@@ -40,7 +40,7 @@ Date.prototype.daysInMonth = function(month, year)
 Date.months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 Date.getMonthName = function(month)
 {
-	return this.months[month];
+	return this.months[month - 1];
 };
 
 Date.getPrefix = function(day)
@@ -50,9 +50,9 @@ Date.getPrefix = function(day)
 
 	switch (number)
 	{
-		case 1: return 'st'; break;
-		case 2: return 'nd'; break;
-		case 3: return 'rd'; break;
+		case '1': return 'st'; break;
+		case '2': return 'nd'; break;
+		case '3': return 'rd'; break;
 		default: return 'th'; break;
 	}
 };
