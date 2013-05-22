@@ -60,7 +60,6 @@ Date.getPrefix = function(day)
 Date.getFormattedFromString = function(date)
 {
 	date = this.parseSQLDateString(date);
-	console.log("Month: " + date[1]);
 	return "{0}{1} {2} {3}".format(date[0], Date.getPrefix(date[0]), Date.getMonthName(date[1]), date[2]);
 };
 
