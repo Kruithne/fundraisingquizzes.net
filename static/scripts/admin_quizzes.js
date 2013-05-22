@@ -58,6 +58,7 @@ var qaHandler = {
 	cancelChanges: function()
 	{
 		qaHandler.editor.slideUp(400, function() {
+			qaHandler.selector.val(0);
 			clearFields(qaHandler.inputTitle, qaHandler.inputCharity, qaHandler.inputDescription, qaHandler.inputDescriptionExtra);
 			qaHandler.inputClosingDate.resetValue();
 		});
