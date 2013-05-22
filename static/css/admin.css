@@ -1,0 +1,27 @@
+#acp-menu
+{
+	list-style: none;
+	margin-left: 5px;
+}
+
+#acp-menu li
+{
+	margin: 3px;
+}
+
+#acp-quiz-list
+{
+	padding: 5px;
+}
+
+#quiz-editor
+{
+	display: none;
+}
+
+#acp-quiz-status
+{
+	color: #439C4D;
+	margin-bottom: 7px;
+	display: none;
+}

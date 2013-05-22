@@ -1,0 +1,48 @@
+input
+{
+	font: 10pt 'Noto Sans', sans-serif;
+}
+
+.form-text-input, .form-button
+{
+	border: 1px solid #999999;
+	padding: 3px;
+	background: white;
+}
+
+.form-text-input-long
+{
+	width: 500px;
+}
+
+.form-text-input:focus, .form-button:hover
+{
+	background-color: #E6E6E6;
+}
+
+.form-button
+{
+	cursor: pointer;
+	padding: 5px 10px;
+}
+
+.form-table
+{
+	border-spacing: 8px;
+}
+
+.form-table th
+{
+	text-align: right;
+}
+
+.form-table-bottom
+{
+	padding-top: 5px;
+}
+
+.form-selector
+{
+	margin-right: 2px;
+	padding: 1px;
+}
