@@ -4,7 +4,7 @@
 		public static function GetQuizzes()
 		{
 			// TODO: Check the ordering on this list.
-			$query = DB::prepare('SELECT ID, title, charity, description, description_extra closing, updated_flag, new_flag FROM quizzes WHERE accepted = 1 ORDER BY closing ASC');
+			$query = DB::prepare('SELECT ID, title, charity, description, description_extra, closing, updated_flag, new_flag FROM quizzes WHERE accepted = 1 ORDER BY closing ASC');
 			$query->execute();
 
 			return $query->fetchAll();
@@ -12,7 +12,7 @@
 
 		public static function GetQuizList()
 		{
-			$query = DB::prepare('SELECT ID, title FROM quizzes ORDER BY closing DESC');
+			$query = DB::prepare('SELECT ID, title FROM quizzes ORDER BY closing ASC');
 			$query->execute();
 
 			return DB::prepareObjects($query);
@@ -85,7 +85,7 @@
 
 		public static function GetQuizData($quiz_id)
 		{
-			$query = DB::prepare('SELECT title, charity, description, closing, updated_flag, new_flag FROM quizzes WHERE ID = :quiz');
+			$query = DB::prepare('SELECT title, charity, description, description_extra, closing, updated_flag, new_flag FROM quizzes WHERE ID = :quiz');
 			$query->bindValue(':quiz', $quiz_id);
 			$query->execute();
 

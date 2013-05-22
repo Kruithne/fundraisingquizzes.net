@@ -40,6 +40,10 @@
 			<td><input type="text" class="form-text-input form-text-input-long" id="quiz-description" maxlength="500"/></td>
 		</tr>
 		<tr>
+			<th>Description Extra:</th>
+			<td><input type="text" class="form-text-input form-text-input-long" id="quiz-description-extra" maxlength="500"/></td>
+		</tr>
+		<tr>
 			<th>Closing Date:</th>
 			<td><div id="quiz-closing-date"></div></td>
 		</tr>

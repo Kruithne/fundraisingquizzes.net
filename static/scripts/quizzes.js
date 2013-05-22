@@ -15,7 +15,7 @@ var quizzes = {
 	}
 };
 
-quizzes.quiz_format = '<p><span class="bold-text">{0}</span> in aid of <span class="bold-text">{1}</span> - Closes: {3}</p><p>{2}</p>';
+quizzes.quiz_format = '<p><span class="bold-text">{0}</span> in aid of <span class="bold-text">{1}</span> - Closes: {3}</p><p>{2}</p><p>{4}</p>';
 
 quizzes.handleBookmarkResponse = function(data)
 {
@@ -42,7 +42,8 @@ quizzes.handleQuizListResponse = function(data)
 					quiz.title,
 					quiz.charity,
 					quiz.description,
-					Date.getFormattedFromString(quiz.closing)
+					Date.getFormattedFromString(quiz.closing),
+					quiz.description_extra
 				)
 			);
 			quizObject.attr('ID', 'quiz-' + quiz.ID);

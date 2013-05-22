@@ -24,6 +24,7 @@ var qaHandler = {
 			qaHandler.inputTitle.val(data.quiz.title);
 			qaHandler.inputCharity.val(data.quiz.charity);
 			qaHandler.inputDescription.val(data.quiz.description);
+			qaHandler.inputDescriptionExtra.val(data.quiz.description_extra);
 			qaHandler.inputClosingDate.setDate(data.quiz.closing);
 			qaHandler.deleteButton.show();
 			qaHandler.editor.slideDown();
@@ -36,7 +37,7 @@ var qaHandler = {
 			qaHandler.selector.val(0);
 			qaHandler.editID = 0;
 			qaHandler.editorTitle.html('Edit Quiz: Untitled Quiz');
-			clearFields(qaHandler.inputTitle, qaHandler.inputCharity, qaHandler.inputDescription);
+			clearFields(qaHandler.inputTitle, qaHandler.inputCharity, qaHandler.inputDescription, qaHandler.inputDescriptionExtra);
 			qaHandler.inputClosingDate.resetValue();
 			qaHandler.deleteButton.hide();
 			qaHandler.editor.slideDown();
@@ -50,13 +51,14 @@ var qaHandler = {
 			title: qaHandler.inputTitle.val(),
 			charity: qaHandler.inputCharity.val(),
 			description: qaHandler.inputDescription.val(),
+			description_extra: qaHandler.inputDescriptionExtra.val(),
 			closing: qaHandler.inputClosingDate.getDateString()
 		});
 	},
 	cancelChanges: function()
 	{
 		qaHandler.editor.slideUp(400, function() {
-			clearFields(qaHandler.inputTitle, qaHandler.inputCharity, qaHandler.inputDescription);
+			clearFields(qaHandler.inputTitle, qaHandler.inputCharity, qaHandler.inputDescription, qaHandler.inputDescriptionExtra);
 			qaHandler.inputClosingDate.resetValue();
 		});
 	},
@@ -107,6 +109,7 @@ $(document).ready(function()
 	qaHandler.inputTitle = $('#quiz-title');
 	qaHandler.inputCharity = $('#quiz-charity');
 	qaHandler.inputDescription = $('#quiz-description');
+	qaHandler.inputDescriptionExtra = $('#quiz-description-extra');
 	qaHandler.status = $('#acp-quiz-status');
 	qaHandler.deleteButton = $('#quiz-delete-button');
 

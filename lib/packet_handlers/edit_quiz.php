@@ -7,6 +7,7 @@
 			$title = REST::Get('title');
 			$closing = REST::Get('closing');
 			$description = REST::Get('description');
+			$description_extra = REST::Get('description_extra');
 			$charity = REST::Get('charity');
 
 			$query = null;
@@ -14,17 +15,43 @@
 			if ($quiz_id > 0)
 			{
 				// TODO: Move this into Quiz handler controlled functions
-				$query = DB::prepare('UPDATE quizzes SET title = :title, closing = :closing, description = :description, charity = :charity, updated_flag = 4 WHERE ID = :id');
+				$query = DB::prepare('
+					UPDATE quizzes SET
+						title = :title,
+						closing = :closing,
+						description = :description,
+						description_extra = :extra,
+						charity = :charity,
+						updated_flag = 4
+					WHERE ID = :id'
+				);
 				$query->bindValue(':id', $quiz_id);
 			}
 			else
 			{
-				$query = DB::prepare('INSERT INTO quizzes (title, closing, description, charity, accepted) VALUES(:title, :closing, :description, :charity, 1)');
+				$query = DB::prepare('
+					INSERT INTO quizzes (
+						title,
+						closing,
+						description,
+						description_extra,
+						charity,
+						accepted
+					) VALUES(
+						:title,
+						:closing,
+						:description,
+						:extra,
+						:charity,
+						1
+					)
+				');
 			}
 
 			$query->bindValue(':title', $title);
 			$query->bindValue(':closing', $closing);
 			$query->bindValue(':description', $description);
+			$query->bindValue(':extra', $description_extra);
 			$query->bindValue(':charity', $charity);
 			$query->execute();
 
