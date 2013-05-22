@@ -13,6 +13,7 @@
 
 			if ($quiz_id > 0)
 			{
+				// TODO: Move this into Quiz handler controlled functions
 				$query = DB::prepare('UPDATE quizzes SET title = :title, closing = :closing, description = :description, charity = :charity, updated_flag = 4 WHERE ID = :id');
 				$query->bindValue(':id', $quiz_id);
 			}
