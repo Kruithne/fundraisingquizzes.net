@@ -143,3 +143,12 @@ Date.prototype.createSelector = function(object, yearsForward, yearsBackward)
 
 	return this;
 };
+
+$(document).ready(function()
+{
+	$('span.date').each(function()
+	{
+		var t = $(this);
+		t.html(Date.getFormattedFromString(t.html()));
+	});
+});
