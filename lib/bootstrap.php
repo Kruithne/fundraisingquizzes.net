@@ -21,6 +21,7 @@
 	ClassLoader::registerClass('AccountFlags', 'account_flags.php');
 	ClassLoader::registerClass('Settings', 'settings.php');
 	ClassLoader::registerClass('DataSanitizer', 'data_sanitizer.php');
+	ClassLoader::registerClass('BugHandler', 'bug_handler.php');
 
 	ClassLoader::registerClass('IModule', 'interfaces/IModule.php');
 
