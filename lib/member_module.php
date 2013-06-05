@@ -1,5 +1,5 @@
 <?php
-	class MemberModule extends Module
+	abstract class MemberModule extends Module
 	{
 		public function __construct()
 		{

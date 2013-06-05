@@ -1,5 +1,5 @@
 <?php
-	class RestrictedModule extends MemberModule
+	abstract class RestrictedModule extends MemberModule
 	{
 		public function __construct()
 		{
