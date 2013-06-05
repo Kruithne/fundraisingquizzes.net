@@ -6,7 +6,8 @@
 			$this->content = new Template('../templates/bugs.php');
 			$this->title = 'Bugs';
 
-			$this->content->bugs = BugHandler::getBugList();
+			$this->content->open_bugs = BugHandler::getOpenBugs();
+			$this->content->closed_bugs = BugHandler::getClosedBugs();
 		}
 	}
 ?>

@@ -1,9 +1,20 @@
 <?php
 	class BugHandler
 	{
-		public static function getBugList()
+		public static function getOpenBugs()
 		{
-			$query = DB::prepare('SELECT ID, title, submitted, status, submitter WHERE status = 0 ORDER BY submitted DESC');
+			return self::getBugs(0);
+		}
+
+		public static function getClosedBugs()
+		{
+			return self::getBugs(1);
+		}
+
+		private static function getBugs($status)
+		{
+			$query = DB::prepare('SELECT ID, title, submitted, status, submitter FROM bugs WHERE status = :status ORDER BY submitted DESC');
+			$query->bindValue(':status', $status);
 			$query->execute();
 
 			return DB::prepareObjects($query);
