@@ -1,5 +1,5 @@
 <?php
-	class AdminQuizzesPage extends RestrictedModule implements IModule
+	class AdminQuizzesPage extends RestrictedModule
 	{
 		public function Build()
 		{

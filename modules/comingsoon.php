@@ -1,5 +1,5 @@
 <?php
-	class ComingSoonPage extends Module implements IModule
+	class ComingSoonPage extends Module
 	{
 		public function Build()
 		{

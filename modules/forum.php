@@ -1,5 +1,5 @@
 <?php
-	class ForumPage extends MemberModule implements IModule
+	class ForumPage extends MemberModule
 	{
 		public function Build()
 		{
