@@ -47,12 +47,18 @@
 
 		public static function GetUsername($user_id)
 		{
+			if (array_key_exists($user_id, self::$usernameCache))
+				return self::$usernameCache[$user_id];
+
 			$query = DB::prepare('SELECT username FROM users WHERE ID = :user');
 			$query->bindValue(':user', $user_id);
 			$query->execute();
 
 			if ($user = $query->fetchObject())
+			{
+				self::$usernameCache[$user_id] = $user->username;
 				return $user->username;
+			}
 
 			return null;
 		}
@@ -94,5 +100,7 @@
 			$query->bindValue(':user', $user_id);
 			$query->execute();
 		}
+
+		private static $usernameCache = Array();
 	}
 ?>
