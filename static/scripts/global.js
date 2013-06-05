@@ -45,16 +45,19 @@ Date.getMonthName = function(month)
 
 Date.getPrefix = function(day)
 {
-	day = day.toString();
-	var number = (day.length > 1 ? day[1] : day[0]);
-
-	switch (number)
+	if (day < 11 || day > 13)
 	{
-		case '1': return 'st'; break;
-		case '2': return 'nd'; break;
-		case '3': return 'rd'; break;
-		default: return 'th'; break;
+		day = day.toString();
+		var number = (day.length > 1 ? day[1] : day[0]);
+
+		switch (number)
+		{
+			case '1': return 'st'; break;
+			case '2': return 'nd'; break;
+			case '3': return 'rd'; break;
+		}
 	}
+	return 'th';
 };
 
 Date.getFormattedFromString = function(date)
