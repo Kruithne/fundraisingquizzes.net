@@ -1,5 +1,5 @@
 <?php
-	class Module implements IModule
+	abstract class Module implements IModule
 	{
 		public function __construct()
 		{
@@ -22,7 +22,6 @@
 		}
 
 		public function HandlePost() {}
-		public function Build() {}
 
 		protected $title;
 		protected $content;
