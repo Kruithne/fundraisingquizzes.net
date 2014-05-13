@@ -16,6 +16,11 @@
 	</head>
 	<body>
 		<div id="container">
+		<div class="module">
+			<a href="http://www.fundraisingquizzes.net/">
+				<img id="logo" src="http://static.fundraisingquizzes.net/images/logo.png" alt="Fundraising Quizzes"/>
+			</a>
+		</div>
 		<?php
 			echo $this->content;
 		?>
