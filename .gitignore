@@ -1,4 +1,3 @@
 .idea
-lib/constants.php
-static/images
 .gitignore
+.gitmodules

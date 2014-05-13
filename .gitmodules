@@ -1,0 +1,3 @@
+[submodule "lib/KrameWork"]
+	path = lib/KrameWork
+	url = git@github.com:Kruithne/KrameWork.git
