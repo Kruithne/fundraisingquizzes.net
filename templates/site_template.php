@@ -15,8 +15,10 @@
 		?>
 	</head>
 	<body>
+		<div id="container">
 		<?php
 			echo $this->content;
 		?>
+		</div>
 	</body>
 </html>
