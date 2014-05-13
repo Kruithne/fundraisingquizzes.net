@@ -1,1 +1,4 @@
-Fundraising Quizzes is undergoing some maintenance! Please stand-by. :)
+<?php
+	require_once('../engine/bootstrap.php');
+	echo new LandingPage();
+?>
