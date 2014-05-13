@@ -3,6 +3,7 @@
 	<head>
 		<title><?php echo $this->title; ?> - Fundraising Quizzes</title>
 		<link rel="stylesheet" type="text/css" href="http://static.fundraisingquizzes.net/css/base.css"/>
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Noto+Sans"/>
 		<?php
 			foreach ($this->styles as $style)
 				echo '<link rel="stylesheet" type="text/css" href="http://static.fundraisingquizzes.net/css/' . $style . '"/>';
