@@ -24,6 +24,11 @@
 		<?php
 			echo $this->content;
 		?>
+		<div class="module module-padded">
+			<div id="copyright">Copyright &copy; Fundraising Quizzes</div>
+			<div id="author">Website by <a href="http://www.kruithne.net/">Stanley Batch</a></div>
+			<div class="float-block"></div>
+		</div>
 		</div>
 	</body>
 </html>
