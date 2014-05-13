@@ -1,4 +1,5 @@
 <?php
+	require_once('constants.php');
 	require_once('../lib/KrameWork/KrameWork/KrameSystem.php');
 
 	$system = new KrameSystem();
