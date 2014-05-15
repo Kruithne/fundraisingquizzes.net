@@ -11,5 +11,6 @@
 	<div class="float-block"></div>
 </div>
 <div class="module module-padded">
-Fundraising Quizzes is undergoing some maintance, please stand-by! :D
+	<p class="center">Welcome to Fundraising Quizzes, a website designed around a 'no-asking for answers' policy for quizzers to discuss quiz related topics in a light hearted, friendly manner.</p>
+	<p class="center">The feature-rich website offers a wide array of features, including a quiz page for charities to advertise upcoming quizzes, a listing of answers for past quizzes and a community driven forum.</p>
 </div>
