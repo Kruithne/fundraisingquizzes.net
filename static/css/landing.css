@@ -1,0 +1,20 @@
+#weekly-quiz, #weekly-trivia
+{
+	height: 42px;
+	padding-top: 6px;
+}
+
+#weekly-quiz
+{
+	float: left;
+	padding-left: 60px;
+	background: url(http://static.fundraisingquizzes.net/images/document_48.png) no-repeat center left;
+}
+
+#weekly-trivia
+{
+	float: right;
+	text-align: right;
+	padding-right: 60px;
+	background: url(http://static.fundraisingquizzes.net/images/pencil_48.png) no-repeat center right;
+}
