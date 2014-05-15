@@ -1,5 +1,5 @@
 <?php
-	class SiteModule extends KW_Module
+	class Module extends KW_Module
 	{
 		public function __construct($title, $content)
 		{

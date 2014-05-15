@@ -1,12 +1,13 @@
 <?php
-	class LandingPage extends SiteModule
+	class LandingPage extends Module
 	{
 		public function __construct()
 		{
 			$template = new KW_Template('../templates/landing.php');
 			parent::__construct('Home', $template);
+			$this->addStylesheet('landing.css');
 
-			$template->test = Settings::get('weeklyQuiz');
+			$template->weeklyQuiz = QuizHandler::getWeeklyQuiz();
 		}
 	}
 ?>
