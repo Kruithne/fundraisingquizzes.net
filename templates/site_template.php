@@ -16,10 +16,18 @@
 	</head>
 	<body>
 		<div id="container">
-		<div class="module">
+		<div class="module" id="header">
 			<a href="http://www.fundraisingquizzes.net/">
 				<img id="logo" src="http://static.fundraisingquizzes.net/images/logo.png" alt="Fundraising Quizzes"/>
 			</a>
+			<div id="account-status">
+				<?php
+					if (Authenticator::getLoggedInUser() != User::NONE)
+						echo "Something went very, very wrong!";
+					else
+						echo "You are currently not logged in: login or register.";
+				?>
+			</div>
 		</div>
 		<?php
 			echo $this->content;

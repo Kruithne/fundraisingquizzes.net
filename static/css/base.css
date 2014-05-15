@@ -32,6 +32,18 @@ body
 	width: 1240px;
 }
 
+#header
+{
+	position: relative;
+}
+
+#account-status
+{
+	position: absolute;
+	top: 10px;
+	right: 15px;
+}
+
 .module
 {
 	text-align: left;
