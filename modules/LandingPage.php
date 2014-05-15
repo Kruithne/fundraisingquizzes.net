@@ -5,6 +5,8 @@
 		{
 			$template = new KW_Template('../templates/landing.php');
 			parent::__construct('Home', $template);
+
+			$template->test = Settings::get('weeklyQuiz');
 		}
 	}
 ?>
