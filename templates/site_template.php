@@ -16,6 +16,9 @@
 	</head>
 	<body>
 		<div id="container">
+		<div class="module module-padded">
+			<p id="maintenance">We're currently under-going some heavy maintenance, so things might not be working correctly!</p>
+		</div>
 		<div class="module" id="header">
 			<a href="http://www.fundraisingquizzes.net/">
 				<img id="logo" src="http://static.fundraisingquizzes.net/images/logo.png" alt="Fundraising Quizzes"/>
