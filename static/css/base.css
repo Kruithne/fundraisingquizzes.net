@@ -33,7 +33,7 @@ a:hover
 
 body
 {
-	background-image: url('http://static.fundraisingquizzes.net/images/background.png');
+	background-image: url(http://static.fundraisingquizzes.net/images/background.png);
 	font: 10pt 'Noto Sans', sans-serif;
 	text-align: center;
 }
@@ -55,7 +55,7 @@ body
 	top: 10px;
 	right: 15px;
 	padding-left: 22px;
-	background: url('http://static.fundraisingquizzes.net/images/user_16.png') no-repeat 0 2px;
+	background: url(http://static.fundraisingquizzes.net/images/user_16.png) no-repeat 0 2px;
 }
 
 .module
@@ -145,5 +145,5 @@ body
 {
 	padding: 7px 0 0 50px;
 	height: 25px;
-	background: url('http://static.fundraisingquizzes.net/images/warning_32.png') no-repeat center left;
+	background: url(http://static.fundraisingquizzes.net/images/warning_32.png) no-repeat center left;
 }
