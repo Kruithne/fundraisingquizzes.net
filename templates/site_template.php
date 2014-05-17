@@ -32,7 +32,7 @@
 				?>
 			</div>
 			<ul id="navigation">
-				<li id="navigation-home">Home</li>
+				<li id="navigation-home"><a href="index.php">Home</a></li>
 				<li id="navigation-quizzes">Quizzes</li>
 				<li id="navigation-answers">Answers</li>
 				<li id="navigation-forum">Forum</li>
