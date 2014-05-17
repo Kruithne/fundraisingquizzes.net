@@ -45,7 +45,7 @@
 		?>
 		<div class="module module-padded">
 			<div id="copyright">Copyright &copy; Fundraising Quizzes</div>
-			<div id="author">Website by <a href="http://www.kruithne.net/">Stanley Batch</a></div>
+			<div id="author">Website by <a href="http://www.kruithne.net/">Stanley Batch</a> | Icons by <a href="http://www.pixel-mixer.com">PixelMixer</a></div>
 			<div class="float-block"></div>
 		</div>
 		</div>
