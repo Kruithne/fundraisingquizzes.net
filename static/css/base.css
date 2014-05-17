@@ -125,6 +125,11 @@ body
 	background-image: url(http://static.fundraisingquizzes.net/images/gear_16.png);
 }
 
+#navigation a, #navigation a:hover
+{
+	color: black;
+}
+
 .float-block
 {
 	clear: both;
