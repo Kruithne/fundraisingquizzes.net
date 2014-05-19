@@ -143,6 +143,11 @@
 			$query->execute();
 		}
 
+		/**
+		 * Retrieve data relating to a specific quiz.
+		 * @param $id int ID of the quiz to query.
+		 * @return int|Quiz Populated quiz object or Quiz::NONE
+		 */
 		public static function get($id)
 		{
 			$query = DB::get()->prepare('SELECT title, charity, description, description_extra, closing, updated_flag, new_flag FROM quizzes WHERE ID = :id');
@@ -160,6 +165,33 @@
 				$result->new_flag,
 				$id
 			);
+		}
+
+		/**
+		 * Retrieve an array of quizzes available.
+		 * @param bool $acceptedOnly Should only accepted quizzes be queried?
+		 * @return array
+		 */
+		public static function getAll($acceptedOnly = true)
+		{
+			$query = DB::get()->prepare('SELECT ID, title, charity, description, description_extra, closing, updated_flag, new_flag FROM quizzes WHERE accepted = ' . ($acceptedOnly ? 1 : 0) . ' ORDER BY closing ASC');
+			$return = Array();
+
+			foreach ($query->getRows() as $row)
+			{
+				$return[] = new Quiz(
+					$row->title,
+					$row->charity,
+					$row->description,
+					$row->description_extra,
+					$row->closing,
+					$row->updated_flag,
+					$row->new_flag,
+					$row->ID
+				);
+			}
+
+			return $return;
 		}
 
 		private $id;
