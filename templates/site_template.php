@@ -9,6 +9,8 @@
 				echo '<link rel="stylesheet" type="text/css" href="http://static.fundraisingquizzes.net/css/' . $style . '"/>';
 		?>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+		<script>var loggedIn = <?php echo Authenticator::getLoggedInUser() == User::NONE ? 'false' : 'true'; ?>;</script>
+		<script src="http://static.fundraisingquizzes.net/scripts/login.js"></script>
 		<?php
 			foreach ($this->scripts as $script)
 				echo '<script src="http://static.fundraisingquizzes.net/scripts/' . $script . '"></script>';
@@ -23,14 +25,7 @@
 			<a href="http://www.fundraisingquizzes.net/">
 				<img id="logo" src="http://static.fundraisingquizzes.net/images/logo.png" alt="Fundraising Quizzes"/>
 			</a>
-			<div id="account-status">
-				<?php
-					if (Authenticator::getLoggedInUser() != User::NONE)
-						echo "Something went very, very wrong!";
-					else
-						echo "You are currently not logged in: login or register.";
-				?>
-			</div>
+			<div id="account-status"></div>
 			<ul id="navigation">
 				<li id="navigation-home"><a href="index.php">Home</a></li>
 				<li id="navigation-quizzes"><a href="quizzes.php">Quizzes</a></li>
