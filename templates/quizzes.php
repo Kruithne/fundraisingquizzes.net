@@ -15,8 +15,8 @@
 			<div class="module module-padded">
 				<p class="center"><span class="strong"><?php echo $quiz->getTitle(); ?></span> in aid of <span class="strong"><?php echo $quiz->getCharity(); ?></span></p>
 				<p class="center">Closes in <span class="time-period"><?php echo $quiz->getClosing(); ?></span> (<span class="time-formal"><?php echo $quiz->getClosing(); ?></span>)</p>
-				<p class="center"><?php echo $quiz->getDescription(); ?></p>
-				<p class="center"><?php echo $quiz->getExtra(); ?></p>
+				<p class="center linkable"><?php echo $quiz->getDescription(); ?></p>
+				<p class="center linkable"><?php echo $quiz->getExtra(); ?></p>
 			</div>
 			<?php
 		}
