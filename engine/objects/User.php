@@ -69,6 +69,17 @@
 		}
 
 		/**
+		 * Persist any modifications to this users flags in the database.
+		 */
+		public function persist()
+		{
+			$query = DB::get()->prepare('UPDATE users SET flags = :flags WHERE ID = :id');
+			$query->setValue(':flags', $this->flags);
+			$query->setValue(':id', $this->id);
+			$query->execute();
+		}
+
+		/**
 		 * @var int ID of the user this object represents.
 		 */
 		private $id;
