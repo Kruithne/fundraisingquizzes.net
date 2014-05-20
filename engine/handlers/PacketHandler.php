@@ -1,6 +1,11 @@
 <?php
 	class PacketHandler
 	{
+		/**
+		 * Used by IPacketListener classes to convert their output to JSON.
+		 * @param $node mixed Node to convert.
+		 * @return array|string
+		 */
 		public static function convertChildren($node)
 		{
 			if (is_array($node))
@@ -13,6 +18,11 @@
 			return $node;
 		}
 
+		/**
+		 * Used by convertChildren to filter out any JSON breaking characters.
+		 * @param $text string Text to filter.
+		 * @return string
+		 */
 		private static function convertCharacters($text)
 		{
 			foreach (self::$char_swaps as $find => $replace)
@@ -21,6 +31,10 @@
 			return $text;
 		}
 
+		/**
+		 * Register a packet listener.
+		 * Each argument should be an array consisting of two values: ID and class.
+		 */
 		public static function registerListeners()
 		{
 			foreach (func_get_args() as $register)
@@ -31,8 +45,8 @@
 		}
 
 		/**
-		 * @param $id
-		 * @return null|IPacketListener
+		 * @param $id int ID of the packet listener to retrieve.
+		 * @return null|IPacketListener Will be null if no listener found for that ID.
 		 */
 		public static function getListener($id)
 		{

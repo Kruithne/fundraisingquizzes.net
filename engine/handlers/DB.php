@@ -1,6 +1,10 @@
 <?php
 	class DB
 	{
+		/**
+		 * Retrieve the currently active database connection.
+		 * @return KW_DatabaseConnection
+		 */
 		public static function get()
 		{
 			if (self::$database == null)
