@@ -14,6 +14,24 @@
 		}
 
 		/**
+		 * Check if the user is an admin on the site.
+		 * @return bool True if the user is an admin, else false.
+		 */
+		public function isAdmin()
+		{
+			return $this->hasFlag(User::FLAG_ADMIN);
+		}
+
+		/**
+		 * Check if the user is banned from the site.
+		 * @return bool True if the user is banned, else false.
+		 */
+		public function isBanned()
+		{
+			return $this->hasFlag(User::FLAG_BANNED);
+		}
+
+		/**
 		 * Returns the flags for this user.
 		 * @return int
 		 */
