@@ -12,7 +12,7 @@
 				return self::$cache[$user_id];
 
 			$current_user = Authenticator::getLoggedInUser();
-			if ($current_user != User::NONE && $user_id == $current_user->getId())
+			if ($current_user instanceof User && $user_id == $current_user->getId())
 				return $current_user;
 
 			$query = DB::get()->prepare('SELECT username, flags FROM users WHERE ID = :user');

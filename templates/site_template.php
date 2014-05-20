@@ -9,7 +9,7 @@
 				echo '<link rel="stylesheet" type="text/css" href="http://static.fundraisingquizzes.net/css/' . $style . '"/>';
 		?>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-		<script>var loggedIn = <?php echo Authenticator::getLoggedInUser() == User::NONE ? 'false' : 'true'; ?>;</script>
+		<script>var loggedIn = <?php echo Authenticator::getLoggedInUser() instanceof User ? 'true' : 'false'; ?>;</script>
 		<script src="http://static.fundraisingquizzes.net/scripts/login.js"></script>
 		<?php
 			foreach ($this->scripts as $script)
