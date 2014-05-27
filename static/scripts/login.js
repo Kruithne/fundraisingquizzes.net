@@ -15,8 +15,7 @@ $(function()
 
 		loginButtonClick: function()
 		{
-			var element = handler.element;
-			element.empty();
+			var element = handler.element.empty();
 			$('<input type="text" placeholder="Username..." id="username-field" class="input-text"/>').appendTo(element);
 			$('<input type="password" placeholder="Password..." id="password-field" class="input-text"/>').appendTo(element);
 			$('<input type="button" id="login-submit" value="Login" class="input-button"/>').appendTo(element);
