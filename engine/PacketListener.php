@@ -11,7 +11,7 @@
 		 * @param $key mixed
 		 * @param $value mixed
 		 */
-		protected function output($key, $value)
+		public function output($key, $value)
 		{
 			$this->output[$key] = $value;
 		}
