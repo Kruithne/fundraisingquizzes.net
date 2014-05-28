@@ -1,5 +1,5 @@
 <?php
 	PacketHandler::registerListeners(
-		Array(1, 'TestListener')
+		Array(1, 'LoginListener')
 	);
 ?>

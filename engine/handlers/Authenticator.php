@@ -8,6 +8,7 @@
 		public static function getLoggedInUser()
 		{
 			$user = Session::Get('LoggedInUser');
+			var_dump($user);
 			return $user == null ? User::NONE : $user;
 		}
 

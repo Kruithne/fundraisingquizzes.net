@@ -62,9 +62,18 @@ body
 	padding-left: 22px;
 	background: url(http://static.fundraisingquizzes.net/images/user_16.png) no-repeat center left;
 }
+
 #account-status input
 {
 	margin: 0 2px;
+}
+
+#account-status-error
+{
+	position: absolute;
+	left: 30px;
+	bottom: -25px;
+	display: none;
 }
 
 .module
@@ -171,6 +180,21 @@ body
 .input-button:hover, .input-text:focus
 {
 	border: 1px solid #000;
+}
+
+.form-error
+{
+	color: #C40000;
+}
+
+.form-success
+{
+	color: #17C400;
+}
+
+.form-pending
+{
+	color: #C48600;
 }
 
 /** Temp **/
