@@ -10,7 +10,7 @@
 		?>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 		<script src="http://static.fundraisingquizzes.net/scripts/packet_handler.js"></script>
-		<script src="http://static.fundraisingquizzes.net/scripts/krorms.js"></script>
+		<script src="http://static.fundraisingquizzes.net/scripts/krorms.min.js"></script>
 		<script>var loggedIn = <?php echo Authenticator::getLoggedInUser() instanceof User ? 'true' : 'false'; ?>;</script>
 		<script src="http://static.fundraisingquizzes.net/scripts/login.js"></script>
 		<?php
