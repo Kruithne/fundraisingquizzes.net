@@ -11,6 +11,7 @@ $(function()
 			var d = document, c = 'click', e = '#account-status-error', f = '#login .input-text';
 			$(d).on(c, '#login-button', handler.loginButtonClick);
 			$(d).on(c, '#login-cancel', handler.resetLoginForm);
+			$(d).on(c, '#logout-button', handler.logoutButtonClick);
 
 			PacketHandler.hook(Packet.Login, packetContext(this, 'loginResult'));
 
@@ -47,10 +48,15 @@ $(function()
 			$('<div id="account-status-error"/>').appendTo(form);
 		},
 
+		logoutButtonClick: function()
+		{
+			PacketHandler.send(Packet.Login);
+		},
+
 		resetLoginForm: function()
 		{
 			if (handler.loggedIn != null)
-				handler.element.html('You are logged in as ' + handler.loggedIn + '.');
+				handler.element.html('You are logged in as ' + handler.loggedIn + '. <a id="logout-button">Logout</a>.');
 			else
 				handler.element.html('You are currently not logged in: <a id="login-button">login</a> or <a>register</a>.');
 		},
@@ -64,8 +70,16 @@ $(function()
 			}
 			else
 			{
-				$('#login .input-text').css('border', '1px solid red').css('background-color', '#EDD3D3');
-				$('#account-status-error').removeClass('form-pending').addClass('form-error').html('Invalid username and/or password.').fadeIn();
+				if (response.logout == undefined)
+				{
+					$('#login .input-text').css('border', '1px solid red').css('background-color', '#EDD3D3');
+					$('#account-status-error').removeClass('form-pending').addClass('form-error').html('Invalid username and/or password.').fadeIn();
+				}
+				else
+				{
+					handler.loggedIn = null;
+					handler.resetLoginForm();
+				}
 			}
 		}
 	};

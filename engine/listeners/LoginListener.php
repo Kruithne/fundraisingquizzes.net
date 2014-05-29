@@ -20,6 +20,11 @@
 					$this->output('success', false);
 				}
 			}
+			else
+			{
+				Authenticator::logoutUser();
+				$this->output('logout', true);
+			}
 		}
 	}
 ?>
