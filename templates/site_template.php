@@ -14,7 +14,7 @@
 		<?php
 			$user = Authenticator::getLoggedInUser();
 			if ($user instanceof User)
-				echo '<script>var loggedIn = ' . $user->getUsername() . ';</script>';
+				echo '<script>var loggedIn = "' . $user->getUsername() . '";</script>';
 		?>
 		<script src="http://static.fundraisingquizzes.net/scripts/login.js"></script>
 		<?php
