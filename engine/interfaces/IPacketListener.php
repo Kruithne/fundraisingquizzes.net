@@ -2,6 +2,6 @@
 	interface IPacketListener
 	{
 		public function run();
-		public function output($key, $value);
+		public function setReturn($key, $value);
 	}
 ?>

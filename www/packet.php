@@ -11,7 +11,7 @@
 		if ($handler instanceof IPacketListener)
 		{
 			if ($packet_uid > 0)
-				$handler->output('uid', $packet_uid);
+				$handler->setReturn('uid', $packet_uid);
 
 			echo $handler;
 		}

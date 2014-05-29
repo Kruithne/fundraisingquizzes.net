@@ -11,7 +11,7 @@
 		 * @param $key mixed
 		 * @param $value mixed
 		 */
-		public function output($key, $value)
+		public function setReturn($key, $value)
 		{
 			$this->output[$key] = $value;
 		}

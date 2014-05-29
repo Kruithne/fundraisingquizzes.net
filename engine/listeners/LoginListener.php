@@ -14,19 +14,19 @@
 					Authenticator::loginUser($user_id);
 					$user = Authenticator::getLoggedInUser();
 
-					$this->output('success', true);
-					$this->output('username', $user->getUsername());
-					$this->output('admin', $user->isAdmin());
+					$this->setReturn('success', true);
+					$this->setReturn('username', $user->getUsername());
+					$this->setReturn('admin', $user->isAdmin());
 				}
 				else
 				{
-					$this->output('success', false);
+					$this->setReturn('success', false);
 				}
 			}
 			else
 			{
 				Authenticator::logoutUser();
-				$this->output('logout', true);
+				$this->setReturn('logout', true);
 			}
 		}
 	}
