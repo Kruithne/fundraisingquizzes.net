@@ -17,6 +17,15 @@
 		}
 
 		/**
+		 * Set multiple outputs using a key->value array.
+		 * @param $array array
+		 */
+		public function setReturns($array)
+		{
+			$this->output = array_merge($this->output, $array);
+		}
+
+		/**
 		 * Compile the output of this listener to a JSON string.
 		 * @return string JSON formatted output.
 		 */
