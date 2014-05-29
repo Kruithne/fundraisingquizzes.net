@@ -14,9 +14,11 @@
 					Authenticator::loginUser($user_id);
 					$user = Authenticator::getLoggedInUser();
 
-					$this->setReturn('success', true);
-					$this->setReturn('username', $user->getUsername());
-					$this->setReturn('admin', $user->isAdmin());
+					$this->setReturns(array(
+						'success' => true,
+						'username' => $user->getUsername(),
+						'admin' => $user->isAdmin()
+					));
 				}
 				else
 				{
