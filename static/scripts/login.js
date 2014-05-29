@@ -81,8 +81,9 @@ $(function()
 			{
 				if (response.logout == undefined)
 				{
+					var error = response.isBanned == undefined ? 'Invalid username and/or password.' : 'Your account has been banned.';
 					$('#login .input-text').css('border', '1px solid red').css('background-color', '#EDD3D3');
-					$('#account-status-error').removeClass('form-pending').addClass('form-error').html('Invalid username and/or password.').fadeIn();
+					$('#account-status-error').removeClass('form-pending').addClass('form-error').html(error).fadeIn();
 				}
 				else
 				{

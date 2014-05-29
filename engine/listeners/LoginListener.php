@@ -14,6 +14,12 @@
 					Authenticator::loginUser($user_id);
 					$user = Authenticator::getLoggedInUser();
 
+					if ($user->isBanned())
+					{
+						$this->setReturn('isBanned', true);
+						return;
+					}
+
 					$this->setReturns(array(
 						'success' => true,
 						'username' => $user->getUsername(),
