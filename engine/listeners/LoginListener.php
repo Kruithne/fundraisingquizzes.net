@@ -12,8 +12,11 @@
 				if ($user_id !== User::NONE)
 				{
 					Authenticator::loginUser($user_id);
+					$user = Authenticator::getLoggedInUser();
+
 					$this->output('success', true);
-					$this->output('username', Authenticator::getLoggedInUser()->getUsername());
+					$this->output('username', $user->getUsername());
+					$this->output('admin', $user->isAdmin());
 				}
 				else
 				{

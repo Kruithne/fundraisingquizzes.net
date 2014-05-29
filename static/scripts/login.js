@@ -5,6 +5,7 @@ $(function()
 		{
 			this.element = $('#account-status');
 			this.loggedIn = (typeof loggedIn == 'undefined' ? null : loggedIn);
+			this.isAdmin = (typeof isAdmin == 'undefined' ? false : isAdmin);
 
 			this.resetLoginForm();
 
@@ -55,10 +56,17 @@ $(function()
 
 		resetLoginForm: function()
 		{
+			$('#navigation-admin').remove();
 			if (handler.loggedIn != null)
+			{
 				handler.element.html('You are logged in as ' + handler.loggedIn + '. <a id="logout-button">Logout</a>.');
+				if (handler.isAdmin)
+					$('<li id="navigation-admin">Admin</li>').appendTo($('#navigation'));
+			}
 			else
+			{
 				handler.element.html('You are currently not logged in: <a id="login-button">login</a> or <a>register</a>.');
+			}
 		},
 
 		loginResult: function(response)
@@ -66,6 +74,7 @@ $(function()
 			if (response.success != undefined && response.success == true)
 			{
 				handler.loggedIn = response.username;
+				handler.isAdmin = response.admin;
 				handler.resetLoginForm();
 			}
 			else
@@ -78,6 +87,7 @@ $(function()
 				else
 				{
 					handler.loggedIn = null;
+					handler.isAdmin = false;
 					handler.resetLoginForm();
 				}
 			}
