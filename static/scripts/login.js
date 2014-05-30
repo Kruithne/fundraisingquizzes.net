@@ -61,7 +61,7 @@ $(function()
 			{
 				handler.element.html('You are logged in as ' + handler.loggedIn + '. <a id="logout-button">Logout</a>.');
 				if (handler.isAdmin)
-					$('<li id="navigation-admin">Admin</li>').appendTo($('#navigation'));
+					$('<li id="navigation-admin"><a href="admin.php">Admin</a></li>').appendTo($('#navigation'));
 			}
 			else
 			{

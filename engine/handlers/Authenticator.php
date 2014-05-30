@@ -21,6 +21,19 @@
 		}
 
 		/**
+		 * Check if the current user is an admin.
+		 * @return bool
+		 */
+		public static function isLoggedInAsAdmin()
+		{
+			$user = self::getLoggedInUser();
+			if ($user instanceof User)
+				return $user->isAdmin();
+
+			return false;
+		}
+
+		/**
 		 * Attempts to authenticate a user.
 		 * @param $username string Username to authenticate.
 		 * @param $password string Password to authenticate with.
