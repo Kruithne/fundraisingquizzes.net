@@ -57,7 +57,7 @@ var PacketHandler = {
 		if (args.length > 2)
 			this.callbackData[params.uid] = args[2];
 
-		func('http://www.fundraisingquizzes.net/packet.php', params, function(data)
+		func('http://' + window.location.host + '/packet.php', params, function(data)
 		{
 			PacketHandler.run(packet_id, $.parseJSON(data));
 		});
