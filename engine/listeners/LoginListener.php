@@ -11,7 +11,7 @@
 				$user_id = Authenticator::authenticateUser($username, $password);
 				if ($user_id !== User::NONE)
 				{
-					Authenticator::loginUser($user_id);
+					Authenticator::loginUser($user_id, true);
 					$user = Authenticator::getLoggedInUser();
 
 					if ($user->isBanned())

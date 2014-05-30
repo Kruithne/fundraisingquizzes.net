@@ -11,4 +11,6 @@
 
 	$system = new KrameSystem();
 	$system->getErrorHandler()->addEmailOutputRecipient('kruithne+fquizzes@gmail.com');
+
+	Authenticator::checkLoginKey();
 ?>

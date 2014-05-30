@@ -12,6 +12,15 @@
 		}
 
 		/**
+		 * Check if a user is currently logged in for this session.
+		 * @return bool
+		 */
+		public static function isLoggedIn()
+		{
+			return self::getLoggedInUser() instanceof User;
+		}
+
+		/**
 		 * Attempts to authenticate a user.
 		 * @param $username string Username to authenticate.
 		 * @param $password string Password to authenticate with.
@@ -33,10 +42,24 @@
 		/**
 		 * Set the currently logged in user.
 		 * @param $user_id int ID of the user to log-in.
+		 * @param $new bool If true, a new login key will be set.
 		 */
-		public static function loginUser($user_id)
+		public static function loginUser($user_id, $new = false)
 		{
-			Session::Set('LoggedInUser', UserHandler::getUser($user_id));
+			$user = UserHandler::getUser($user_id);
+			Session::Set('LoggedInUser', $user);
+
+			if ($new)
+			{
+				$loginKey = hash('md5', $user->getUsername() . time());
+				$user->setLoginKey($loginKey);
+
+				$date = new DateTime();
+				$date->add(new DateInterval('P1Y'));
+
+				Cookie::Set('LoginKey', $loginKey, $date);
+				Cookie::Set('LoginUser', $user->getId(), $date);
+			}
 		}
 
 		/**
@@ -45,6 +68,24 @@
 		public static function logoutUser()
 		{
 			Session::Delete('LoggedInUser');
+			Cookie::Delete('LoginKey');
+			Cookie::Delete('LoginUser');
+		}
+
+		public static function checkLoginKey()
+		{
+			if (self::isLoggedIn())
+				return;
+
+			$loginUser = Cookie::Get('LoginUser');
+			$loginKey = Cookie::Get('LoginKey');
+
+			if ($loginUser !== null && $loginKey !== null)
+			{
+				$user = UserHandler::getUser($loginUser);
+				if ($user instanceof User && $user->getLoginKey() === $loginKey)
+					Authenticator::loginUser($user->getId(), false);
+			}
 		}
 	}
 ?>

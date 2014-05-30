@@ -87,7 +87,36 @@
 		}
 
 		/**
+		 * Returns the login key for this user.
+		 * @return string
+		 */
+		public function getLoginKey()
+		{
+			if ($this->loginKey == null)
+			{
+				$query = DB::get()->prepare('SELECT loginKey FROM quizzes WHERE ID = :id');
+				$query->setValue(':id', $this->id);
+
+				$result = $query->getFirstRow();
+				if ($result != null)
+					$this->loginKey = $result->loginKey;
+			}
+			return $this->loginKey;
+		}
+
+		/**
+		 * Set the login key for this user.
+		 * @param $key string
+		 */
+		public function setLoginKey($key)
+		{
+			$this->loginKey = $key;
+			DB::get()->prepare('UPDATE users SET loginKey = :key WHERE ID = :id')->setValue(':key', $key)->setValue(':id', $this->id)->execute();
+		}
+
+		/**
 		 * Persist any modifications to this users flags in the database.
+		 * Login keys are not persisted using this function to reduce common overhead.
 		 */
 		public function persist()
 		{
@@ -111,5 +140,10 @@
 		 * @var int Flags relating to this user.
 		 */
 		private $flags;
+
+		/**
+		 * @var string Login key for this user, normally NULL until requested.
+		 */
+		private $loginKey;
 	}
 ?>
