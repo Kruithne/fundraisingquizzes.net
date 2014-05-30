@@ -1,0 +1,10 @@
+#error-frame
+{
+	margin: 20px auto;
+}
+
+#error-frame td
+{
+	vertical-align: middle;
+	padding-left: 30px;
+}

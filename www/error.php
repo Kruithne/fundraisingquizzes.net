@@ -1,1 +1,4 @@
-There was an error, but there is no error page yet!
+<?php
+	require_once('../engine/bootstrap.php');
+	echo new ErrorPage();
+?>
