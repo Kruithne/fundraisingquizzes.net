@@ -36,3 +36,40 @@
 {
 	background-position: 0 -39px;
 }
+
+.quiz-options
+{
+	position: absolute;
+	bottom: 10px;
+	right: 20px;
+	display: none;
+}
+
+.quiz-options ul
+{
+	list-style: none;
+}
+
+.quiz-options li
+{
+	display: inline;
+	margin: 0 10px;
+	padding-left: 20px;
+	background-repeat: no-repeat;
+	background-position: 0 1px;
+}
+
+.quiz-option-bookmark
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/bookmark_16.png);
+}
+
+.quiz-option-vote
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/star_16.png);
+}
+
+.quiz-option-edit
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/pencil_16.png);
+}
