@@ -12,8 +12,7 @@ $(function()
 				handler.y = e.offsetY;
 			}).on('mouseup', '.quiz-listing', function(e)
 			{
-				var h = handler;
-				if (h.x != null && h.y != null && Math.abs((h.x - e.offsetX) + (h.y - e.offsetY)) < 10)
+				if (handler.x != null && handler.y != null && Math.abs((handler.x - e.offsetX) + (handler.y - e.offsetY)) < 10)
 				{
 					var t = $(this);
 					if (t.hasClass('active'))
