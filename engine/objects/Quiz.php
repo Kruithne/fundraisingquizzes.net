@@ -29,6 +29,30 @@
 		}
 
 		/**
+		 * @return int
+		 */
+		public function getId()
+		{
+			return $this->id;
+		}
+
+		/**
+		 * @return int
+		 */
+		public function getNewDays()
+		{
+			return $this->new;
+		}
+
+		/**
+		 * @return string
+		 */
+		public function getUpdateDays()
+		{
+			return $this->update;
+		}
+
+		/**
 		 * @param string $charity
 		 */
 		public function setCharity($charity)
