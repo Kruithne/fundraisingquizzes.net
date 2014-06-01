@@ -23,7 +23,7 @@ $(function()
 					else
 					{
 						t.addClass('active').children('.quiz-extra').stop().slideDown();
-						t.children('.quiz-arrow').addClas('quiz-arrow-flip');
+						t.children('.quiz-arrow').addClass('quiz-arrow-flip');
 					}
 				}
 			});
