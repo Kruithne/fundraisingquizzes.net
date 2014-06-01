@@ -1,0 +1,38 @@
+.quiz-title
+{
+	font-weight: bold;
+	font-size: 1.5em;
+}
+
+.quiz-closing
+{
+	font-size: 1.3em;
+	font-weight: bold;
+}
+
+.quiz-extra
+{
+	display: none;
+	margin-top: 10px;
+}
+
+.quiz-listing
+{
+	cursor: pointer;
+	position: relative;
+}
+
+.quiz-arrow
+{
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	background: url(http://static.fundraisingquizzes.net/images/quiz_arrow.png) no-repeat;
+	height: 39px;
+	width: 44px;
+}
+
+.quiz-arrow-flip
+{
+	background-position: 0 -39px;
+}

@@ -12,11 +12,14 @@
 		foreach ($this->quizzes as $quiz)
 		{
 			?>
-			<div class="module module-padded">
-				<p class="center"><span class="strong"><?php echo $quiz->getTitle(); ?></span> in aid of <span class="strong"><?php echo $quiz->getCharity(); ?></span></p>
-				<p class="center">Closes in <span class="time-period"><?php echo $quiz->getClosing(); ?></span> (<span class="time-formal"><?php echo $quiz->getClosing(); ?></span>)</p>
-				<p class="center linkable"><?php echo $quiz->getDescription(); ?></p>
-				<p class="center linkable"><?php echo $quiz->getExtra(); ?></p>
+			<div class="module module-padded quiz-listing">
+				<div class="quiz-arrow"></div>
+				<p class="quiz-title"><?php echo $quiz->getTitle(); ?> in aid of <?php echo $quiz->getCharity(); ?></p>
+				<p class="quiz-closing">Closes in <span class="time-period"><?php echo $quiz->getClosing(); ?></span> (<span class="time-formal"><?php echo $quiz->getClosing(); ?></span>)</p>
+				<div class="quiz-extra">
+					<p class="linkable"><?php echo $quiz->getDescription(); ?></p>
+					<p class="linkable"><?php echo $quiz->getExtra(); ?></p>
+				</div>
 			</div>
 			<?php
 		}
