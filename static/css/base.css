@@ -109,7 +109,8 @@ body
 	display: inline;
 	margin: 0 10px;
 	padding-left: 20px;
-	background: no-repeat 0 1px;
+	background-repeat: no-repeat;
+	background-position: 0 1px;
 }
 
 #navigation-home
