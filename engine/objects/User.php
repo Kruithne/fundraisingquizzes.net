@@ -94,7 +94,7 @@
 		{
 			if ($this->loginKey == null)
 			{
-				$query = DB::get()->prepare('SELECT loginKey FROM quizzes WHERE ID = :id');
+				$query = DB::get()->prepare('SELECT loginKey FROM users WHERE ID = :id');
 				$query->setValue(':id', $this->id);
 
 				$result = $query->getFirstRow();
