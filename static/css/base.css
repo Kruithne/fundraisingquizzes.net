@@ -187,6 +187,11 @@ body
 	border: 1px solid #000;
 }
 
+.input-error
+{
+	border: 1px solid red;
+}
+
 .form-error
 {
 	color: #C40000;

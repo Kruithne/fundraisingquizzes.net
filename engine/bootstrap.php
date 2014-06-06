@@ -13,4 +13,13 @@
 	$system->getErrorHandler()->addEmailOutputRecipient('kruithne+fquizzes@gmail.com');
 
 	Authenticator::checkLoginKey();
+
+	function nullCheck()
+	{
+		foreach (func_get_args() as $arg)
+			if ($arg === NULL)
+				return false;
+
+		return true;
+	}
 ?>

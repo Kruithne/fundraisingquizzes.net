@@ -39,7 +39,7 @@ timeMachine.suffix = function(day)
 timeMachine.sqlToDate = function(date)
 {
 	var split = date.split("-");
-	return new Date(split[0], split[1], split[2]);
+	return new Date(split[0], split[1] - 1, split[2]);
 };
 
 timeMachine.getFormalDateString = function(date)
@@ -135,15 +135,48 @@ $(function()
 		{
 			$('.time-period').each(function()
 			{
-				var t = $(this);
-				t.html(timeMachine.getFormalTimePeriod(timeMachine.sqlToDate(t.html())));
+				timeManager.formatPeriod($(this));
 			});
 
 			$('.time-formal').each(function()
 			{
-				var t = $(this);
-				t.html(timeMachine.getFormalDateString(timeMachine.sqlToDate(t.html())));
+				timeManager.formatFormal($(this));
 			});
+
+			$.fn.extend({
+				formatPeriods: function()
+				{
+					this.find('.time-period').each(function()
+					{
+						timeManager.formatPeriod($(this));
+					});
+					return this;
+				},
+
+				formatFormal: function()
+				{
+					this.find('.time-formal').each(function()
+					{
+						timeManager.formatFormal($(this));
+					});
+					return this;
+				},
+
+				formatTime: function()
+				{
+					return this.formatPeriods().formatFormal();
+				}
+			});
+		},
+
+		formatPeriod: function(t)
+		{
+			t.html(timeMachine.getFormalTimePeriod(timeMachine.sqlToDate(t.html())));
+		},
+
+		formatFormal: function(t)
+		{
+			t.html(timeMachine.getFormalDateString(timeMachine.sqlToDate(t.html())));
 		}
 	};
 
