@@ -161,6 +161,7 @@
 
 			$query->setValue(':title', $this->title);
 			$query->setValue(':charity', $this->charity);
+			$query->setValue(':description', $this->getDescription());
 			$query->setValue(':extra', $this->extra);
 			$query->setValue(':closing', $this->closing);
 
