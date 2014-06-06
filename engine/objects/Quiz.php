@@ -69,7 +69,7 @@
 		}
 
 		/**
-		 * @param int $closing
+		 * @param string $closing
 		 */
 		public function setClosing($closing)
 		{
@@ -77,7 +77,7 @@
 		}
 
 		/**
-		 * @return int
+		 * @return string
 		 */
 		public function getClosing()
 		{
