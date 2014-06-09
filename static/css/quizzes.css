@@ -107,3 +107,23 @@
 {
 	background-image: url(http://static.fundraisingquizzes.net/images/delete_16.png);
 }
+
+.flag
+{
+	font-weight: bold;
+	display: inline;
+	margin-left: 20px;
+	padding-left: 20px;
+	background-repeat: no-repeat;
+	background-position: left;
+}
+
+.flag_new
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/new_16.png);
+}
+
+.flag_updated
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/updated_16.png);
+}

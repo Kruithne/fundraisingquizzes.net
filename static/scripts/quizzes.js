@@ -47,6 +47,13 @@ $(function()
 				}
 			});
 
+			setTimeout(function() {
+				$('.quiz-listing').each(function()
+				{
+					handler.applyQuizFlags($(this));
+				});
+			}, 10);
+
 			window.quizEditError = handler.handleEditErrors;
 			window.quizEditSuccess = handler.handleEditSuccess;
 			window.quizEditSubmit = handler.handleEditSubmit;
@@ -71,6 +78,11 @@ $(function()
 
 				listing.find('.quiz-option-cancel,.quiz-option-save').remove();
 				listing.find('.quiz-options ul').prepend('<li class="quiz-option-edit">Edit</li>');
+
+				if (!listing.hasClass('updated'))
+					listing.addClass('updated');
+
+				handler.applyQuizFlags(listing);
 			}
 		},
 
@@ -176,6 +188,17 @@ $(function()
 				offset.y = e.pageY - $(e.target).offset().top;
 
 			return offset;
+		},
+
+		applyQuizFlags: function(listing)
+		{
+			var closingElement = listing.find('.quiz-closing');
+
+			if (listing.hasClass('new'))
+				closingElement.append('<div class="flag_new flag">New!</div>');
+
+			if (listing.hasClass('updated'))
+				closingElement.append('<div class="flag_updated flag">Updated!</div>');
 		}
 	};
 
