@@ -127,3 +127,11 @@
 {
 	background-image: url(http://static.fundraisingquizzes.net/images/updated_16.png);
 }
+
+#submit-button
+{
+	background: white url(http://static.fundraisingquizzes.net/images/plus_32.png) no-repeat 20px;
+	font-size: 20px;
+	padding-left: 65px;
+	cursor: pointer;
+}
