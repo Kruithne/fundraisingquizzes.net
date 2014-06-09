@@ -82,7 +82,7 @@ $(function()
 				if (!listing.hasClass('updated'))
 					listing.addClass('updated');
 
-				handler.applyQuizFlags(listing);
+				handler.applyQuizFlags(listing.removeClass('editing'));
 			}
 		},
 
