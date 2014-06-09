@@ -68,21 +68,10 @@ $(function()
 				var id = 'quiz-' + callback.id, listing = $('#' + id);
 				delete handler.old[id];
 
-				handler.resetField(listing, 'title-title', callback.title);
-				handler.resetField(listing, 'title-charity', callback.charity);
-				handler.resetField(listing, 'description', callback.description);
-				handler.resetField(listing, 'description-extra', callback.extra);
-
-				var dateField = listing.find('.quiz-closing'), date = callback.closing;
-				dateField.html('Closes in <span class="time-period">' + date + '</span> (<span class="time-formal">' + date + '</span>)').formatTime();
-
-				listing.find('.quiz-option-cancel,.quiz-option-save').remove();
-				listing.find('.quiz-options ul').prepend('<li class="quiz-option-edit">Edit</li>');
+				handler.cancelEditing(listing, callback);
 
 				if (!listing.hasClass('updated'))
 					listing.addClass('updated');
-
-				handler.applyQuizFlags(listing.removeClass('editing'));
 			}
 		},
 
@@ -162,19 +151,26 @@ $(function()
 			listing.find('.quiz-' + fieldName).html(data);
 		},
 
-		cancelEditing: function(listing)
+		cancelEditing: function(listing, data)
 		{
-			var data = handler.old[listing.attr('id')];
+			var dateField = listing.find('.quiz-closing');
+			if (data == undefined)
+			{
+				data = handler.old[listing.attr('id')];
+				data.closing = dateField.attr('date');
+			}
+
 			handler.resetField(listing, 'title-title', data.title);
 			handler.resetField(listing, 'title-charity', data.charity);
 			handler.resetField(listing, 'description', data.description);
 			handler.resetField(listing, 'description-extra', data.extra);
 
-			var dateField = listing.find('.quiz-closing'), date = dateField.attr('date');
-			dateField.html('Closes in <span class="time-period">' + date + '</span> (<span class="time-formal">' + date + '</span>)').formatTime();
+			dateField.html('Closes in <span class="time-period">' + data.closing + '</span> (<span class="time-formal">' + data.closing + '</span>)').formatTime();
 
 			listing.find('.quiz-option-cancel,.quiz-option-save').remove();
 			listing.find('.quiz-options ul').prepend('<li class="quiz-option-edit">Edit</li>');
+
+			handler.applyQuizFlags(listing.removeClass('editing'));
 		},
 
 		getOffset: function(e)
