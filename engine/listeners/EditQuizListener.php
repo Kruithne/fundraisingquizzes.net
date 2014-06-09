@@ -7,11 +7,11 @@
 			if (!Authenticator::isLoggedInAsAdmin())
 				return;
 
-			$id = REST::Get('id', FILTER_VALIDATE_INT);
-			$title = REST::Get('title', FILTER_SANITIZE_SPECIAL_CHARS);
-			$charity = REST::Get('charity', FILTER_SANITIZE_SPECIAL_CHARS);
-			$description = REST::Get('description', FILTER_SANITIZE_SPECIAL_CHARS);
-			$extra = REST::Get('extra', FILTER_SANITIZE_SPECIAL_CHARS);
+			$id = REST::Get('id');
+			$title = REST::Get('title');
+			$charity = REST::Get('charity');
+			$description = REST::Get('description');
+			$extra = REST::Get('extra');
 			$closing = REST::Get('closing');
 
 			if ($id !== FALSE && REST::Check($title, $charity, $description, $extra, $closing))
