@@ -140,10 +140,10 @@
 			$query = null;
 			if ($this->id == Quiz::NONE)
 			{
-				$query = DB::get()->prepare('INSERT INTO quizzes (title, charity, description, description_extra, closing, updated_flag)
-					VALUES(:title, :charity, :description, :extra, :closing, :updated)');
+				$query = DB::get()->prepare('INSERT INTO quizzes (title, charity, description, description_extra, closing, new_flag)
+					VALUES(:title, :charity, :description, :extra, :closing, :new)');
 
-				$query->setValue(':updated', Quiz::DEFAULT_UPDATE_FLAG);
+				$query->setValue(':new', QUIZ::DEFAULT_NEW_FLAG);
 			}
 			else
 			{
@@ -153,9 +153,9 @@
 					description = :description,
 					description_extra = :extra,
 					closing = :closing,
-					new_flag = :new WHERE ID = :id');
+					updated_flag = :updated WHERE ID = :id');
 
-				$query->setValue(':new', QUIZ::DEFAULT_NEW_FLAG);
+				$query->setValue(':updated', Quiz::DEFAULT_UPDATE_FLAG);
 				$query->setValue(':id', $this->id);
 			}
 
