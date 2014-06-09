@@ -12,7 +12,7 @@
 		foreach ($this->quizzes as $quiz)
 		{
 			?>
-			<div class="module module-padded quiz-listing" id="quiz-<?php echo $quiz->getId(); ?>">
+			<div class="module module-padded quiz-listing<?php if ($quiz->getUpdateDays() > 0) echo ' updated'; ?><?php if ($quiz->getNewDays() > 0) echo ' new'; ?>" id="quiz-<?php echo $quiz->getId(); ?>">
 				<form class="validatable preventDefault" complete="quizEditSuccess" error="quizEditError" submit="quizEditSubmit">
 					<div class="quiz-arrow"></div>
 					<p class="quiz-title"><span class="quiz-title-title"><?php echo $quiz->getTitle(); ?></span> in aid of <span class="quiz-title-charity"><?php echo $quiz->getCharity(); ?></span></p>
