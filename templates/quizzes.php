@@ -4,6 +4,18 @@
 <div class="module module-padded" id="submit-button">
 	Want to add your own quiz to this list? Click here to submit one!
 </div>
+<div class="module module-padded" id="quiz-submit">
+	<p class="quiz-title"><input type="text" id="title" require="true" placeholder="Title..."/> in aid of <input type="text" id="charity" require="true" placeholder="Charity..."/></p>
+	<p class="quiz-closing">Closes:
+		<select range="days" type="day"></select>
+		<select range="months" type="month"></select>
+		<select range="year-year+5" type="year"></select>
+	</p>
+	<div class="quiz-submit-extra">
+		<p class="quiz-description"><input type="text" id="description" require="true" placeholder="Description..."/></p>
+		<p class="quiz-description-extra"><input type="text" id="description" placeholder="(Optional) Extra Information... "/></p>
+	</div>
+</div>
 <?php
 	if ($this->quizzes == null || !count($this->quizzes))
 	{

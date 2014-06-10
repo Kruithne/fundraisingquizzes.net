@@ -45,6 +45,9 @@ $(function()
 					case 'cancel': handler.cancelEditing(l); break;
 					case 'save': handler.saveEdit(l); break;
 				}
+			}).on('click', '#submit-button', function()
+			{
+				handler.submitQuizField.slideDown();
 			});
 
 			setTimeout(function() {
@@ -59,6 +62,8 @@ $(function()
 			window.quizEditSubmit = handler.handleEditSubmit;
 
 			PacketHandler.hook(Packet.EditQuiz, packetContext(handler, 'handlePacketReply'));
+
+			handler.submitQuizField = $('#quiz-submit');
 		},
 
 		handlePacketReply: function(data, callback)

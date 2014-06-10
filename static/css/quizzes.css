@@ -1,4 +1,4 @@
-.quiz-listing input, .quiz-listing select
+.quiz-listing input, .quiz-listing select, #quiz-submit input, #quiz-submit select
 {
 	padding: 2px;
 	margin: 2px;
@@ -26,10 +26,14 @@
 .quiz-extra
 {
 	display: none;
+}
+
+.quiz-extra, .quiz-submit-extra
+{
 	margin-top: 10px;
 }
 
-.quiz-extra input
+.quiz-extra input, .quiz-submit-extra input
 {
 	width: 700px;
 }
@@ -134,4 +138,9 @@
 	font-size: 20px;
 	padding-left: 65px;
 	cursor: pointer;
+}
+
+#quiz-submit
+{
+	display: none;
 }
