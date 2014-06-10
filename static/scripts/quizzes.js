@@ -133,10 +133,12 @@ $(function()
 
 			var dateField = listing.find('.quiz-closing').empty(), selector = $('<div/>').appendTo(dateField), s = '<select/>';
 
-			$(s).attr('range', 'days').attr('type', 'day').appendTo(selector).updateRange();
+			var daySelector = $(s).attr('range', 'days').attr('type', 'day').appendTo(selector);
 			$(s).attr('range', 'months').attr('type', 'month').appendTo(selector).updateRange();
 			$(s).attr('range', 'year-year+5').attr('type', 'year').appendTo(selector).updateRange();
 			$(selector).prepend('Closes: ');
+
+			daySelector.updateRange();
 
 			dateField.setDateSelectorValue(dateField.attr('date'));
 
