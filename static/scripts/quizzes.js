@@ -4,6 +4,7 @@ $(function()
 		x: null,
 		y: null,
 		old: [],
+		submitting: false,
 		load: function()
 		{
 			var d = document, q = '.quiz-listing';
@@ -95,6 +96,9 @@ $(function()
 
 		handleQuizSuccess: function(form)
 		{
+			if (handler.submitted)
+				return;
+
 			var data =
 			{
 				title: form.find('#title').val().trim(),
@@ -104,11 +108,13 @@ $(function()
 				extra: form.find('#extra').val().trim()
 			};
 
+			handler.submitting = true;
 			PacketHandler.send(Packet.AddQuiz, data);
 		},
 
 		handleAddReply: function(data)
 		{
+			handler.submitting = false;
 			if (data.success != undefined && data.success == true)
 			{
 				handler.closeSubmitField();
@@ -118,6 +124,7 @@ $(function()
 
 		handleEditReply: function(data, callback)
 		{
+			handler.submitting = false;
 			if (data.success != undefined && data.success == true)
 			{
 				var id = 'quiz-' + callback.id, listing = $('#' + id);
@@ -151,6 +158,8 @@ $(function()
 
 		handleEditSuccess: function(form)
 		{
+			if (handler.submitting)
+				return;
 			var data = {
 				id: parseInt(form.parent().attr('id').split('-')[1]),
 				title: form.find('.quiz-title-title input').val().trim(),
@@ -160,6 +169,7 @@ $(function()
 				extra: form.find('.quiz-description-extra input').val().trim()
 			};
 
+			handler.submitting = true;
 			PacketHandler.send(Packet.EditQuiz, data, data);
 		},
 
