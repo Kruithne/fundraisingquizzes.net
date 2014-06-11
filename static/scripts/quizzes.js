@@ -37,17 +37,28 @@ $(function()
 				}
 			}).on('click', '.quiz-options li', function()
 			{
-				var t = $(this), l = t.parent().parent().parent().parent(), id = l.attr('id').split('-')[1], o = t.attr('class').split('-')[2];
+				var t = $(this), l = t.parent().parent().parent().parent(), eid = l.attr('id'), o = t.attr('class').split('-')[2];
 
-				switch (o)
+				if (eid == 'quiz-submit')
 				{
-					case 'edit': handler.editQuiz(l); break;
-					case 'cancel': handler.cancelEditing(l); break;
-					case 'save': handler.saveEdit(l); break;
+					switch (o)
+					{
+						case 'cancel': handler.closeSubmitField(); break;
+						case 'save': handler.submitQuizField.find('form').submit(); break;
+					}
+				}
+				else
+				{
+					switch (o)
+					{
+						case 'edit': handler.editQuiz(l); break;
+						case 'cancel': handler.cancelEditing(l); break;
+						case 'save': handler.saveEdit(l); break;
+					}
 				}
 			}).on('click', '#submit-button', function()
 			{
-				handler.submitQuizField.slideDown();
+				handler.submitQuizField.slideDown().find('.quiz-options').fadeIn('slow');
 			});
 
 			setTimeout(function() {
@@ -57,16 +68,55 @@ $(function()
 				});
 			}, 10);
 
-			window.quizEditError = handler.handleEditErrors;
-			window.quizEditSuccess = handler.handleEditSuccess;
-			window.quizEditSubmit = handler.handleEditSubmit;
+			var w = window;
+			w.quizEditError = handler.handleEditErrors;
+			w.quizEditSuccess = handler.handleEditSuccess;
+			w.quizEditSubmit = handler.handleEditSubmit;
 
-			PacketHandler.hook(Packet.EditQuiz, packetContext(handler, 'handlePacketReply'));
+			w.submitQuizError = handler.handleEditErrors;
+			w.submitQuizSubmit = handler.handleEditSubmit;
+			w.submitQuizSuccess = handler.handleQuizSuccess;
+
+			PacketHandler.hook(Packet.EditQuiz, packetContext(handler, 'handleEditReply'));
+			PacketHandler.hook(Packet.AddQuiz, packetContext(handler, 'handleAddReply'));
 
 			handler.submitQuizField = $('#quiz-submit');
 		},
 
-		handlePacketReply: function(data, callback)
+		closeSubmitField: function()
+		{
+			handler.submitQuizField.slideUp(400, function()
+			{
+				var t = $(this);
+				t.find('input').val('');
+				t.find('.dateSelector').setDateSelectorValue(new Date());
+			}).find('.quiz-options').fadeOut('fast');
+		},
+
+		handleQuizSuccess: function(form)
+		{
+			var data =
+			{
+				title: form.find('#title').val().trim(),
+				charity: form.find('#charity').val().trim(),
+				closing: form.find('.dateSelector').getDateSelectorValue(),
+				description: form.find('#description').val().trim(),
+				extra: form.find('#extra').val().trim()
+			};
+
+			PacketHandler.send(Packet.AddQuiz, data);
+		},
+
+		handleAddReply: function(data)
+		{
+			if (data.success != undefined && data.success == true)
+			{
+				handler.closeSubmitField();
+				$('#submit-button').addClass('quiz-submitted').html('Quiz submitted! It will appear on the listing after approval. Click here to submit another!');
+			}
+		},
+
+		handleEditReply: function(data, callback)
 		{
 			if (data.success != undefined && data.success == true)
 			{
@@ -82,15 +132,20 @@ $(function()
 
 		handleEditSubmit: function(form)
 		{
-			form.find('input').removeClass('input-error');
+			form.find('input,select').removeClass('error');
 		},
 
 		handleEditErrors: function(errorList)
 		{
 			for (var errorIndex in errorList)
 			{
-				var error = errorList[errorIndex];
-				error.field.addClass('input-error');
+				var error = errorList[errorIndex],
+					field = error.field;
+
+				if (field.hasClass('dateSelector'))
+					field = field.find('select');
+
+				field.addClass('error');
 			}
 		},
 

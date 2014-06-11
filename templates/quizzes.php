@@ -4,17 +4,25 @@
 <div class="module module-padded" id="submit-button">
 	Want to add your own quiz to this list? Click here to submit one!
 </div>
-<div class="module module-padded" id="quiz-submit">
-	<p class="quiz-title"><input type="text" id="title" require="true" placeholder="Title..."/> in aid of <input type="text" id="charity" require="true" placeholder="Charity..."/></p>
-	<p class="quiz-closing">Closes:
-		<select range="days" type="day"></select>
-		<select range="months" type="month"></select>
-		<select range="year-year+5" type="year"></select>
-	</p>
-	<div class="quiz-submit-extra">
-		<p class="quiz-description"><input type="text" id="description" require="true" placeholder="Description..."/></p>
-		<p class="quiz-description-extra"><input type="text" id="description" placeholder="(Optional) Extra Information... "/></p>
-	</div>
+<div class="module module-padded quiz-listing editing" id="quiz-submit">
+	<form class="validatable preventDefault" complete="submitQuizSuccess" error="submitQuizError" submit="submitQuizSubmit">
+		<p class="quiz-title"><input type="text" id="title" require="true" placeholder="Title..."/> in aid of <input type="text" id="charity" require="true" placeholder="Charity..."/></p>
+		<p class="dateSelector quiz-closing" validate=">" date="now">Closes:
+			<select range="days" type="day"></select>
+			<select range="months" type="month"></select>
+			<select range="year-year+5" type="year"></select>
+		</p>
+		<div class="quiz-extra visible">
+			<p class="quiz-description"><input type="text" id="description" require="true" placeholder="Description..."/></p>
+			<p class="quiz-description-extra"><input type="text" id="extra" placeholder="(Optional) Extra Information... "/></p>
+		</div>
+		<div class="quiz-options">
+			<ul>
+				<li class="quiz-option-save">Submit</li>
+				<li class="quiz-option-cancel">Cancel</li>
+			</ul>
+		</div>
+	</form>
 </div>
 <?php
 	if ($this->quizzes == null || !count($this->quizzes))
@@ -31,7 +39,7 @@
 				<form class="validatable preventDefault" complete="quizEditSuccess" error="quizEditError" submit="quizEditSubmit">
 					<div class="quiz-arrow"></div>
 					<p class="quiz-title"><span class="quiz-title-title"><?php echo $quiz->getTitle(); ?></span> in aid of <span class="quiz-title-charity"><?php echo $quiz->getCharity(); ?></span></p>
-					<p class="quiz-closing" date="<?php echo $quiz->getClosing(); ?>">Closes in <span class="time-period"><?php echo $quiz->getClosing(); ?></span> (<span class="time-formal"><?php echo $quiz->getClosing(); ?></span>)</p>
+					<p class="dateSelector quiz-closing" validate=">" date="<?php echo $quiz->getClosing(); ?>">Closes in <span class="time-period"><?php echo $quiz->getClosing(); ?></span> (<span class="time-formal"><?php echo $quiz->getClosing(); ?></span>)</p>
 					<div class="quiz-extra">
 						<p class="linkable quiz-description"><?php echo $quiz->getDescription(); ?></p>
 						<p class="linkable quiz-description-extra"><?php echo $quiz->getExtra(); ?></p>

@@ -1,9 +1,14 @@
-.quiz-listing input, .quiz-listing select, #quiz-submit input, #quiz-submit select
+.quiz-listing input, .quiz-listing select
 {
 	padding: 2px;
 	margin: 2px;
 	font-family: 'Noto Sans', sans-serif;
 	border: 1px solid #999;
+}
+
+.quiz-listing .error
+{
+	border: 1px solid red;
 }
 
 .quiz-title, .quiz-title input
@@ -26,14 +31,10 @@
 .quiz-extra
 {
 	display: none;
-}
-
-.quiz-extra, .quiz-submit-extra
-{
 	margin-top: 10px;
 }
 
-.quiz-extra input, .quiz-submit-extra input
+.quiz-extra input
 {
 	width: 700px;
 }
@@ -140,7 +141,18 @@
 	cursor: pointer;
 }
 
+#submit-button.quiz-submitted
+{
+	background-color: #D0F3C2;
+	background-image: url(http://static.fundraisingquizzes.net/images/tick_32.png);
+}
+
 #quiz-submit
 {
 	display: none;
+}
+
+.visible
+{
+	display: block;
 }
