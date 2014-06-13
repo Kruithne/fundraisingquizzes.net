@@ -55,6 +55,7 @@ $(function()
 						case 'edit': handler.editQuiz(l); break;
 						case 'cancel': handler.cancelEditing(l); break;
 						case 'save': handler.saveEdit(l); break;
+						case 'approve': handler.approveQuiz(l); break;
 					}
 				}
 			}).on('click', '#submit-button', function()
@@ -80,13 +81,15 @@ $(function()
 
 			PacketHandler.hook(Packet.EditQuiz, packetContext(handler, 'handleEditReply'));
 			PacketHandler.hook(Packet.AddQuiz, packetContext(handler, 'handleAddReply'));
+			PacketHandler.hook(Packet.ApproveQuiz, packetContext(handler, 'handleApproval'));
 
 			handler.submitQuizField = $('#quiz-submit');
 
 			var container = $('#listing-container');
 			$('.unapproved').each(function()
 			{
-				$(this).prependTo(container);
+				var t = $(this);
+				t.attr('origindex', t.index()).prependTo(container);
 			});
 		},
 
@@ -179,6 +182,18 @@ $(function()
 			PacketHandler.send(Packet.EditQuiz, data, data);
 		},
 
+		handleApproval: function(data, callback)
+		{
+			if (data.success != undefined && data.success == true)
+			{
+				var listing = callback.listing,
+					position = parseInt(listing.attr('origindex')) + 1;
+
+				$('#listing-container div:nth-child(' + position + ')').after(listing);
+				listing.removeClass('unapproved').find('.quiz-option-approve').remove();
+			}
+		},
+
 		prepareEditField: function(listing, fieldClass, required)
 		{
 			var field = listing.find('.quiz-' + fieldClass),
@@ -222,6 +237,15 @@ $(function()
 			options.prepend('<li class="quiz-option-cancel">Cancel</li>');
 			options.prepend('<li class="quiz-option-save">Save</li>');
 			options.find('.quiz-option-edit').remove();
+		},
+
+		approveQuiz: function(listing)
+		{
+			PacketHandler.send(Packet.ApproveQuiz, {
+				id: listing.attr('id').split('-')[1]
+			}, {
+				listing: listing
+			});
 		},
 
 		resetField: function(listing, fieldName, data)

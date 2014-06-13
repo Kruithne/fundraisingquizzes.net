@@ -59,7 +59,11 @@
 						<ul>
 							<?php
 								if (Authenticator::isLoggedInAsAdmin())
+								{
 									echo '<li class="quiz-option-edit">Edit</li>';
+									if (!$quiz->isAccepted())
+										echo '<li class="quiz-option-approve">Approve</li>';
+								}
 							?>
 							<li class="quiz-option-bookmark">Bookmark</li>
 							<li class="quiz-option-vote">Vote</li>

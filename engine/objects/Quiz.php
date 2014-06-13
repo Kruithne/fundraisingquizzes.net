@@ -171,6 +171,7 @@
 					description = :description,
 					description_extra = :extra,
 					closing = :closing,
+					accepted = :accepted,
 					updated_flag = :updated WHERE ID = :id');
 
 				$query->setValue(':updated', Quiz::DEFAULT_UPDATE_FLAG);

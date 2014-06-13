@@ -1,7 +1,8 @@
 var Packet = {
 	Login: 1,
 	EditQuiz: 2,
-	AddQuiz: 3
+	AddQuiz: 3,
+	ApproveQuiz: 4
 };
 
 var PacketHandler = {

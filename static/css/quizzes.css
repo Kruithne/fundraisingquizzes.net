@@ -108,7 +108,7 @@
 	background-image: url(http://static.fundraisingquizzes.net/images/pencil_16.png);
 }
 
-.quiz-option-save
+.quiz-option-save, .quiz-option-approve
 {
 	background-image: url(http://static.fundraisingquizzes.net/images/tick_16.png);
 }
