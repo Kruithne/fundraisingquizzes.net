@@ -10,7 +10,7 @@
 			$this->addScript('link_parsing.js');
 			$this->addScript('quizzes.js');
 
-			$template->quizzes = Quiz::getAll();
+			$template->quizzes = Quiz::getAll(!Authenticator::isLoggedIn());
 		}
 	}
 ?>

@@ -24,6 +24,7 @@
 		</div>
 	</form>
 </div>
+<div id="listing-container">
 <?php
 	if ($this->quizzes == null || !count($this->quizzes))
 	{
@@ -41,6 +42,9 @@
 
 			if ($quiz->getNewDays() > 0)
 				$classes[] = ' new';
+
+			if (!$quiz->isAccepted())
+				$classes[] = ' unapproved';
 			?>
 			<div class="module module-padded quiz-listing<?php echo implode($classes); ?>" id="quiz-<?php echo $quiz->getId(); ?>">
 				<form class="validatable preventDefault" complete="quizEditSuccess" error="quizEditError" submit="quizEditSubmit">
@@ -67,3 +71,4 @@
 		}
 	}
 ?>
+</div>

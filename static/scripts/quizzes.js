@@ -82,6 +82,12 @@ $(function()
 			PacketHandler.hook(Packet.AddQuiz, packetContext(handler, 'handleAddReply'));
 
 			handler.submitQuizField = $('#quiz-submit');
+
+			var container = $('#listing-container');
+			$('.unapproved').each(function()
+			{
+				$(this).prependTo(container);
+			});
 		},
 
 		closeSubmitField: function()

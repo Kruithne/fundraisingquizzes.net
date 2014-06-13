@@ -22,6 +22,11 @@
 	width: 500px;
 }
 
+.unapproved .quiz-title
+{
+	color: #DB7423;
+}
+
 .quiz-closing
 {
 	font-size: 1.3em;
