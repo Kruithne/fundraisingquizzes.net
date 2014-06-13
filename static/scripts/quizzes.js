@@ -56,6 +56,9 @@ $(function()
 						case 'cancel': handler.cancelEditing(l); break;
 						case 'save': handler.saveEdit(l); break;
 						case 'approve': handler.approveQuiz(l); break;
+						case 'delete': handler.deleteQuiz(l); break;
+						case 'confirm': handler.confirmDelete(l); break;
+						case 'nodelete': handler.cancelDelete(l); break;
 					}
 				}
 			}).on('click', '#submit-button', function()
@@ -82,6 +85,7 @@ $(function()
 			PacketHandler.hook(Packet.EditQuiz, packetContext(handler, 'handleEditReply'));
 			PacketHandler.hook(Packet.AddQuiz, packetContext(handler, 'handleAddReply'));
 			PacketHandler.hook(Packet.ApproveQuiz, packetContext(handler, 'handleApproval'));
+			PacketHandler.hook(Packet.DeleteQuiz, packetContext(handler, 'handleDelete'));
 
 			handler.submitQuizField = $('#quiz-submit');
 
@@ -194,6 +198,15 @@ $(function()
 			}
 		},
 
+		handleDelete: function(data, callback)
+		{
+			if (data.success != undefined && data.success == true)
+				callback.listing.fadeOut(400, function()
+				{
+					$(this).remove();
+				});
+		},
+
 		prepareEditField: function(listing, fieldClass, required)
 		{
 			var field = listing.find('.quiz-' + fieldClass),
@@ -205,6 +218,27 @@ $(function()
 				input.attr('require', 'true');
 
 			return old;
+		},
+
+		deleteQuiz: function(listing)
+		{
+			var options = listing.find('.quiz-options ul');
+			options.find('li').hide();
+
+			$('<li/>').addClass('quiz-option-confirm').html('Confirm Deletion').appendTo(options);
+			$('<li/>').addClass('quiz-option-nodelete').html('No, stop!').appendTo(options);
+		},
+
+		cancelDelete: function(listing)
+		{
+			var options = listing.find('.quiz-options');
+			options.find('.quiz-option-confirm, .quiz-option-nodelete').remove();
+			options.find('li').show();
+		},
+
+		confirmDelete: function(listing)
+		{
+			handler.sendIDListingPacket(listing, Packet.DeleteQuiz);
 		},
 
 		saveEdit: function(listing)
@@ -241,7 +275,12 @@ $(function()
 
 		approveQuiz: function(listing)
 		{
-			PacketHandler.send(Packet.ApproveQuiz, {
+			handler.sendIDListingPacket(listing, Packet.ApproveQuiz);
+		},
+
+		sendIDListingPacket: function(listing, packet)
+		{
+			PacketHandler.send(packet, {
 				id: listing.attr('id').split('-')[1]
 			}, {
 				listing: listing

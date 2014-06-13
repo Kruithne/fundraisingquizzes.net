@@ -108,14 +108,19 @@
 	background-image: url(http://static.fundraisingquizzes.net/images/pencil_16.png);
 }
 
-.quiz-option-save, .quiz-option-approve
+.quiz-option-save, .quiz-option-approve, .quiz-option-confirm
 {
 	background-image: url(http://static.fundraisingquizzes.net/images/tick_16.png);
 }
 
-.quiz-option-cancel
+.quiz-option-cancel, .quiz-option-nodelete
 {
 	background-image: url(http://static.fundraisingquizzes.net/images/delete_16.png);
+}
+
+.quiz-option-delete
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/trash_16.png);
 }
 
 .flag

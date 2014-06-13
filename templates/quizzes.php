@@ -61,6 +61,7 @@
 								if (Authenticator::isLoggedInAsAdmin())
 								{
 									echo '<li class="quiz-option-edit">Edit</li>';
+									echo '<li class="quiz-option-delete">Delete</li>';
 									if (!$quiz->isAccepted())
 										echo '<li class="quiz-option-approve">Approve</li>';
 								}

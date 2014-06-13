@@ -151,6 +151,15 @@
 		}
 
 		/**
+		 * Delete the current quiz from the database.
+		 */
+		public function delete()
+		{
+			if ($this->id !== Quiz::NONE)
+				DB::get()->prepare('DELETE FROM quizzes WHERE ID = :id')->setValue(':id', $this->id)->execute();
+		}
+
+		/**
 		 * Persist this quiz object in the database.
 		 */
 		public function persist()
