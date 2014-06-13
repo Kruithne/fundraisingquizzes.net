@@ -194,6 +194,9 @@
 		 */
 		public static function get($id)
 		{
+			if ($id == 0)
+				return QUIZ::NONE;
+
 			$query = DB::get()->prepare('SELECT title, charity, description, description_extra, closing, accepted, updated_flag, new_flag FROM quizzes WHERE ID = :id');
 			$query->setValue(':id', $id);
 
