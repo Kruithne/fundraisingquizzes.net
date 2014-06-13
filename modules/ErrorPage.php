@@ -4,7 +4,7 @@
 		public function __construct($error = null)
 		{
 			if ($error == null)
-				$error = intval(REST::Get('e'));
+				$error = (int) REST::Get('e');
 
 			$template = 'error_500.php';
 			$title = 'Server Error';

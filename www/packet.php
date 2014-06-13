@@ -2,8 +2,8 @@
 	require_once('../engine/bootstrap.php');
 	require_once('../engine/packet_handling_bootstrap.php');
 
-	$packet_id = intval(REST::Get('pid'));
-	$packet_uid = intval(REST::Get('uid'));
+	$packet_id = (int) REST::Get('pid');
+	$packet_uid = (int) REST::Get('uid');
 
 	if ($packet_id > 0)
 	{

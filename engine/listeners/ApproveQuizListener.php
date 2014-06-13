@@ -7,7 +7,7 @@
 			if (!Authenticator::isLoggedInAsAdmin())
 				return;
 
-			$quiz = Quiz::get(intval(REST::Get('id')));
+			$quiz = Quiz::get((int) REST::Get('id'));
 
 			if ($quiz instanceof Quiz)
 			{
