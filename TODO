@@ -2,7 +2,7 @@
 	- Allow users to bookmark certain quizzes and display them at the top of the list.
 	- Allow users to vote for quizzes each week and automatically set the quiz with the most votes as the weekly quiz, clearing all existing votes.
 	- Set-up automatic deletion of out of date quizzes.
-	- Allow users to submit their own quizzes which will require acceptance by a site admin before appearing on the site. Admin submitted quizzes need no approval.
+	- Implement approval system for submitted quizzes.
 	- Display new/updated flags on quizzes next to the closing date.
 	- Send an e-mail to the submitter (if not admin) when a quiz they've submitted is approved.
 
