@@ -1,8 +1,8 @@
 <?php
-	PacketHandler::registerListeners(
-		Array(1, 'LoginListener'),
-		Array(2, 'EditQuizListener'),
-		Array(3, 'AddQuizListener'),
-		Array(4, 'ApproveQuizListener')
-	);
+	PacketHandler::registerListeners(Array(
+		1 => 'LoginListener',
+		2 => 'EditQuizListener',
+		3 => 'AddQuizListener',
+		4 => 'ApproveQuizListener',
+	));
 ?>

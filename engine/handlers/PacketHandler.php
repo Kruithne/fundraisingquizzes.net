@@ -33,15 +33,12 @@
 
 		/**
 		 * Register a packet listener.
-		 * Each argument should be an array consisting of two values: ID and class.
+		 * @param $listeners array Associative array with keys as the ID and values as the listeners.
 		 */
-		public static function registerListeners()
+		public static function registerListeners($listeners)
 		{
-			foreach (func_get_args() as $register)
-			{
-				if (is_array($register) && count($register) == 2)
-					self::$listeners[$register[0]] = $register[1];
-			}
+			foreach ($listeners as $id => $listener)
+				self::$listeners[$id] = $listener;
 		}
 
 		/**
