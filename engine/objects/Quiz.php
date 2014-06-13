@@ -219,7 +219,7 @@
 		 */
 		public static function getAll($acceptedOnly = true)
 		{
-			$query = DB::get()->prepare('SELECT ID, title, charity, description, description_extra, closing, accepted, updated_flag, new_flag FROM quizzes WHERE accepted = ' . ($acceptedOnly ? 1 : 0) . ' ORDER BY closing ASC');
+			$query = DB::get()->prepare('SELECT ID, title, charity, description, description_extra, closing, accepted, updated_flag, new_flag FROM quizzes' . ($acceptedOnly ? ' WHERE accepted = 1' : '') . ' ORDER BY closing ASC');
 			$return = Array();
 
 			foreach ($query->getRows() as $row)
