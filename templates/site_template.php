@@ -25,7 +25,7 @@
 	<body>
 		<div id="container">
 		<div class="module module-padded">
-			<p id="maintenance">We're currently under-going some heavy maintenance, so things might not be working correctly!</p>
+			<p id="maintenance"><b>17th June:</b> Quiz submitting/voting is now functional! Bookmarking will be working in the next few days.</p>
 		</div>
 		<div class="module" id="header">
 			<a href="http://www.fundraisingquizzes.net/">
