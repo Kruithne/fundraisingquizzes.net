@@ -156,7 +156,7 @@
 		public function delete()
 		{
 			if ($this->id !== Quiz::NONE)
-				DB::get()->prepare('DELETE FROM quizzes WHERE ID = :id')->setValue(':id', $this->id)->execute();
+				DB::get()->prepare('UPDATE quizzes SET deleted = 1 WHERE ID = :id')->setValue(':id', $this->id)->execute();
 		}
 
 		/**
@@ -232,7 +232,7 @@
 		 */
 		public static function getAll($acceptedOnly = true)
 		{
-			$query = DB::get()->prepare('SELECT ID, title, charity, description, description_extra, closing, accepted, updated_flag, new_flag FROM quizzes' . ($acceptedOnly ? ' WHERE accepted = 1' : '') . ' ORDER BY closing ASC');
+			$query = DB::get()->prepare('SELECT ID, title, charity, description, description_extra, closing, accepted, updated_flag, new_flag FROM quizzes WHERE deleted = 0' . ($acceptedOnly ? ' AND accepted = 1' : '') . ' ORDER BY closing ASC');
 			$return = Array();
 
 			foreach ($query->getRows() as $row)
