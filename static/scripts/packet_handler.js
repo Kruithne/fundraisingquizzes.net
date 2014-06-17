@@ -3,7 +3,8 @@ var Packet = {
 	EditQuiz: 2,
 	AddQuiz: 3,
 	ApproveQuiz: 4,
-	DeleteQuiz: 5
+	DeleteQuiz: 5,
+	VoteQuiz: 6
 };
 
 var PacketHandler = {

@@ -11,6 +11,7 @@
 			$this->addScript('quizzes.js');
 
 			$template->quizzes = Quiz::getAll(!Authenticator::isLoggedIn());
+			$template->votes = VoteHandler::getVotedQuizzes();
 		}
 	}
 ?>

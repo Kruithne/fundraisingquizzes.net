@@ -59,6 +59,7 @@ $(function()
 						case 'delete': handler.deleteQuiz(l); break;
 						case 'confirm': handler.confirmDelete(l); break;
 						case 'nodelete': handler.cancelDelete(l); break;
+						case 'vote': handler.vote(l); break;
 					}
 				}
 			}).on('click', '#submit-button', function()
@@ -89,12 +90,27 @@ $(function()
 
 			handler.submitQuizField = $('#quiz-submit');
 
+			$('.voted').each(function()
+			{
+				handler.vote($(this));
+			});
+
 			var container = $('#listing-container');
 			$('.unapproved').each(function()
 			{
 				var t = $(this);
 				t.attr('origindex', t.index()).prependTo(container);
 			});
+		},
+
+		vote: function(listing)
+		{
+			$('<div class="quiz-vote" title="You have voted for this quiz!"/>').appendTo(listing.find('form')).fadeIn();
+			listing.addClass('voted').find('.quiz-option-vote').remove();
+			handler.sendIDListingPacket(listing, Packet.VoteQuiz);
+
+			if ($('.voted').length == 3)
+				$('.quiz-option-vote').remove();
 		},
 
 		closeSubmitField: function()

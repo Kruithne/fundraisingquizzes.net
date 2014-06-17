@@ -45,6 +45,9 @@
 
 			if (!$quiz->isAccepted())
 				$classes[] = ' unapproved';
+
+			if (in_array($quiz->getId(), $this->votes))
+				$classes[] = ' voted';
 			?>
 			<div class="module module-padded quiz-listing<?php echo implode($classes); ?>" id="quiz-<?php echo $quiz->getId(); ?>">
 				<form class="validatable preventDefault" complete="quizEditSuccess" error="quizEditError" submit="quizEditSubmit">
