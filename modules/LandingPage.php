@@ -7,7 +7,7 @@
 			parent::__construct('Home', $template);
 			$this->addStylesheet('landing.css');
 
-			$template->weeklyQuiz = QuizHandler::getWeeklyQuiz();
+			$template->weeklyQuiz = Quiz::getWeekly();
 		}
 	}
 ?>

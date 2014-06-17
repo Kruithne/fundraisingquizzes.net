@@ -253,6 +253,15 @@
 			return $return;
 		}
 
+		/**
+		 * Get the current quiz of the week.
+		 * @return int|Quiz
+		 */
+		public static function getWeekly()
+		{
+			return self::get(Settings::get('weeklyQuiz'));
+		}
+
 		private $id;
 		private $title;
 		private $charity;
