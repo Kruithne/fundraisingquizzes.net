@@ -38,7 +38,12 @@
 		{
 			$quizzes = Array();
 			if ($user == null)
-				$user = Authenticator::getLoggedInUser();
+			{
+				if (Authenticator::isLoggedIn())
+					$user = Authenticator::getLoggedInUser();
+				else
+					return $quizzes;
+			}
 
 			$query = DB::get()->prepare('SELECT quizID FROM quiz_votes WHERE userID = :user');
 			$query->setValue(':user', $user->getId());
