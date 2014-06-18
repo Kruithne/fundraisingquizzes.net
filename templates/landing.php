@@ -6,7 +6,7 @@
 				else
 					echo 'There is no Quiz of the Week yet!';
 			?>
-	</p><p>Click here to vote for next weeks Quiz of the Week.</p></div>
+	</p><p><a href="quizzes.php">Click here to vote for next weeks Quiz of the Week.</a></p></div>
 	<div id="weekly-trivia"><p>Last months trivia winner: Coming soon!</p><p>Click here to see scores and answer this months trivia.</p></div>
 	<div class="float-block"></div>
 </div>
