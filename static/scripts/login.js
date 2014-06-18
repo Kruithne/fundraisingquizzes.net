@@ -73,6 +73,7 @@ $(function()
 		{
 			if (response.success != undefined && response.success == true)
 			{
+				$(document).trigger('fqLogin');
 				handler.loggedIn = response.username;
 				handler.isAdmin = response.admin;
 				handler.resetLoginForm();
@@ -87,6 +88,7 @@ $(function()
 				}
 				else
 				{
+					$(document).trigger('fqLogout');
 					handler.loggedIn = null;
 					handler.isAdmin = false;
 					handler.resetLoginForm();
