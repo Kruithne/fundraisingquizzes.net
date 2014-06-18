@@ -16,6 +16,11 @@ $(function()
 
 			PacketHandler.hook(Packet.Login, packetContext(this, 'loginResult'));
 
+			window.getLoggedInUser = function()
+			{
+				return handler.loggedIn;
+			};
+
 			window.loginFormReset = function()
 			{
 				$(f).css('border', '1px solid #999').css('background-color', 'white');
