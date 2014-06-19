@@ -65,7 +65,14 @@ $(function()
 			}).on('click', '#submit-button', function()
 			{
 				handler.submitQuizField.slideDown().find('.quiz-options').fadeIn('slow');
+			}).on('fqLogout', function()
+			{
+				handler.hideUserOptions();
+			}).on('fqLogin', function()
+			{
+				handler.showUserOptions();
 			});
+
 
 			setTimeout(function() {
 				$('.quiz-listing').each(function()
@@ -101,6 +108,16 @@ $(function()
 				var t = $(this);
 				t.attr('origindex', t.index()).prependTo(container);
 			});
+		},
+
+		hideUserOptions: function()
+		{
+			$('.quiz-options ul li').hide();
+		},
+
+		showUserOptions: function()
+		{
+			$('.quiz-options ul li').show();
 		},
 
 		vote: function(listing)
