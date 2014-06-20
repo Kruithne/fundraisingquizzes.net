@@ -328,8 +328,6 @@ $(function()
 				listing.addClass('bookmarked');
 				option.html('Unbookmark');
 
-				$('<div class="quiz-bookmark" title="You have bookmarked this quiz."/>').appendTo(listing.find('form')).fadeIn();
-
 				if (submit)
 					handler.sendIDListingPacket(listing, Packet.BookmarkQuiz);
 			}
