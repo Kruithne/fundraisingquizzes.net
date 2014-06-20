@@ -71,6 +71,7 @@ $(function()
 			}).on('fqLogin', function()
 			{
 				handler.showUserOptions();
+				$('#submit-button').show();
 			});
 
 
