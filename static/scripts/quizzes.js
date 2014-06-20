@@ -389,7 +389,7 @@ $(function()
 
 		resetField: function(listing, fieldName, data)
 		{
-			listing.find('.quiz-' + fieldName).html(data);
+			return listing.find('.quiz-' + fieldName).html(data);
 		},
 
 		cancelEditing: function(listing, data)
@@ -403,8 +403,8 @@ $(function()
 
 			handler.resetField(listing, 'title-title', data.title);
 			handler.resetField(listing, 'title-charity', data.charity);
-			handler.resetField(listing, 'description', data.description);
-			handler.resetField(listing, 'description-extra', data.extra);
+			handler.resetField(listing, 'description', data.description).parseLinks();
+			handler.resetField(listing, 'description-extra', data.extra).parseLinks();
 
 			dateField.html('Closes in <span class="time-period">' + data.closing + '</span> (<span class="time-formal">' + data.closing + '</span>)').formatTime();
 
