@@ -108,6 +108,7 @@ $(function()
 						});
 						$('.admin-option').hide();
 						$('.quiz-query-question .delete').remove();
+						$('.quiz-queries').slideUp();
 					}
 				},
 				{
