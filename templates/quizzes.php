@@ -56,6 +56,21 @@
 						<p class="linkable quiz-description"><?php echo $quiz->getDescription(); ?></p>
 						<p class="linkable quiz-description-extra"><?php echo $quiz->getExtra(); ?></p>
 					</div>
+					<div class="quiz-queries">
+						<p class="query-title">Queries</p>
+						<?php
+							foreach ($quiz->getQueries() as $query)
+							{
+								?>
+								<div class="quiz-query" id="query-<?php echo $query->getId(); ?>">
+									<p class="quiz-query-question"><b>Q:</b> <?php echo $query->getQuery(); ?> (Queried by <?php echo $query->getQueryUser()->getUsername(); ?>)</p>
+									<p class="quiz-query-answer"><b>A:</b> <?php echo $query->getAnswer() === NULL ? 'This query has not been answered yet. <a>[Submit Answer]</a>' : $query->getAnswer() . ' (Answered by ' . $query->getAnswerUser()->getUsername() . ')'; ?></p>
+								</div>
+							<?php
+							}
+						?>
+						<p class="quiz-query-submit"><a>&raquo; Submit a query for this quiz &laquo;</a></p>
+					</div>
 					<div class="quiz-options">
 						<ul>
 							<?php
@@ -64,6 +79,7 @@
 							?>
 							<li class="quiz-option-edit admin-option">Edit</li>
 							<li class="quiz-option-delete admin-option">Delete</li>
+							<li class="quiz-option-queries">Queries</li>
 							<li class="quiz-option-bookmark">Bookmark</li>
 							<li class="quiz-option-vote">Vote</li>
 						</ul>

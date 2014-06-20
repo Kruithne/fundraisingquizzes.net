@@ -140,7 +140,12 @@
 	background-image: url(http://static.fundraisingquizzes.net/images/trash_16.png);
 }
 
-.quiz-options .admin-option
+.quiz-option-queries
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/bubble_16.png);
+}
+
+.quiz-options .admin-option, .quiz-queries
 {
 	display: none;
 }
@@ -188,4 +193,29 @@
 .visible
 {
 	display: block;
+}
+
+.query-title
+{
+	font-weight: bold;
+}
+
+.quiz-query, .query-title, .quiz-query-submit
+{
+	margin-top: 10px;
+}
+
+.quiz-query .input-button
+{
+	padding: 2px 7px;
+}
+
+.quiz-query-submit .input-text
+{
+	width: 400px;
+}
+
+.query-answer-form
+{
+	margin: 10px;
 }

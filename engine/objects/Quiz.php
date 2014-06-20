@@ -28,6 +28,7 @@
 			$this->update = $update;
 			$this->accepted = $accepted;
 			$this->new = $new;
+			$this->queries = Array();
 		}
 
 		/**
@@ -151,6 +152,14 @@
 		}
 
 		/**
+		 * @return QuizQuery[]
+		 */
+		public function getQueries()
+		{
+			return $this->queries;
+		}
+
+		/**
 		 * Delete the current quiz from the database.
 		 */
 		public function delete()
@@ -159,6 +168,45 @@
 			{
 				DB::get()->prepare('UPDATE quizzes SET deleted = 1 WHERE ID = :id')->setValue(':id', $this->id)->execute();
 			}
+		}
+
+		/**
+		 * Pull any queries for this quiz into the object.
+		 */
+		public function pullQueries()
+		{
+			$this->queries = Array();
+			if ($this->getId() === Quiz::NONE)
+				return;
+
+			$query = DB::get()->prepare('SELECT queryID, query, answer, query_user, answer_user FROM quiz_queries WHERE quizID = :id');
+			$query->setValue(':id', $this->getId());
+
+			foreach ($query->getRows() as $row)
+				$this->queries[] = new QuizQuery($row->queryID, $row->query, $row->answer, $row->query_user, $row->answer_user);
+		}
+
+		/**
+		 * Add a query to this quiz.
+		 * @param $query_text
+		 * @return null|int
+		 */
+		public function addQuery($query_text)
+		{
+			if ($this->getId() !== Quiz::NONE && !Authenticator::isLoggedIn())
+				return null;
+
+			$user_id = Authenticator::getLoggedInUser()->getId();
+			$query = DB::get()->prepare('INSERT INTO quiz_queries (quizID, query, query_user) VALUES(:quiz, :query, :user)');
+			$query->setValue(':quiz', $this->getId());
+			$query->setValue(':query', $query_text);
+			$query->setValue(':user', $user_id);
+			$query->execute();
+
+			$id = DB::get()->getLastInsertID('quiz_queries');
+			$this->queries[] = new QuizQuery($id, $query_text, null, $user_id);
+
+			return $id;
 		}
 
 		/**
@@ -214,7 +262,10 @@
 
 			$result = $query->getFirstRow();
 
-			return $result == null ? Quiz::NONE : new Quiz(
+			if ($result == null)
+				return Quiz::NONE;
+
+			$quiz = new Quiz(
 				$result->title,
 				$result->charity,
 				$result->description,
@@ -225,6 +276,9 @@
 				$result->new_flag,
 				$id
 			);
+
+			$quiz->pullQueries();
+			return $quiz;
 		}
 
 		/**
@@ -239,7 +293,7 @@
 
 			foreach ($query->getRows() as $row)
 			{
-				$return[] = new Quiz(
+				$quiz = new Quiz(
 					$row->title,
 					$row->charity,
 					$row->description,
@@ -250,6 +304,8 @@
 					$row->new_flag,
 					$row->ID
 				);
+				$quiz->pullQueries();
+				$return[] = $quiz;
 			}
 
 			return $return;
@@ -273,5 +329,6 @@
 		private $update;
 		private $new;
 		private $accepted;
+		private $queries;
 	}
 ?>

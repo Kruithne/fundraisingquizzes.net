@@ -5,9 +5,10 @@ $(function()
 		y: null,
 		old: [],
 		submitting: false,
+		halt: false,
 		load: function()
 		{
-			var d = document, q = '.quiz-listing';
+			var d = document, q = '.quiz-listing', c = 'click';
 			$(d).on('mousedown', q, function(e)
 			{
 				var offset = handler.getOffset(e);
@@ -15,29 +16,37 @@ $(function()
 				handler.y = offset.y;
 			}).on('mouseup', q, function(e)
 			{
-				var offset = handler.getOffset(e);
-				if (handler.x != null && handler.y != null && Math.abs((handler.x - offset.x) + (handler.y - offset.y)) < 10)
+				var t = $(this);
+				setTimeout(function()
 				{
-					var t = $(this), qo = t.find('.quiz-options'), o = qo.offset();
-
-					if (t.hasClass('editing') || (qo.is(':visible') && e.pageX >= o.left && e.pageY >= o.top))
-						return;
-
-					if (t.hasClass('active'))
+					var offset = handler.getOffset(e);
+					if (handler.x != null && handler.y != null && Math.abs((handler.x - offset.x) + (handler.y - offset.y)) < 10)
 					{
-						t.removeClass('active').find('.quiz-extra').stop().slideUp();
-						t.find('.quiz-options').stop().fadeOut();
-						t.find('.quiz-arrow').removeClass('quiz-arrow-flip');
+						if (handler.halt == true || t.hasClass('editing'))
+						{
+							handler.halt = false;
+							return;
+						}
+
+						if (t.hasClass('active'))
+						{
+							t.removeClass('active').find('.quiz-extra').stop().slideUp();
+							t.find('.quiz-options').stop().fadeOut();
+							t.find('.quiz-arrow').removeClass('quiz-arrow-flip');
+							handler.retractQueries(t);
+						}
+						else
+						{
+							t.addClass('active').find('.quiz-extra').stop().slideDown();
+							t.find('.quiz-options').stop().fadeIn();
+							t.find('.quiz-arrow').addClass('quiz-arrow-flip');
+						}
+						handler.halt = false;
 					}
-					else
-					{
-						t.addClass('active').find('.quiz-extra').stop().slideDown();
-						t.find('.quiz-options').stop().fadeIn();
-						t.find('.quiz-arrow').addClass('quiz-arrow-flip');
-					}
-				}
-			}).on('click', '.quiz-options li', function()
+				}, 1);
+			}).on(c, '.quiz-options li', function()
 			{
+				handler.halt = true;
 				var t = $(this), l = t.parent().parent().parent().parent(), eid = l.attr('id'), o = t.attr('class').split(' ')[0].split('-')[2];
 
 				if (eid == 'quiz-submit')
@@ -61,9 +70,10 @@ $(function()
 						case 'nodelete': handler.cancelDelete(l); break;
 						case 'vote': handler.vote(l, true); break;
 						case 'bookmark': handler.bookmark(l, true); break;
+						case 'queries': handler.expandQueries(l); break;
 					}
 				}
-			}).on('click', '#submit-button', function()
+			}).on(c, '#submit-button', function()
 			{
 				handler.submitQuizField.slideDown().find('.quiz-options').fadeIn('slow');
 			}).on('fqLogout', function()
@@ -85,12 +95,77 @@ $(function()
 					$('.admin-option').css('display', 'inline');
 
 				PacketHandler.send(Packet.QuizData);
+			}).on(c, '.quiz-query-submit a', function()
+			{
+				$(this).parent().html('<b>New Query:</b> <input class="input-text" type="text"/> <input type="button" class="input-button query-submit" value="Submit">').find('.input-text').focus();
+			}).on(c, '.quiz-query-submit .query-submit', function()
+			{
+				var t = $(this),
+					p = t.parent(),
+					value = p.find('.input-text').val().trim(),
+					listing = p.parent().parent().parent();
+
+				if (value.length > 5)
+				{
+					p.html('<span class="form-pending">Submitting query, please wait...</span>');
+					PacketHandler.send(Packet.SubmitQuery, {
+						query: value,
+						quiz: handler.getListingID(listing)
+					},
+					{
+						listing: listing,
+						query: value
+					});
+				}
+				else
+				{
+					handler.resetQuerySubmission(listing);
+				}
+			}).on(c, '.quiz-query .query-answer', function()
+			{
+				var t = $(this),
+					form = t.parent(),
+					value = form.find('.input-text').val().trim(),
+					holder = form.parent();
+
+				if (value.length > 5)
+				{
+					form.html('<span class="form-pending">Submitting answer, please wait...</span>');
+					PacketHandler.send(Packet.SubmitQueryAnswer, {
+						answer: value,
+						id: handler.getQueryID(holder)
+					},
+					{
+						queryHolder: holder,
+						form: form,
+						answer: value
+					});
+				}
+				else
+				{
+					form.fadeOut(400, function()
+					{
+						$(this).remove();
+					});
+				}
+			}).on(c, '.quiz-query-answer a', function()
+			{
+				handler.halt = true;
+				var t = $(this),
+					q = t.parent().parent();
+
+				q.append('<p class="query-answer-form"><b>Your Answer:</b> <input class="input-text" type="text"/> <input type="button" class="input-button query-answer" value="Answer"></p>').find('.input-text').focus();
+			}).on(c, '.quiz-query-submit,.query-answer-form', function()
+			{
+				handler.halt = true;
 			});
 
 			setTimeout(function() {
 				$('.quiz-listing').each(function()
 				{
-					handler.applyQuizFlags($(this));
+					var t = $(this);
+					handler.applyQuizFlags(t);
+					handler.updateQueryCounter(t);
 				});
 			}, 10);
 
@@ -113,6 +188,8 @@ $(function()
 			hook(Packet.ApproveQuiz, 'handleApproval');
 			hook(Packet.DeleteQuiz, 'handleDelete');
 			hook(Packet.QuizData, 'applyData');
+			hook(Packet.SubmitQuery, 'handleQuerySubmit');
+			hook(Packet.SubmitQueryAnswer, 'handleQueryAnswerSubmit');
 
 			handler.submitQuizField = $('#quiz-submit');
 
@@ -249,7 +326,7 @@ $(function()
 			if (handler.submitting)
 				return;
 			var data = {
-				id: parseInt(form.parent().attr('id').split('-')[1]),
+				id: handler.getListingID(form.parent()),
 				title: form.find('.quiz-title-title input').val().trim(),
 				charity: form.find('.quiz-title-charity input').val().trim(),
 				closing: form.find('.quiz-closing').getDateSelectorValue(),
@@ -381,7 +458,7 @@ $(function()
 		sendIDListingPacket: function(listing, packet)
 		{
 			PacketHandler.send(packet, {
-				id: listing.attr('id').split('-')[1]
+				id: handler.getListingID(listing)
 			}, {
 				listing: listing
 			});
@@ -437,6 +514,63 @@ $(function()
 
 			if (listing.hasClass('updated'))
 				closingElement.append('<div class="flag_updated flag">Updated!</div>');
+		},
+
+		expandQueries: function(listing)
+		{
+			listing.find('.quiz-queries').slideDown();
+		},
+
+		retractQueries: function(listing)
+		{
+			listing.find('.quiz-queries').slideUp();
+			handler.resetQuerySubmission(listing);
+		},
+
+		resetQuerySubmission: function(listing)
+		{
+			listing.find('.quiz-query-submit').html('<a>&raquo; Submit a query for this quiz</a>');
+		},
+
+		updateQueryCounter: function(listing)
+		{
+			var queryCount = listing.find('.quiz-query').length;
+			listing.find('.quiz-option-queries').text('Queries' + (queryCount > 0 ? ' (' + queryCount + ')' : ''));
+		},
+
+		handleQuerySubmit: function(data, callback)
+		{
+			var listing = callback.listing;
+			handler.resetQuerySubmission(listing);
+			if (data.success != undefined && data.success === true)
+			{
+				var container = $('<div/>').addClass('quiz-query').attr('id', 'query-' + data.queryID).insertBefore(listing.find('.quiz-query-submit')),
+					p = '<p/>';
+				$(p).addClass('quiz-query-question').html('<b>Q:</b> ' + callback.query + ' (Queried by ' + getLoggedInUser() + ')').appendTo(container);
+				$(p).addClass('quiz-query-answer').html('<b>A:</b> This query has not been answered yet. <a>[Submit Answer]</a>').appendTo(container);
+				handler.updateQueryCounter(listing);
+			}
+		},
+
+		handleQueryAnswerSubmit: function(data, callback)
+		{
+			callback.form.fadeOut(400, function()
+			{
+				$(this).remove();
+			});
+
+			if (data.success != undefined && data.success === true)
+				callback.queryHolder.find('.quiz-query-answer').html('<b>A:</b> ' + callback.answer + ' (Answered by ' + getLoggedInUser() + ')');
+		},
+
+		getQueryID: function(queryHolder)
+		{
+			return parseInt(queryHolder.attr('id').split('-')[1]);
+		},
+
+		getListingID: function(listing)
+		{
+			return parseInt(listing.attr('id').split('-')[1]);
 		}
 	};
 
