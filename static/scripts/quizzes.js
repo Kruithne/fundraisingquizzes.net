@@ -331,10 +331,10 @@ $(function()
 			{
 				listing.addClass('bookmarked').prependTo(list);
 				option.html('Unbookmark');
-
-				if (submit)
-					handler.sendIDListingPacket(listing, Packet.BookmarkQuiz);
 			}
+
+			if (submit)
+				handler.sendIDListingPacket(listing, Packet.BookmarkQuiz);
 		},
 
 		saveEdit: function(listing)
