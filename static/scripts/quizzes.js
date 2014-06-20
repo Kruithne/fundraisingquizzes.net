@@ -59,7 +59,7 @@ $(function()
 						case 'delete': handler.deleteQuiz(l); break;
 						case 'confirm': handler.confirmDelete(l); break;
 						case 'nodelete': handler.cancelDelete(l); break;
-						case 'vote': handler.vote(l); break;
+						case 'vote': handler.vote(l, true); break;
 					}
 				}
 			}).on('click', '#submit-button', function()
@@ -110,7 +110,7 @@ $(function()
 
 			$('.voted').each(function()
 			{
-				handler.vote($(this));
+				handler.vote($(this), false);
 			});
 
 			var container = $('#listing-container');
@@ -137,15 +137,17 @@ $(function()
 			{
 				var element = $('#quiz-' + data[index]);
 				if (element.length > 0)
-					handler.vote(element);
+					handler.vote(element, false);
 			}
 		},
 
-		vote: function(listing)
+		vote: function(listing, submit)
 		{
 			$('<div class="quiz-vote" title="You have voted for this quiz!"/>').appendTo(listing.find('form')).fadeIn();
 			listing.addClass('voted').find('.quiz-option-vote').remove();
-			handler.sendIDListingPacket(listing, Packet.VoteQuiz);
+
+			if (submit)
+				handler.sendIDListingPacket(listing, Packet.VoteQuiz);
 
 			if ($('.voted').length == 3)
 				$('.quiz-option-vote').remove();
