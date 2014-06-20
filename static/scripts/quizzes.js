@@ -68,6 +68,7 @@ $(function()
 			}).on('fqLogout', function()
 			{
 				handler.hideUserOptions();
+				$('#submit-button').hide();
 			}).on('fqLogin', function()
 			{
 				handler.showUserOptions();
