@@ -74,6 +74,8 @@ $(function()
 				{
 					$(this).remove();
 				});
+
+				$('.admin-option').hide();
 			}).on('fqLogin', function()
 			{
 				handler.showUserOptions();
