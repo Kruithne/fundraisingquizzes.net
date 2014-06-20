@@ -271,7 +271,8 @@ $(function()
 
 		moveToOrigPosition: function(listing)
 		{
-			$('#listing-container div:nth-child(' + (parseInt(listing.attr('origindex')) + 1) + ')').after(listing);
+			var topElements = $('.unapproved,.bookmarked').length;
+			$('#listing-container .quiz-listing:nth-child(' + (parseInt(listing.attr('origindex')) + 1 + topElements) + ')').after(listing);
 		},
 
 		handleDelete: function(data, callback)
