@@ -9,7 +9,7 @@
 				return;
 
 			$quiz = Quiz::get((int) REST::Get('id'));
-			if ($quiz instanceof Quiz)
+			if ($quiz instanceof Quiz && count(VoteHandler::getVotedQuizzes()) < 3)
 			{
 				VoteHandler::castVote($quiz);
 				$this->setReturn('success', true);
