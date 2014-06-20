@@ -24,6 +24,11 @@ $(function()
 				return handler.loggedIn;
 			};
 
+			window.userIsAdmin = function()
+			{
+				return handler.isAdmin;
+			},
+
 			window.loginFormReset = function()
 			{
 				$(f).css('border', '1px solid #999').css('background-color', 'white');
