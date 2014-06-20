@@ -10,7 +10,7 @@
 			$query = (int) REST::Get('id');
 			if ($query > 0)
 			{
-				DB::get()->prepare('DELETE FROM quiz_queries WHERE queryID = :id')->setValue(':id', $query)->execute();
+				QueryHandler::deleteQuery($query);
 				$this->setReturn('success', true);
 			}
 		}

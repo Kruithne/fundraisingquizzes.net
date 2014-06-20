@@ -187,34 +187,6 @@
 		}
 
 		/**
-		 * Add a query to this quiz.
-		 * @param $query_text
-		 * @return null|int
-		 */
-		public function addQuery($query_text)
-		{
-			if ($this->getId() !== Quiz::NONE && !Authenticator::isLoggedIn())
-				return null;
-
-			$user_id = Authenticator::getLoggedInUser()->getId();
-			$query = DB::get()->prepare('INSERT INTO quiz_queries (quizID, query, query_user) VALUES(:quiz, :query, :user)');
-			$query->setValue(':quiz', $this->getId());
-			$query->setValue(':query', $query_text);
-			$query->setValue(':user', $user_id);
-			$query->execute();
-
-			$query = DB::get()->prepare('UPDATE quizzes SET updated_flag = :flag WHERE ID = :quiz');
-			$query->setValue(':flag', Quiz::DEFAULT_UPDATE_FLAG);
-			$query->setValue(':quiz', $this->getId());
-			$query->execute();
-
-			$id = DB::get()->getLastInsertID('quiz_queries');
-			$this->queries[] = new QuizQuery($id, $query_text, null, $user_id);
-
-			return $id;
-		}
-
-		/**
 		 * Persist this quiz object in the database.
 		 */
 		public function persist()

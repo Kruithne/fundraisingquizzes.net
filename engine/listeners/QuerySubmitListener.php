@@ -13,7 +13,7 @@
 
 			if ($query !== null && $quiz instanceof Quiz)
 			{
-				$id = $quiz->addQuery($query);
+				$id = QueryHandler::addQuery($quiz, $query);
 				if ($id !== NULL)
 				{
 					$this->setReturn('success', true);
