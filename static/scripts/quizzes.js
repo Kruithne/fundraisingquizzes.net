@@ -69,7 +69,10 @@ $(function()
 			{
 				handler.hideUserOptions();
 				$('#submit-button').hide();
-				$('.quiz-vote').fadeOut();
+				$('.quiz-vote').fadeOut(400, function()
+				{
+					$(this).remove();
+				});
 			}).on('fqLogin', function()
 			{
 				handler.showUserOptions();
