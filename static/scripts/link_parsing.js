@@ -3,10 +3,15 @@ $(function()
 	var parser = {
 		load: function()
 		{
+			$.fn.extend({
+				parseLinks: function()
+				{
+					this.html(this.html().replace(/(((?:http(s)?:\/\/)|(www\.))(\S+))/, '<a href="http$3://$4$5">$1</a>'));
+				}
+			});
 			$('.linkable').each(function()
 			{
-				var e = $(this);
-				e.html(e.html().replace(/(((?:http(s)?:\/\/)|(www\.))(\S+))/, '<a href="http$3://$4$5">$1</a>'));
+				$(this).parseLinks();
 			})
 		}
 	};
