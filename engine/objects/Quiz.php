@@ -203,6 +203,11 @@
 			$query->setValue(':user', $user_id);
 			$query->execute();
 
+			$query = DB::get()->prepare('UPDATE quizzes SET updated_flag = :flag WHERE ID = :quiz');
+			$query->setValue(':flag', Quiz::DEFAULT_UPDATE_FLAG);
+			$query->setValue(':quiz', $this->getId());
+			$query->execute();
+
 			$id = DB::get()->getLastInsertID('quiz_queries');
 			$this->queries[] = new QuizQuery($id, $query_text, null, $user_id);
 
