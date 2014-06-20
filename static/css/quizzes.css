@@ -70,15 +70,25 @@
 	background-position: 0 -39px;
 }
 
-.quiz-vote
+.quiz-vote, .quiz-bookmark
 {
 	position: absolute;
 	top: 15px;
-	right: 75px;
-	background: url(http://static.fundraisingquizzes.net/images/star_48.png) no-repeat;
 	height: 48px;
 	width: 48px;
 	display: none;
+}
+
+.quiz-vote
+{
+	right: 75px;
+	background: url(http://static.fundraisingquizzes.net/images/star_48.png) no-repeat;
+}
+
+.quiz-bookmark
+{
+	right: 133px;
+	background: url(http://static.fundraisingquizzes.net/images/bookmark_48.png) no-repeat;
 }
 
 .quiz-options

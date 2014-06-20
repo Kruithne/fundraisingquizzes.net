@@ -38,7 +38,7 @@ $(function()
 				}
 			}).on('click', '.quiz-options li', function()
 			{
-				var t = $(this), l = t.parent().parent().parent().parent(), eid = l.attr('id'), o = t.attr('class').split('-')[2];
+				var t = $(this), l = t.parent().parent().parent().parent(), eid = l.attr('id'), o = t.attr('class').split(' ')[0].split('-')[2];
 
 				if (eid == 'quiz-submit')
 				{
@@ -327,6 +327,8 @@ $(function()
 			{
 				listing.addClass('bookmarked');
 				option.html('Unbookmark');
+
+				$('<div class="quiz-bookmark" title="You have bookmarked this quiz."/>').appendTo(listing.find('form')).fadeIn();
 
 				if (submit)
 					handler.sendIDListingPacket(listing, Packet.BookmarkQuiz);
