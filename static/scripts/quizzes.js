@@ -60,6 +60,7 @@ $(function()
 						case 'confirm': handler.confirmDelete(l); break;
 						case 'nodelete': handler.cancelDelete(l); break;
 						case 'vote': handler.vote(l, true); break;
+						case 'bookmark': handler.bookmark(l, true); break;
 					}
 				}
 			}).on('click', '#submit-button', function()
@@ -82,6 +83,7 @@ $(function()
 					$('.admin-option').css('display', 'inline');
 
 				PacketHandler.send(Packet.VoteData);
+				PacketHandler.send(Packet.BookmarkData);
 			});
 
 			setTimeout(function() {
@@ -105,6 +107,7 @@ $(function()
 			PacketHandler.hook(Packet.ApproveQuiz, packetContext(handler, 'handleApproval'));
 			PacketHandler.hook(Packet.DeleteQuiz, packetContext(handler, 'handleDelete'));
 			PacketHandler.hook(Packet.VoteData, packetContext(handler, 'applyVotes'));
+			PacketHandler.hook(Packet.BookmarkData, packetContext(handler, 'applyBookmarks'));
 
 			handler.submitQuizField = $('#quiz-submit');
 
@@ -131,13 +134,23 @@ $(function()
 			$('.quiz-options ul').show();
 		},
 
+		applyBookmarks: function(data)
+		{
+			handler.apply(data, 'bookmark');
+		},
+
 		applyVotes: function(data)
+		{
+			handler.apply(data, 'vote');
+		},
+
+		apply: function(data, func)
 		{
 			for (var index in data.data)
 			{
 				var element = $('#quiz-' + data.data[index]);
 				if (element.length > 0)
-					handler.vote(element, false);
+					handler[func](element, false);
 			}
 		},
 
@@ -297,6 +310,25 @@ $(function()
 		confirmDelete: function(listing)
 		{
 			handler.sendIDListingPacket(listing, Packet.DeleteQuiz);
+		},
+
+		bookmark: function(listing, submit)
+		{
+			var option = listing.find('.quiz-option-bookmark');
+
+			if (listing.hasClass('bookmarked'))
+			{
+				listing.removeClass('bookmarked');
+				option.html('Bookmark');
+			}
+			else
+			{
+				listing.addClass('bookmarked');
+				option.html('Unbookmark');
+
+				if (submit)
+					handler.sendIDListingPacket(listing, Packet.BookmarkQuiz);
+			}
 		},
 
 		saveEdit: function(listing)

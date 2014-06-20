@@ -6,6 +6,8 @@
 		4 => 'ApproveQuizListener',
 		5 => 'DeleteQuizListener',
 		6 => 'VoteQuizListener',
-		7 => 'GetVoteData'
+		7 => 'GetVoteData',
+		8 => 'BookmarkQuizListener',
+		9 => 'GetBookmarkData'
 	));
 ?>

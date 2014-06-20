@@ -5,7 +5,9 @@ var Packet = {
 	ApproveQuiz: 4,
 	DeleteQuiz: 5,
 	VoteQuiz: 6,
-	VoteData: 7
+	VoteData: 7,
+	BookmarkQuiz: 8,
+	BookmarkData: 9
 };
 
 var PacketHandler = {
