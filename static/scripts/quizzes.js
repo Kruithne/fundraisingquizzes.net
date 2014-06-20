@@ -250,7 +250,7 @@ $(function()
 				id: parseInt(form.parent().attr('id').split('-')[1]),
 				title: form.find('.quiz-title-title input').val().trim(),
 				charity: form.find('.quiz-title-charity input').val().trim(),
-				closing: form.find('.quiz-closing div').getDateSelectorValue(),
+				closing: form.find('.quiz-closing').getDateSelectorValue(),
 				description: form.find('.quiz-description input').val().trim(),
 				extra: form.find('.quiz-description-extra input').val().trim()
 			};
@@ -350,12 +350,12 @@ $(function()
 				extra: handler.prepareEditField(listing, 'description-extra', false)
 			};
 
-			var dateField = listing.find('.quiz-closing').empty(), selector = $('<div/>').appendTo(dateField), s = '<select/>';
+			var dateField = listing.find('.quiz-closing').empty(), s = '<select/>';
 
-			var daySelector = $(s).attr('range', 'days').attr('type', 'day').appendTo(selector);
-			$(s).attr('range', 'months').attr('type', 'month').appendTo(selector).updateRange();
-			$(s).attr('range', 'year-year+5').attr('type', 'year').appendTo(selector).updateRange();
-			$(selector).prepend('Closes: ');
+			var daySelector = $(s).attr('range', 'days').attr('type', 'day').appendTo(dateField);
+			$(s).attr('range', 'months').attr('type', 'month').appendTo(dateField).updateRange();
+			$(s).attr('range', 'year-year+5').attr('type', 'year').appendTo(dateField).updateRange();
+			$(dateField).prepend('Closes: ');
 
 			daySelector.updateRange();
 
