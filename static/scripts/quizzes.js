@@ -114,12 +114,12 @@ $(function()
 
 		hideUserOptions: function()
 		{
-			$('.quiz-options ul li').hide();
+			$('.quiz-options ul').hide();
 		},
 
 		showUserOptions: function()
 		{
-			$('.quiz-options ul li').show();
+			$('.quiz-options ul').show();
 		},
 
 		vote: function(listing)

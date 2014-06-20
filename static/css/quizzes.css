@@ -92,6 +92,7 @@
 .quiz-options ul
 {
 	list-style: none;
+	display: none;
 }
 
 .quiz-options li
