@@ -144,13 +144,15 @@ $(function()
 		vote: function(listing, submit)
 		{
 			$('<div class="quiz-vote" title="You have voted for this quiz!"/>').appendTo(listing.find('form')).fadeIn();
-			listing.addClass('voted').find('.quiz-option-vote').remove();
+			listing.addClass('voted').find('.quiz-option-vote').hide();
 
 			if (submit)
 				handler.sendIDListingPacket(listing, Packet.VoteQuiz);
 
 			if ($('.voted').length == 3)
-				$('.quiz-option-vote').remove();
+				$('.quiz-option-vote').hide();
+			else
+				$('.quiz-option-vote').show();
 		},
 
 		closeSubmitField: function()
