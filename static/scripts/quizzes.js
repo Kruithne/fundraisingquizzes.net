@@ -342,7 +342,7 @@ $(function()
 
 		editQuiz: function(listing)
 		{
-			listing.addClass('editing');
+			listing.addClass('editing').find('.quiz-vote').hide();
 			handler.old[listing.attr('id')] = {
 				title: handler.prepareEditField(listing, 'title-title', true),
 				charity: handler.prepareEditField(listing, 'title-charity', true),
@@ -406,6 +406,7 @@ $(function()
 			listing.find('.quiz-options ul').prepend('<li class="quiz-option-edit">Edit</li>');
 
 			handler.applyQuizFlags(listing.removeClass('editing'));
+			listing.find('.quiz-vote').fadeIn();
 		},
 
 		getOffset: function(e)
