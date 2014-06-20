@@ -11,6 +11,11 @@
 	border: 1px solid red;
 }
 
+.quiz-listing.bookmarked
+{
+	border-color: #dd5a26;
+}
+
 .quiz-title, .quiz-title input
 {
 	font-weight: bold;

@@ -116,11 +116,16 @@ $(function()
 
 			handler.submitQuizField = $('#quiz-submit');
 
+			$('.quiz-listing').each(function()
+			{
+				var t = $(this);
+				t.attr('origindex', t.index());
+			});
+
 			var container = $('#listing-container');
 			$('.unapproved').each(function()
 			{
-				var t = $(this);
-				t.attr('origindex', t.index()).prependTo(container);
+				$(this).prependTo(container);
 			});
 		},
 
@@ -257,12 +262,16 @@ $(function()
 		{
 			if (data.success != undefined && data.success == true)
 			{
-				var listing = callback.listing,
-					position = parseInt(listing.attr('origindex')) + 1;
+				var listing = callback.listing;
 
-				$('#listing-container div:nth-child(' + position + ')').after(listing);
+				handler.moveToOrigPosition(listing);
 				listing.removeClass('unapproved').find('.quiz-option-approve').remove();
 			}
+		},
+
+		moveToOrigPosition: function(listing)
+		{
+			$('#listing-container div:nth-child(' + (parseInt(listing.attr('origindex')) + 1) + ')').after(listing);
 		},
 
 		handleDelete: function(data, callback)
@@ -310,16 +319,17 @@ $(function()
 
 		bookmark: function(listing, submit)
 		{
-			var option = listing.find('.quiz-option-bookmark');
+			var option = listing.find('.quiz-option-bookmark'), list = $('#listing-container');
 
 			if (listing.hasClass('bookmarked'))
 			{
 				listing.removeClass('bookmarked');
 				option.html('Bookmark');
+				handler.moveToOrigPosition(listing);
 			}
 			else
 			{
-				listing.addClass('bookmarked');
+				listing.addClass('bookmarked').prependTo(list);
 				option.html('Unbookmark');
 
 				if (submit)
