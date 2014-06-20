@@ -25,7 +25,7 @@
 	<body>
 		<div id="container">
 		<div class="module module-padded">
-			<p id="maintenance"><b>20th June:</b> Quiz submitting/voting/bookmarking is now functional!</p>
+			<p id="maintenance"><b>20th June:</b> The following features are now operational - Voting, bookmarking, viewing/submitting quiz queries/query answers, account registration.</p>
 		</div>
 		<div class="module" id="header">
 			<a href="http://www.fundraisingquizzes.net/">
