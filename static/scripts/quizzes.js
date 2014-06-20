@@ -133,9 +133,9 @@ $(function()
 
 		applyVotes: function(data)
 		{
-			for (var index in data)
+			for (var index in data.data)
 			{
-				var element = $('#quiz-' + data[index]);
+				var element = $('#quiz-' + data.data[index]);
 				if (element.length > 0)
 					handler.vote(element, false);
 			}
