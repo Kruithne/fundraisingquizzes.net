@@ -18,7 +18,8 @@
 			$email = REST::Get('value');
 			if ($email !== NULL)
 			{
-				if (UserHandler::emailRegistered($email))
+				$username = UserHandler::emailRegistered($email);
+				if ($username !== FALSE)
 				{
 					// E-mail the username to this address.
 					if ($withPassword)

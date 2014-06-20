@@ -49,14 +49,15 @@
 		/**
 		 * Check to see if a specified e-mail address is already registered.
 		 * @param $email string E-mail address to check for.
-		 * @return bool True if the e-mail address is already registered, else false.
+		 * @return string|boolean Returns the username the account is linked to, or FALSE
 		 */
 		public static function emailRegistered($email)
 		{
-			$query = DB::get()->prepare('SELECT ID FROM users WHERE email = :email');
+			$query = DB::get()->prepare('SELECT username FROM users WHERE email = :email');
 			$query->setValue(':email', $email);
 
-			return count($query->getRows());
+			$row = $query->getFirstRow();
+			return $row == NULL ? FALSE : $row->username;
 		}
 
 		public static function usernameRegistered($username)

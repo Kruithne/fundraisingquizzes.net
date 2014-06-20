@@ -35,7 +35,7 @@
 			if (UserHandler::usernameRegistered($username))
 				return 'That username is already in-use on the site!';
 
-			if (UserHandler::emailRegistered($email))
+			if (UserHandler::emailRegistered($email) !== FALSE)
 				return 'That e-mail address is already registered on the site!';
 
 			return NULL;
