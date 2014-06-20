@@ -16,6 +16,9 @@ $(function()
 
 			PacketHandler.hook(Packet.Login, packetContext(this, 'loginResult'));
 
+			if (handler.loggedIn != null)
+				setTimeout(function() { $(d).trigger('fqLogin'); }, 1);
+
 			window.getLoggedInUser = function()
 			{
 				return handler.loggedIn;
