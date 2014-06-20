@@ -113,11 +113,6 @@ $(function()
 
 			handler.submitQuizField = $('#quiz-submit');
 
-			$('.voted').each(function()
-			{
-				handler.vote($(this), false);
-			});
-
 			var container = $('#listing-container');
 			$('.unapproved').each(function()
 			{
