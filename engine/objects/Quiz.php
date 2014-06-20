@@ -158,7 +158,6 @@
 			if ($this->id !== Quiz::NONE)
 			{
 				DB::get()->prepare('UPDATE quizzes SET deleted = 1 WHERE ID = :id')->setValue(':id', $this->id)->execute();
-				DB::get()->prepare('DELETE FROM bookmarks WHERE quizID = :id')->setValue(':id', $this->id)->execute();
 			}
 		}
 
