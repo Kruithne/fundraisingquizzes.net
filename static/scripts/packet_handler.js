@@ -10,7 +10,8 @@ var Packet = {
 	SubmitQuery: 9,
 	SubmitQueryAnswer: 10,
 	DeleteQuery: 11,
-	RegisterAccount: 12
+	RegisterAccount: 12,
+	RecoverAccount: 13
 };
 
 var PacketHandler = {
