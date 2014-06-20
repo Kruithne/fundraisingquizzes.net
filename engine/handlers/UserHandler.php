@@ -40,7 +40,7 @@
 		{
 			DB::get()
 				->prepare('INSERT INTO users (username, password, email, registered) VALUES(:username, :password, :email, NOW())')
-				->setValue(':username', $username)->setValue(':password', $password)->setValue(':email', $email)
+				->setValue(':username', $username)->setValue(':password', crypt($password))->setValue(':email', $email)
 				->execute();
 
 			return DB::get()->getLastInsertID('users');
@@ -53,11 +53,18 @@
 		 */
 		public static function emailRegistered($email)
 		{
-			$query = DB::get()->prepare('SELECT COUNT(ID) AS user_count FROM users WHERE email = :email');
+			$query = DB::get()->prepare('SELECT ID FROM users WHERE email = :email');
 			$query->setValue(':email', $email);
 
-			$result = $query->getFirstRow();
-			return $result != null && $result->user_count > 0;
+			return count($query->getRows());
+		}
+
+		public static function usernameRegistered($username)
+		{
+			$query = DB::get()->prepare('SELECT ID FROM users WHERE username = :username');
+			$query->setValue(':username', $username);
+
+			return count($query->getRows());
 		}
 
 		private static $cache = Array();

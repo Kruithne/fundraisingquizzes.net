@@ -10,6 +10,7 @@
 		8 => 'BookmarkQuizListener',
 		9 => 'QuerySubmitListener',
 		10 => 'QueryAnswerSubmitListener',
-		11 => 'DeleteQueryListener'
+		11 => 'DeleteQueryListener',
+		12 => 'RegisterAccountListener'
 	));
 ?>

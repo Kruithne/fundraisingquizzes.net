@@ -78,7 +78,7 @@ $(function()
 			}
 			else
 			{
-				handler.element.html('You are currently not logged in: <a id="login-button">login</a> or <a>register</a>.');
+				handler.element.html('You are currently not logged in: <a id="login-button">login</a> or <a href="register.php">register</a>.');
 			}
 		},
 

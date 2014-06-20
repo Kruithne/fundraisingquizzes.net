@@ -207,6 +207,11 @@ body
 	color: #C48600;
 }
 
+.error
+{
+	border: 1px solid red;
+}
+
 /** Temp **/
 #maintenance
 {
