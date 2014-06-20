@@ -290,7 +290,7 @@ $(function()
 		prepareEditField: function(listing, fieldClass, required)
 		{
 			var field = listing.find('.quiz-' + fieldClass),
-				old = field.html();
+				old = field.text();
 
 			field.empty();
 			var input = $('<input/>').val(old).appendTo(field);
