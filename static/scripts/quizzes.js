@@ -104,12 +104,17 @@ $(function()
 			w.submitQuizSubmit = handler.handleEditSubmit;
 			w.submitQuizSuccess = handler.handleQuizSuccess;
 
-			PacketHandler.hook(Packet.EditQuiz, packetContext(handler, 'handleEditReply'));
-			PacketHandler.hook(Packet.AddQuiz, packetContext(handler, 'handleAddReply'));
-			PacketHandler.hook(Packet.ApproveQuiz, packetContext(handler, 'handleApproval'));
-			PacketHandler.hook(Packet.DeleteQuiz, packetContext(handler, 'handleDelete'));
-			PacketHandler.hook(Packet.VoteData, packetContext(handler, 'applyVotes'));
-			PacketHandler.hook(Packet.BookmarkData, packetContext(handler, 'applyBookmarks'));
+			function hook(packet, handleFunc)
+			{
+				PacketHandler.hook(packet, packetContext(handler, handleFunc));
+			}
+
+			hook(Packet.EditQuiz, 'handleEditReply');
+			hook(Packet.AddQuiz, 'handleAddReply');
+			hook(Packet.ApproveQuiz, 'handleApproval');
+			hook(Packet.DeleteQuiz, 'handleDelete');
+			hook(Packet.VoteData, 'applyVotes');
+			hook(Packet.BookmarkData, 'applyBookmarks');
 
 			handler.submitQuizField = $('#quiz-submit');
 
