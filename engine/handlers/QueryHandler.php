@@ -41,15 +41,16 @@
 				return null;
 
 			$user_id = Authenticator::getLoggedInUser()->getId();
-			$query = DB::get()->prepare('INSERT INTO quiz_queries (quizID, query, query_user) VALUES(:quiz, :query, :user)');
-			$query->setValue(':quiz', $quiz->getId());
-			$query->setValue(':query', $query_text);
-			$query->setValue(':user', $user_id);
-			$query->execute();
 
 			$query = DB::get()->prepare('UPDATE quizzes SET updated_flag = :flag WHERE ID = :quiz');
 			$query->setValue(':flag', Quiz::DEFAULT_UPDATE_FLAG);
 			$query->setValue(':quiz', $quiz->getId());
+			$query->execute();
+
+			$query = DB::get()->prepare('INSERT INTO quiz_queries (quizID, query, query_user) VALUES(:quiz, :query, :user)');
+			$query->setValue(':quiz', $quiz->getId());
+			$query->setValue(':query', $query_text);
+			$query->setValue(':user', $user_id);
 			$query->execute();
 
 			return DB::get()->getLastInsertID('quiz_queries');
