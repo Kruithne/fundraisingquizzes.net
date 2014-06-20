@@ -27,7 +27,7 @@ $(function()
 			window.userIsAdmin = function()
 			{
 				return handler.isAdmin;
-			},
+			};
 
 			window.loginFormReset = function()
 			{
