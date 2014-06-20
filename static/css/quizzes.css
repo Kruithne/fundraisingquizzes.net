@@ -145,7 +145,7 @@
 	background-image: url(http://static.fundraisingquizzes.net/images/bubble_16.png);
 }
 
-.quiz-options .admin-option, .quiz-queries
+.quiz-options .admin-option, .quiz-queries, #quiz-submit
 {
 	display: none;
 }
@@ -183,11 +183,6 @@
 {
 	background-color: #D0F3C2;
 	background-image: url(http://static.fundraisingquizzes.net/images/tick_32.png);
-}
-
-#quiz-submit
-{
-	display: none;
 }
 
 .visible
