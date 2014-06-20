@@ -73,8 +73,10 @@ $(function()
 			{
 				handler.showUserOptions();
 				$('#submit-button').show();
-			});
 
+				if (userIsAdmin())
+					$('.admin-option').css('display', 'inline');
+			});
 
 			setTimeout(function() {
 				$('.quiz-listing').each(function()

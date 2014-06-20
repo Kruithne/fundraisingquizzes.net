@@ -135,6 +135,11 @@
 	background-image: url(http://static.fundraisingquizzes.net/images/trash_16.png);
 }
 
+.quiz-options .admin-option
+{
+	display: none;
+}
+
 .flag
 {
 	font-weight: bold;

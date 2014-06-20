@@ -62,14 +62,11 @@
 					<div class="quiz-options">
 						<ul>
 							<?php
-								if (Authenticator::isLoggedInAsAdmin())
-								{
-									echo '<li class="quiz-option-edit">Edit</li>';
-									echo '<li class="quiz-option-delete">Delete</li>';
-									if (!$quiz->isAccepted())
-										echo '<li class="quiz-option-approve">Approve</li>';
-								}
+								if (!$quiz->isAccepted())
+									echo '<li class="quiz-option-approve admin-option">Approve</li>';
 							?>
+							<li class="quiz-option-edit admin-option">Edit</li>
+							<li class="quiz-option-delete admin-option">Delete</li>
 							<li class="quiz-option-bookmark">Bookmark</li>
 							<li class="quiz-option-vote">Vote</li>
 						</ul>
