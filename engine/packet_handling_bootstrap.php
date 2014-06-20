@@ -9,6 +9,7 @@
 		7 => 'GetQuizData',
 		8 => 'BookmarkQuizListener',
 		9 => 'QuerySubmitListener',
-		10 => 'QueryAnswerSubmitListener'
+		10 => 'QueryAnswerSubmitListener',
+		11 => 'DeleteQueryListener'
 	));
 ?>

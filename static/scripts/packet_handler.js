@@ -8,7 +8,8 @@ var Packet = {
 	QuizData: 7,
 	BookmarkQuiz: 8,
 	SubmitQuery: 9,
-	SubmitQueryAnswer: 10
+	SubmitQueryAnswer: 10,
+	DeleteQuery: 11
 };
 
 var PacketHandler = {

@@ -215,6 +215,22 @@
 	width: 400px;
 }
 
+.quiz-query-question .delete
+{
+	position: relative;
+	display: inline;
+}
+
+.quiz-query-question .delete div
+{
+	background: url(http://static.fundraisingquizzes.net/images/delete_16.png) no-repeat center;
+	width: 16px;
+	height: 16px;
+	position: absolute;
+	top: 2px;
+	right: -25px;
+}
+
 .quiz-query span
 {
 	color: #696969;

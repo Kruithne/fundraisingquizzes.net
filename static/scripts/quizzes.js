@@ -84,8 +84,8 @@ $(function()
 				{
 					$(this).remove();
 				});
-
 				$('.admin-option').hide();
+				$('.quiz-query-question .delete').remove();
 			}).on('fqLogin', function()
 			{
 				handler.showUserOptions();
@@ -93,6 +93,8 @@ $(function()
 
 				if (userIsAdmin())
 					$('.admin-option').css('display', 'inline');
+
+				$('.quiz-query-question').append('<div class="delete"><div></div></div>');
 
 				PacketHandler.send(Packet.QuizData);
 			}).on(c, '.quiz-query-submit a', function()
@@ -158,6 +160,17 @@ $(function()
 			}).on(c, '.quiz-query-submit,.query-answer-form', function()
 			{
 				handler.halt = true;
+			}).on(c, '.quiz-query-question .delete div', function()
+			{
+				handler.halt = true;
+				var holder = $(this).parent().parent().parent();
+
+				PacketHandler.send(Packet.DeleteQuery, {
+					id: handler.getQueryID(holder)
+				},
+				{
+					holder: holder
+				});
 			});
 
 			setTimeout(function() {
@@ -190,6 +203,7 @@ $(function()
 			hook(Packet.QuizData, 'applyData');
 			hook(Packet.SubmitQuery, 'handleQuerySubmit');
 			hook(Packet.SubmitQueryAnswer, 'handleQueryAnswerSubmit');
+			hook(Packet.DeleteQuery, 'handleDeleteQuery');
 
 			handler.submitQuizField = $('#quiz-submit');
 
@@ -545,9 +559,14 @@ $(function()
 			if (data.success != undefined && data.success === true)
 			{
 				var container = $('<div/>').addClass('quiz-query').attr('id', 'query-' + data.queryID).insertBefore(listing.find('.quiz-query-submit')),
-					p = '<p/>';
-				$(p).addClass('quiz-query-question').html('<b>Q:</b> ' + callback.query + ' <span>(Queried by ' + getLoggedInUser() + ')</span>').appendTo(container);
+					p = '<p/>',
+					q = $(p).addClass('quiz-query-question').html('<b>Q:</b> ' + callback.query + ' <span>(Queried by ' + getLoggedInUser() + ')</span>').appendTo(container);
+
 				$(p).addClass('quiz-query-answer').html('<b>A:</b> This query has not been answered yet. <a>[Submit Answer]</a>').appendTo(container);
+
+				if (userIsAdmin())
+					q.append('<div class="delete"><div></div></div>');
+
 				handler.updateQueryCounter(listing);
 			}
 		},
@@ -561,6 +580,19 @@ $(function()
 
 			if (data.success != undefined && data.success === true)
 				callback.queryHolder.find('.quiz-query-answer').html('<b>A:</b> ' + callback.answer + ' <span>(Answered by ' + getLoggedInUser() + ')</span>');
+		},
+
+		handleDeleteQuery: function(data, callback)
+		{
+			if (data.success != undefined && data.success === true)
+			{
+				callback.holder.fadeOut(400, function()
+				{
+					var t = $(this), listing = t.parent().parent().parent();
+					t.remove();
+					handler.updateQueryCounter(listing);
+				});
+			}
 		},
 
 		getQueryID: function(queryHolder)
