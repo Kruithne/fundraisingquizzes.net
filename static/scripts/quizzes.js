@@ -80,6 +80,8 @@ $(function()
 
 				if (userIsAdmin())
 					$('.admin-option').css('display', 'inline');
+
+				PacketHandler.send(Packet.VoteData);
 			});
 
 			setTimeout(function() {
@@ -102,6 +104,7 @@ $(function()
 			PacketHandler.hook(Packet.AddQuiz, packetContext(handler, 'handleAddReply'));
 			PacketHandler.hook(Packet.ApproveQuiz, packetContext(handler, 'handleApproval'));
 			PacketHandler.hook(Packet.DeleteQuiz, packetContext(handler, 'handleDelete'));
+			PacketHandler.hook(Packet.VoteData, packetContext(handler, 'applyVotes'));
 
 			handler.submitQuizField = $('#quiz-submit');
 
@@ -126,6 +129,16 @@ $(function()
 		showUserOptions: function()
 		{
 			$('.quiz-options ul').show();
+		},
+
+		applyVotes: function(data)
+		{
+			for (var index in data)
+			{
+				var element = $('#quiz-' + data[index]);
+				if (element.length > 0)
+					handler.vote(element);
+			}
 		},
 
 		vote: function(listing)
