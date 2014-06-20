@@ -143,6 +143,9 @@ $(function()
 		{
 			handler.apply(data.votes, 'vote');
 			handler.apply(data.bookmarks, 'bookmark');
+
+			if (data.votes.length >= 3)
+				$('.quiz-option-vote').hide();
 		},
 
 		apply: function(data, func)
