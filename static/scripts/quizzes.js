@@ -546,7 +546,7 @@ $(function()
 			{
 				var container = $('<div/>').addClass('quiz-query').attr('id', 'query-' + data.queryID).insertBefore(listing.find('.quiz-query-submit')),
 					p = '<p/>';
-				$(p).addClass('quiz-query-question').html('<b>Q:</b> ' + callback.query + ' (Queried by ' + getLoggedInUser() + ')').appendTo(container);
+				$(p).addClass('quiz-query-question').html('<b>Q:</b> ' + callback.query + ' <span>(Queried by ' + getLoggedInUser() + ')</span>').appendTo(container);
 				$(p).addClass('quiz-query-answer').html('<b>A:</b> This query has not been answered yet. <a>[Submit Answer]</a>').appendTo(container);
 				handler.updateQueryCounter(listing);
 			}
@@ -560,7 +560,7 @@ $(function()
 			});
 
 			if (data.success != undefined && data.success === true)
-				callback.queryHolder.find('.quiz-query-answer').html('<b>A:</b> ' + callback.answer + ' (Answered by ' + getLoggedInUser() + ')');
+				callback.queryHolder.find('.quiz-query-answer').html('<b>A:</b> ' + callback.answer + ' <span>(Answered by ' + getLoggedInUser() + ')</span>');
 		},
 
 		getQueryID: function(queryHolder)

@@ -215,6 +215,11 @@
 	width: 400px;
 }
 
+.quiz-query span
+{
+	color: #696969;
+}
+
 .query-answer-form
 {
 	margin: 10px;

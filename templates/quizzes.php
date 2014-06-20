@@ -63,8 +63,8 @@
 							{
 								?>
 								<div class="quiz-query" id="query-<?php echo $query->getId(); ?>">
-									<p class="quiz-query-question"><b>Q:</b> <?php echo $query->getQuery(); ?> (Queried by <?php echo $query->getQueryUser()->getUsername(); ?>)</p>
-									<p class="quiz-query-answer"><b>A:</b> <?php echo $query->getAnswer() === NULL ? 'This query has not been answered yet. <a>[Submit Answer]</a>' : $query->getAnswer() . ' (Answered by ' . $query->getAnswerUser()->getUsername() . ')'; ?></p>
+									<p class="quiz-query-question"><b>Q:</b> <?php echo $query->getQuery(); ?> <span>(Queried by <?php echo $query->getQueryUser()->getUsername(); ?>)</span></p>
+									<p class="quiz-query-answer"><b>A:</b> <?php echo $query->getAnswer() === NULL ? 'This query has not been answered yet. <a>[Submit Answer]</a>' : $query->getAnswer() . ' <span>(Answered by ' . $query->getAnswerUser()->getUsername() . ')</span>'; ?></p>
 								</div>
 							<?php
 							}
