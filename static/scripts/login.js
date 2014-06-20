@@ -86,10 +86,10 @@ $(function()
 		{
 			if (response.success != undefined && response.success == true)
 			{
-				$(document).trigger('fqLogin');
 				handler.loggedIn = response.username;
 				handler.isAdmin = response.admin;
 				handler.resetLoginForm();
+				$(document).trigger('fqLogin');
 			}
 			else
 			{
