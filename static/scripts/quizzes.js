@@ -84,8 +84,7 @@ $(function()
 				if (userIsAdmin())
 					$('.admin-option').css('display', 'inline');
 
-				PacketHandler.send(Packet.VoteData);
-				PacketHandler.send(Packet.BookmarkData);
+				PacketHandler.send(Packet.QuizData);
 			});
 
 			setTimeout(function() {
@@ -113,8 +112,7 @@ $(function()
 			hook(Packet.AddQuiz, 'handleAddReply');
 			hook(Packet.ApproveQuiz, 'handleApproval');
 			hook(Packet.DeleteQuiz, 'handleDelete');
-			hook(Packet.VoteData, 'applyVotes');
-			hook(Packet.BookmarkData, 'applyBookmarks');
+			hook(Packet.QuizData, 'applyData');
 
 			handler.submitQuizField = $('#quiz-submit');
 
@@ -136,21 +134,17 @@ $(function()
 			$('.quiz-options ul').show();
 		},
 
-		applyBookmarks: function(data)
+		applyData: function(data)
 		{
-			handler.apply(data, 'bookmark');
-		},
-
-		applyVotes: function(data)
-		{
-			handler.apply(data, 'vote');
+			handler.apply(data.votes, 'vote');
+			handler.apply(data.bookmarks, 'bookmark');
 		},
 
 		apply: function(data, func)
 		{
-			for (var index in data.data)
+			for (var index in data)
 			{
-				var element = $('#quiz-' + data.data[index]);
+				var element = $('#quiz-' + data[index]);
 				if (element.length > 0)
 					handler[func](element, false);
 			}
