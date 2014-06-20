@@ -6,11 +6,6 @@
 	border: 1px solid #999;
 }
 
-.quiz-listing
-{
-	border: 1px solid red;
-}
-
 .quiz-listing.bookmarked
 {
 	border-color: #dd5a26;
