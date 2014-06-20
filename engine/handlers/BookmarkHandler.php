@@ -44,5 +44,14 @@
 
 			return $quizzes;
 		}
+
+		/**
+		 * Purge all bookmarks for a specific quiz.
+		 * @param int $quizID ID of the quiz to purge for.
+		 */
+		public static function purge($quizID)
+		{
+			DB::get()->prepare('DELETE FROM bookmarks WHERE quizID = :id')->setValue(':id', $quizID)->execute();
+		}
 	}
 ?>

@@ -55,5 +55,14 @@
 
 			return DB::get()->getLastInsertID('quiz_queries');
 		}
+
+		/**
+		 * Purge all queries for a specific quiz.
+		 * @param int $quizID ID of the quiz to purge queries for.
+		 */
+		public static function purge($quizID)
+		{
+			DB::get()->prepare('DELETE FROM quiz_queries WHERE quizID = :id')->setValue(':id', $quizID)->execute();
+		}
 	}
 ?>
