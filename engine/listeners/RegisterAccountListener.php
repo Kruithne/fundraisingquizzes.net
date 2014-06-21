@@ -32,7 +32,7 @@
 			if (!preg_match('/^\S+@\S+\.[a-zA-Z]+$/', $email))
 				return 'You must enter a valid e-mail address!';
 
-			if (UserHandler::usernameRegistered($username))
+			if (UserHandler::usernameRegistered($username) !== FALSE)
 				return 'That username is already in-use on the site!';
 
 			if (UserHandler::emailRegistered($email) !== FALSE)

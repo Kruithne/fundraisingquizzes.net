@@ -70,7 +70,8 @@
 			$query = DB::get()->prepare('SELECT ID FROM users WHERE username = :username');
 			$query->setValue(':username', $username);
 
-			return count($query->getRows()) > 0;
+			$user = $query->getFirstRow();
+			return $user == NULL ? FALSE : $user->ID;
 		}
 
 		private static $cache = Array();
