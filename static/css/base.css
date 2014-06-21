@@ -209,6 +209,18 @@ body
 	color: #C48600;
 }
 
+.form-table th
+{
+	text-align: right;
+	padding-right: 5px;
+}
+
+.form-table .footer
+{
+	text-align: center;
+	padding-top: 10px;
+}
+
 .error
 {
 	border: 1px solid red;

@@ -29,18 +29,6 @@ h1
 	margin: 20px 0 10px 0;
 }
 
-#register-table th
-{
-	text-align: right;
-	padding-right: 5px;
-}
-
-#register-table .footer
-{
-	text-align: center;
-	padding-top: 10px;
-}
-
 #feature-list
 {
 	list-style: none;
