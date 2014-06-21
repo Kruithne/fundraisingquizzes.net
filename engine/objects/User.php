@@ -87,6 +87,23 @@
 		}
 
 		/**
+		 * Returns the e-mail address of this user.
+		 * @return null|string
+		 */
+		public function getEmailAddress()
+		{
+			if ($this->email !== NULL)
+				return $this->email;
+
+			$query = DB::get()->prepare('SELECT email FROM users WHERE ID = :user');
+			$query->setValue(':user', $this->getId());
+
+			$result = $query->getFirstRow();
+			$this->email = $result === NULL ? NULL : $result->email;
+			return $this->email;
+		}
+
+		/**
 		 * Returns the login key for this user.
 		 * @return string
 		 */
@@ -145,5 +162,10 @@
 		 * @var string Login key for this user, normally NULL until requested.
 		 */
 		private $loginKey;
+
+		/**
+		 * @var string E-mail address for this user, normally NULL until requested.
+		 */
+		private $email;
 	}
 ?>
