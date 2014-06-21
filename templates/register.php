@@ -2,7 +2,7 @@
 	<h1>Account Creation</h1>
 	<p class="center" id="status">Creating an account is simple, fill out the form below and hit register!</p>
 	<form id="register-form" class="validatable preventDefault" complete="regFormSuccess" submit="regFormSubmit" error="regFormErrors">
-		<table id="register-table">
+		<table id="register-table" class="form-table">
 			<tr>
 				<th>Username:</th>
 				<td><input type="text" class="input-text" id="reg-username" require="true" maxlength="20" validate="^[a-zA-Z0-9_]{4,}$"/></td>
