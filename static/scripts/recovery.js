@@ -32,7 +32,7 @@ $(function()
 			}
 
 			handler.submitting = true;
-			handler.setPending(field, 'Processing, please wait...');
+			handler.setPending(p, 'Processing, please wait...');
 			PacketHandler.send(Packet.RecoverAccount, {
 				type: field.attr('recover'),
 				value: value
