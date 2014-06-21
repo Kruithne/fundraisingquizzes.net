@@ -47,7 +47,7 @@ $(function()
 			var field = callback.parent;
 			if (data.success != undefined && data.success == true)
 			{
-				handler.setSuccess(field, 'E-mail sent, check your inbox!');
+				handler.setSuccess(field, 'E-mail sent, check your inbox! (Check your spam folder)');
 				field.children('input').fadeOut();
 			}
 			else
