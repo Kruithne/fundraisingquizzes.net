@@ -21,6 +21,7 @@
 	<div id="recover-password-slide">
 		<div class="recovery-icon recovery-icon-password"></div><h1>Password Recovery</h1>
 		<p>To recover the password to your account, simply enter your username below and we will e-mail you a link which you can click to change your password.</p>
+		<p class="form-error recover-warn center">Outlook.com/Hotmail does not accept e-mails from us!</p>
 		<div class="recovery-box">
 			<input type="text" class="input-text" recover="password" placeholder="Username..."/> <input type="button" class="input-button" value="Recover"/>
 			<p class="center error-text"></p>
@@ -29,6 +30,7 @@
 	<div id="recover-username-slide">
 		<div class="recovery-icon recovery-icon-username"></div><h1>Username Recovery</h1>
 		<p>To recover the username for your account, enter your e-mail address below and we will send you an e-mail containing your username.</p>
+		<p class="form-error recover-warn center">Outlook.com/Hotmail does not accept e-mails from us!</p>
 		<div class="recovery-box">
 			<input type="text" class="input-text" recover="username" placeholder="E-mail address..."/> <input type="button" class="input-button" value="Recover"/>
 			<p class="center error-text"></p>
@@ -37,6 +39,7 @@
 	<div id="recover-both-slide">
 		<div class="recovery-icon recovery-icon-both"></div><h1>Account Recovery</h1>
 		<p>Type in your e-mail address below and we will send you an e-mail containing your username along with a link you can click to change your password.</p>
+		<p class="form-error recover-warn center">Outlook.com/Hotmail does not accept e-mails from us!</p>
 		<div class="recovery-box">
 			<input type="text" class="input-text" recover="both" placeholder="E-mail address..."/> <input type="button" class="input-button" value="Recover"/>
 			<p class="center error-text"></p>
