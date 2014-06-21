@@ -65,20 +65,17 @@ body
 
 #account-status input
 {
-	margin: 0 2px;
+	margin: 0 2px 4px 0;
 }
 
 #account-status-error
 {
-	position: absolute;
-	left: 30px;
-	bottom: -25px;
 	display: none;
 }
 
-#account-recover-link
+#account-recover-link, #account-status-error
 {
-	margin: 5px 0 0 10px;
+	margin-left: 10px;
 }
 
 .module
