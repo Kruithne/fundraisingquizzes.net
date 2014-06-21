@@ -59,7 +59,6 @@ $(function()
 			$('<input type="password" placeholder="Password..." id="password-field" class="input-text" require="true"/>').appendTo(form);
 			$('<input type="submit" id="login-submit" value="Login" class="input-button"/>').appendTo(form);
 			$('<input type="button" id="login-cancel" value="Cancel" class="input-button"/>').appendTo(form);
-			$('<div id="account-recover-link"><a href="recovery.php">Forgotten your account details? Click here.</a></div>').appendTo(form);
 			$('<div id="account-status-error"/>').appendTo(form);
 		},
 
