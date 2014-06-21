@@ -69,7 +69,7 @@
 		private function sendRecoverEmail($email, $file, $search, $replace)
 		{
 			$mail = new KW_Mail();
-			$mail->setSender('noreply@fundraisingquizzes.net');
+			$mail->setSender('Fundraising Quizzes <noreply@fundraisingquizzes.net>');
 			$mail->addRecipients($email);
 			$mail->setSubject('Account Recovery - Fundraising Quizzes');
 			$mail->append(str_replace($search, $replace, file_get_contents('../engine/emails/' . $file)));
