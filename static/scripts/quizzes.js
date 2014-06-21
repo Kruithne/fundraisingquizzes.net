@@ -620,6 +620,13 @@ $(function()
 		{
 			var queryCount = listing.find('.quiz-query').length;
 			listing.find('.quiz-option-queries').text('Queries' + (queryCount > 0 ? ' (' + queryCount + ')' : ''));
+
+			var queryFlag = listing.find('.flag_query');
+
+			if (queryCount > 0 && queryFlag.length === 0)
+				listing.find('.quiz-closing').append('<div class="flag_query flag ">Queries!</div>');
+			else if (queryCount === 0 && queryFlag.length > 0)
+				queryFlag.remove();
 		},
 
 		handleQuerySubmit: function(data, callback)
