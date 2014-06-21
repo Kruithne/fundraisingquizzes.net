@@ -60,12 +60,17 @@
 			return $row == NULL ? FALSE : $row->username;
 		}
 
+		/**
+		 * Check if a username is registered on the site.
+		 * @param string $username Username to check for.
+		 * @return boolean
+		 */
 		public static function usernameRegistered($username)
 		{
 			$query = DB::get()->prepare('SELECT ID FROM users WHERE username = :username');
 			$query->setValue(':username', $username);
 
-			return count($query->getRows());
+			return count($query->getRows()) > 0;
 		}
 
 		private static $cache = Array();
