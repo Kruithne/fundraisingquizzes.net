@@ -21,10 +21,25 @@
 				$username = UserHandler::emailRegistered($email);
 				if ($username !== FALSE)
 				{
-					// E-mail the username to this address.
 					if ($withPassword)
 					{
-						// Include a password reset link in the e-mail to the user.
+						$user_id = UserHandler::usernameRegistered($username);
+						if ($user_id !== FALSE)
+						{
+							$this->sendRecoverEmail($email, 'recover_both.txt', Array(
+								'{key}', '{username}'
+							), Array(
+								UserHandler::getPasswordResetKey($user_id), $username
+							));
+						}
+						else
+						{
+							$this->setReturn('error', 'Error getting account details!');
+						}
+					}
+					else
+					{
+						$this->sendRecoverEmail($email, 'recover_username.txt', '{username}', $username);
 					}
 
 					$this->setReturn('success', true);
@@ -45,10 +60,19 @@
 			$username = REST::Get('value');
 			if ($username !== NULL)
 			{
-				if (UserHandler::usernameRegistered($username))
+				$user_id = UserHandler::usernameRegistered($username);
+				if ($user_id !== FALSE)
 				{
-					// E-mail the user a password reset link.
-					$this->setReturn('success', true);
+					$user = UserHandler::getUser($user_id);
+					if ($user instanceof User)
+					{
+						$this->sendRecoverEmail($user->getEmailAddress(), 'recover_password.txt', '{key}', UserHandler::getPasswordResetKey($user_id));
+						$this->setReturn('success', true);
+					}
+					else
+					{
+						$this->setReturn('error', 'Error getting user info!');
+					}
 				}
 				else
 				{
@@ -59,6 +83,16 @@
 			{
 				$this->setReturn('error', 'Server error, try again later!');
 			}
+		}
+
+		private function sendRecoverEmail($email, $file, $search, $replace)
+		{
+			$mail = new KW_Mail();
+			$mail->setSender('noreply@fundraisingquizzes.net');
+			$mail->addRecipients($email);
+			$mail->setSubject('Account Recovery - Fundraising Quizzes');
+			$mail->append(str_replace($search, $replace, file_get_contents('../engine/emails/' . $file)));
+			$mail->send();
 		}
 	}
 ?>

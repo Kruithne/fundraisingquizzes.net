@@ -1,0 +1,8 @@
+Hello!
+
+A request was made on Fundraising Quizzes to recover the username registered to this e-mail address! Included in the e-mail below is the username as expected, hopefully you don't loose it again anytime soon!
+
+Your Account Username: {username}
+
+Have a great day,
+All the monkeys behind the scenes at Fundraising Quizzes.

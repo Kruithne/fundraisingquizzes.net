@@ -74,6 +74,33 @@
 			return $user == NULL ? FALSE : $user->ID;
 		}
 
+		/**
+		 * Retrieve a password reset key for the user.
+		 * @param int $user_id The ID of the user.
+		 * @param bool $create Should a key be created if none exists?
+		 * @return string|null
+		 */
+		public static function getPasswordResetKey($user_id, $create = true)
+		{
+			$query = DB::get()->prepare('SELECT resetKey FROM password_resets WHERE userID = :user');
+			$query->setValue(':user', $user_id);
+			$result = $query->getFirstRow();
+
+			if ($result !== NULL)
+				return $result->resetKey;
+
+			if (!$create)
+				return NULL;
+
+			$new_key = md5($user_id + time());
+			$query = DB::get()->prepare('INSERT INTO password_resets (userID, resetKey, created) VALUES(:user, :key, NOW())');
+			$query->setValue(':user', $user_id);
+			$query->setValue(':key', $new_key);
+			$query->execute();
+
+			return $new_key;
+		}
+
 		private static $cache = Array();
 	}
 ?>
