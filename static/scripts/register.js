@@ -44,7 +44,7 @@ $(function()
 		handleFormSuccess: function(form)
 		{
 			handler.submitting = true;
-			handler.setPending('Verifying your details, hang tight! ...');
+			handler.errorStatus.setPending('Verifying your details, hang tight! ...');
 			setTimeout(function()
 			{
 				var username = handler.grabFormValue(form, '#reg-username'),
@@ -85,14 +85,14 @@ $(function()
 			if (errorMessage == null)
 				errorMessage = 'There was an error with your registration!';
 
-			handler.setError(errorMessage);
+			handler.errorStatus.setError(errorMessage);
 		},
 
 		handleRegister: function(data, callback)
 		{
 			if (data.success != undefined && data.success == true)
 			{
-				handler.setSuccess('Account created! Logging you in now...');
+				handler.errorStatus.setSuccess('Account created! Logging you in now...');
 				PacketHandler.send(Packet.Login, {
 					user: callback.username,
 					pass: callback.password
@@ -101,9 +101,9 @@ $(function()
 			else
 			{
 				if (data.error != undefined)
-					handler.setError(data.error);
+					handler.errorStatus.setError(data.error);
 				else
-					handler.setError('Something went wrong, try again later!');
+					handler.errorStatus.setError('Something went wrong, try again later!');
 			}
 			handler.submitting = false;
 		},
@@ -111,26 +111,6 @@ $(function()
 		grabFormValue: function(form, value)
 		{
 			return form.find(value).val().trim();
-		},
-
-		setStatus: function(msg)
-		{
-			return handler.errorStatus.text(msg).removeClass('form-error form-success form-pending');
-		},
-
-		setError: function(msg)
-		{
-			handler.setStatus(msg).addClass('form-error');
-		},
-
-		setPending: function(msg)
-		{
-			handler.setStatus(msg).addClass('form-pending');
-		},
-
-		setSuccess: function(msg)
-		{
-			handler.setStatus(msg).addClass('form-success');
 		}
 	};
 	handler.load();

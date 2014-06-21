@@ -32,18 +32,18 @@ $(function()
 			window.loginFormReset = function()
 			{
 				$(f).css('border', '1px solid #999').css('background-color', 'white');
-				$(e).removeClass('form-error form-success form-pending').fadeOut();
+				$(e).fadeOut();
 			};
 
 			window.loginFormFail = function()
 			{
-				$(e).addClass('form-error').html('Enter both your username and password.').fadeIn();
+				$(e).setError('Enter both your username and password.').fadeIn();
 				$(f).css('border', '1px solid red').css('background-color', '#EDD3D3');
 			};
 
 			window.loginFormComplete = function()
 			{
-				$(e).addClass('form-pending').html('Authenticating...').fadeIn();
+				$(e).setPending('Authenticating...').fadeIn();
 				PacketHandler.send(Packet.Login, {
 					user: $('#username-field').val().trim(),
 					pass: $('#password-field').val().trim()
@@ -98,7 +98,7 @@ $(function()
 				{
 					var error = response.isBanned == undefined ? 'Invalid username and/or password.' : 'Your account has been banned.';
 					$('#login .input-text').css('border', '1px solid red').css('background-color', '#EDD3D3');
-					$('#account-status-error').removeClass('form-pending').addClass('form-error').html(error).fadeIn();
+					$('#account-status-error').setError(error).fadeIn();
 				}
 				else
 				{

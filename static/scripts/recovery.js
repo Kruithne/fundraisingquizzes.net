@@ -27,12 +27,12 @@ $(function()
 
 			if (value.length == 0)
 			{
-				handler.setError(p, "Don't leave the box blank!");
+				handler.getErrorField(p).setError('Don\'t leave the box blank!');
 				return;
 			}
 
 			handler.submitting = true;
-			handler.setPending(p, 'Processing, please wait...');
+			handler.getErrorField(p).setPending('Processing, please wait...');
 			PacketHandler.send(Packet.RecoverAccount, {
 				type: field.attr('recover'),
 				value: value
@@ -47,37 +47,22 @@ $(function()
 			var field = callback.parent;
 			if (data.success != undefined && data.success == true)
 			{
-				handler.setSuccess(field, 'E-mail sent, check your inbox! (Check your spam folder)');
+				handler.getErrorField(field).setError('E-mail sent, check your inbox! (Check spam too!)');
 				field.children('input').fadeOut();
 			}
 			else
 			{
 				if (data.error != undefined)
-					handler.setError(field, data.error);
+					handler.getErrorField(field).setError(data.error);
 				else
-					handler.setError(field, 'Server error, try again later!');
+					handler.getErrorField(field).setError('Server error, try again later!');
 			}
 			handler.submitting = false;
 		},
 
-		setMessage: function(field, msg)
+		getErrorField: function(field)
 		{
-			return field.find('.error-text').removeClass('form-error form-success form-pending').text(msg);
-		},
-
-		setError: function(field, msg)
-		{
-			handler.setMessage(field, msg).addClass('form-error');
-		},
-
-		setSuccess: function(field, msg)
-		{
-			handler.setMessage(field, msg).addClass('form-success');
-		},
-
-		setPending: function(field, msg)
-		{
-			handler.setMessage(field, msg).addClass('form-pending');
+			return field.find('.error-text');
 		},
 
 		switchSlide: function(slide)

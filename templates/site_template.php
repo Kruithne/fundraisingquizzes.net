@@ -16,6 +16,7 @@
 			if ($user instanceof User)
 				echo '<script>var loggedIn = "' . $user->getUsername() . '", isAdmin = ' . ($user->isAdmin() ? 'true' : 'false') . ';</script>';
 		?>
+		<script src="http://static.fundraisingquizzes.net/scripts/forms.js"></script>
 		<script src="http://static.fundraisingquizzes.net/scripts/login.js"></script>
 		<?php
 			foreach ($this->scripts as $script)
