@@ -26,6 +26,7 @@
 				</td>
 			</tr>
 		</table>
+		<p class="center"><a href="recovery.php">Having trouble accessing an existing account? Click here!</a></p>
 	</form>
 </div>
 <div class="module module-padded" id="register-right">

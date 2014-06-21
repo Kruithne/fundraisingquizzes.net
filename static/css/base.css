@@ -60,7 +60,7 @@ body
 	top: 10px;
 	right: 15px;
 	padding-left: 22px;
-	background: url(http://static.fundraisingquizzes.net/images/user_16.png) no-repeat center left;
+	background: url(http://static.fundraisingquizzes.net/images/user_16.png) no-repeat 0 6px;
 }
 
 #account-status input
@@ -74,6 +74,11 @@ body
 	left: 30px;
 	bottom: -25px;
 	display: none;
+}
+
+#account-recover-link
+{
+	margin: 5px 0 0 10px;
 }
 
 .module
