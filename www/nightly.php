@@ -6,4 +6,7 @@
 		die();
 
 	DB::get()->execute('UPDATE quizzes SET deleted = 1 WHERE closing < CURDATE()');
+
+	// Delete any expired password keys.
+	DB::get()->execute('DELETE FROM password_resets WHERE created < DATE_SUB(NOW(), INTERVAL 1 DAY)');
 ?>
