@@ -5,7 +5,7 @@
 		{
 			$this->setReturn('success', false);
 
-			if (!Authenticator::isLoggedInAsAdmin())
+			if (!Authenticator::isLoggedIn())
 				return;
 
 			$title = REST::Get('title');
