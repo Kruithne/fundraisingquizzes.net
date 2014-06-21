@@ -67,8 +67,8 @@
 		 */
 		public static function usernameRegistered($username)
 		{
-			$query = DB::get()->prepare('SELECT ID FROM users WHERE username = :username');
-			$query->setValue(':username', $username);
+			$query = DB::get()->prepare('SELECT ID FROM users WHERE LOWER(username) = :username');
+			$query->setValue(':username', strtolower($username));
 
 			$user = $query->getFirstRow();
 			return $user == NULL ? FALSE : $user->ID;
