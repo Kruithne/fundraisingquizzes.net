@@ -87,7 +87,7 @@ $(function()
 
 			handler.currentSlide = slide;
 			var container = handler.container;
-			container.children().fadeOut(400, function()
+			container.children().stop().fadeOut(400, function()
 			{
 				var stuff = $(slide).clone().hide().appendTo(container.empty());
 				setTimeout(function()
