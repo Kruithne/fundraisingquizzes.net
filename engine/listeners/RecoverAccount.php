@@ -4,85 +4,66 @@
 		public function run()
 		{
 			$type = REST::Get('type');
+			$result = null;
 
 			switch ($type)
 			{
-				case 'username': $this->recoverUsername(false); break;
-				case 'password': $this->recoverPassword(); break;
-				case 'both': $this->recoverUsername(true); break;
+				case 'username': $result = $this->recoverUsername(false); break;
+				case 'password': $result = $this->recoverPassword(); break;
+				case 'both': $result = $this->recoverUsername(true); break;
 			}
+
+			if ($result !== NULL)
+				$this->setReturn('error', $result);
+			else
+				$this->setReturn('success', true);
 		}
 
 		private function recoverUsername($withPassword = false)
 		{
 			$email = REST::Get('value');
-			if ($email !== NULL)
-			{
-				$username = UserHandler::emailRegistered($email);
-				if ($username !== FALSE)
-				{
-					if ($withPassword)
-					{
-						$user_id = UserHandler::usernameRegistered($username);
-						if ($user_id !== FALSE)
-						{
-							$this->sendRecoverEmail($email, 'recover_both.txt', Array(
-								'{key}', '{username}'
-							), Array(
-								UserHandler::getPasswordResetKey($user_id), $username
-							));
-						}
-						else
-						{
-							$this->setReturn('error', 'Error getting account details!');
-						}
-					}
-					else
-					{
-						$this->sendRecoverEmail($email, 'recover_username.txt', '{username}', $username);
-					}
 
-					$this->setReturn('success', true);
-				}
-				else
-				{
-					$this->setReturn('error', 'E-mail address not registered.');
-				}
+			if ($email === NULL)
+				return 'Server error, try again later!';
+
+			$username = UserHandler::emailRegistered($email);
+
+			if ($username === FALSE)
+				return 'E-mail address not registered.';
+
+
+			if ($withPassword)
+			{
+				$user_id = UserHandler::usernameRegistered($username);
+				if ($user_id === FALSE)
+					return 'Error getting account details!';
+
+				$this->sendRecoverEmail($email, 'recover_both.txt', Array('{key}', '{username}'), Array(UserHandler::getPasswordResetKey($user_id), $username));
 			}
 			else
 			{
-				$this->setReturn('error', 'Server error, try again later!');
+				$this->sendRecoverEmail($email, 'recover_username.txt', '{username}', $username);
 			}
+			return NULL;
 		}
 
 		private function recoverPassword()
 		{
 			$username = REST::Get('value');
-			if ($username !== NULL)
-			{
-				$user_id = UserHandler::usernameRegistered($username);
-				if ($user_id !== FALSE)
-				{
-					$user = UserHandler::getUser($user_id);
-					if ($user instanceof User)
-					{
-						$this->sendRecoverEmail($user->getEmailAddress(), 'recover_password.txt', '{key}', UserHandler::getPasswordResetKey($user_id));
-						$this->setReturn('success', true);
-					}
-					else
-					{
-						$this->setReturn('error', 'Error getting user info!');
-					}
-				}
-				else
-				{
-					$this->setReturn('error', 'Username does not exist!');
-				}
-			}
-			else
-			{
-				$this->setReturn('error', 'Server error, try again later!');
-			}
+
+			if ($username === NULL)
+				return 'Server error, try again later!';
+
+			$user_id = UserHandler::usernameRegistered($username);
+			if ($user_id === FALSE)
+				return 'Username does not exist!';
+
+			$user = UserHandler::getUser($user_id);
+			if (!($user instanceof User))
+				return 'Error getting user info!';
+
+			$this->sendRecoverEmail($user->getEmailAddress(), 'recover_password.txt', '{key}', UserHandler::getPasswordResetKey($user_id));
+			return NULL;
 		}
 
 		private function sendRecoverEmail($email, $file, $search, $replace)
