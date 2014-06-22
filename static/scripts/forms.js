@@ -3,6 +3,9 @@ $(function()
 	$.fn.extend({
 		setFormMessage: function(msg)
 		{
+			if (!this.is(':visible'))
+				this.slideDown();
+
 			return this.removeClass('form-error form-success form-pending').text(msg);
 		},
 
