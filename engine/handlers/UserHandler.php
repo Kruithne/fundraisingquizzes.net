@@ -8,6 +8,9 @@
 		 */
 		public static function getUser($user_id)
 		{
+			if ($user_id == User::NONE)
+				return User::NONE;
+
 			if (array_key_exists($user_id, self::$cache))
 				return self::$cache[$user_id];
 
