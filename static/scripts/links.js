@@ -22,7 +22,8 @@ $(function()
 					$('#new-link-button').show();
 				})
 				.on('fqLogout', function(){
-					$('#new-link-button, .site-link .options, #link-new').remove();
+					$('.site-link .options, #link-new').remove();
+					$('#new-link-button').hide();
 				});
 
 			PacketHandler.hook(Packet.DeleteSiteLink, packetContext(handler, 'handleDeleteLink'));
