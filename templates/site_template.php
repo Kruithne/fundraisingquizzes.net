@@ -26,7 +26,10 @@
 	<body>
 		<div id="container">
 		<div class="module module-padded">
-			<p id="maintenance"><b>20th June:</b> The following features are now operational - Voting, bookmarking, viewing/submitting quiz queries/query answers, account registration.</p>
+			<p id="maintenance">
+				<b>20th June:</b> The following features are now operational - Voting, bookmarking, viewing/submitting quiz queries/query answers, account registration.<br/>
+				<b>22nd June:</b> The links page and account recovery are now fully working!
+			</p>
 		</div>
 		<div class="module" id="header">
 			<a href="http://www.fundraisingquizzes.net/">
