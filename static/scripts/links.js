@@ -7,19 +7,23 @@ $(function()
 		load: function()
 		{
 			var doc = document, click = 'click';
-			if (userIsAdmin())
-			{
-				$('.site-link').each(function()
+
+			$(doc)
+				.on(click, '.site-link', handler.handleLinkClick)
+				.on('fqLogin', function()
 				{
-					handler.applyOptions($(this));
+					$('.site-link').each(function()
+					{
+						handler.applyOptions($(this));
+					});
+
+					$(doc).on(click, '.site-link li', handler.handleOptionClick);
+					$(doc).on(click, '#new-link-button', handler.handleCreateClick);
+					$('#new-link-button').show();
+				})
+				.on('fqLogout', function(){
+					$('#new-link-button, .site-link .options, #link-new').remove();
 				});
-
-				$(doc).on(click, '.site-link li', handler.handleOptionClick);
-				$(doc).on(click, '#new-link-button', handler.handleCreateClick);
-				$('#new-link-button').show();
-			}
-
-			$(doc).on(click, '.site-link', handler.handleLinkClick);
 
 			PacketHandler.hook(Packet.DeleteSiteLink, packetContext(handler, 'handleDeleteLink'));
 			PacketHandler.hook(Packet.EditSiteLink, packetContext(handler, 'handleSave'));
