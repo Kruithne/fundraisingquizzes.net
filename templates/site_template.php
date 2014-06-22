@@ -38,7 +38,7 @@
 				<li id="navigation-quizzes"><a href="quizzes.php">Quizzes</a></li>
 				<li id="navigation-answers">Answers</li>
 				<li id="navigation-forum">Forum</li>
-				<li id="navigation-links">Links</li>
+				<li id="navigation-links"><a href="links.php">Links</a></li>
 				<li id="navigation-settings">Settings</li>
 			</ul>
 		</div>

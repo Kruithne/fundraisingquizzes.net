@@ -1,0 +1,74 @@
+.site-link
+{
+	cursor: pointer;
+	position: relative;
+}
+
+.site-link h1, .site-link h1 input
+{
+	font-size: 19px;
+	font-weight: bold;
+}
+
+.site-link p
+{
+	font-size: 1.3em;
+}
+
+.site-link input
+{
+	margin: 3px 0;
+	width: 900px;
+}
+
+.site-link .options
+{
+	position: absolute;
+	bottom: 10px;
+	right: 20px;
+}
+
+.site-link .options ul
+{
+	list-style: none;
+}
+
+.site-link .options li
+{
+	display: inline;
+	margin: 0 10px;
+	padding-left: 20px;
+	background-repeat: no-repeat;
+	background-position: 0 1px;
+	cursor: pointer;
+}
+
+.option-edit
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/pencil_16.png);
+}
+
+.option-delete
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/trash_16.png);
+}
+
+
+.option-save
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/tick_16.png);
+}
+
+.option-cancel
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/delete_16.png);
+}
+
+#new-link-button
+{
+	background: white url(http://static.fundraisingquizzes.net/images/plus_32.png) no-repeat 20px;
+	font-size: 20px;
+	padding-left: 65px;
+	cursor: pointer;
+	display: none;
+}

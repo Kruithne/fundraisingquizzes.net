@@ -13,6 +13,8 @@
 		11 => 'DeleteQueryListener',
 		12 => 'RegisterAccountListener',
 		13 => 'RecoverAccount',
-		14 => 'ResetPassword'
+		14 => 'ResetPassword',
+		15 => 'DeleteSiteLink',
+		16 => 'EditSiteLink'
 	));
 ?>
