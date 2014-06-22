@@ -101,6 +101,54 @@
 			return $new_key;
 		}
 
+		/**
+		 * Retrieve the user_id linked to a password reset key.
+		 * @param string $key
+		 * @return int|null
+		 */
+		public static function getPasswordResetKeyUser($key)
+		{
+			$query = DB::get()->prepare('SELECT userID FROM password_resets WHERE resetKey = :key');
+			$query->setValue(':key', $key);
+
+			$result = $query->getFirstRow();
+			return $result === NULL ? NULL : $result->userID;
+		}
+
+		/**
+		 * Delete a password reset key.
+		 * @param string $key
+		 */
+		public static function deleteResetKey($key)
+		{
+			DB::get()->prepare('DELETE FROM password_resets WHERE resetKey = :key')->setValue(':key', $key)->execute();
+		}
+
+		/**
+		 * Change the password of a user account.
+		 * @param int|null $user_id ID of the user, NULL defaults to logged in user.
+		 * @param string $password New password.
+		 * @return bool
+		 */
+		public static function changeUserPassword($user_id, $password)
+		{
+			if ($user_id === NULL)
+			{
+				$user = Authenticator::getLoggedInUser();
+				if (!($user instanceof User))
+					return false;
+
+				$user_id = $user->getId();
+			}
+
+			$query = DB::get()->prepare('UPDATE users SET password = :pass WHERE ID = :id');
+			$query->setValue(':pass', crypt($password));
+			$query->setValue(':id', $user_id);
+			$query->execute();
+
+			return true;
+		}
+
 		private static $cache = Array();
 	}
 ?>

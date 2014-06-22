@@ -11,7 +11,8 @@ var Packet = {
 	SubmitQueryAnswer: 10,
 	DeleteQuery: 11,
 	RegisterAccount: 12,
-	RecoverAccount: 13
+	RecoverAccount: 13,
+	ResetPassword: 14
 };
 
 var PacketHandler = {

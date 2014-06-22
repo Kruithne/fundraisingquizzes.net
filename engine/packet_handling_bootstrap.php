@@ -12,6 +12,7 @@
 		10 => 'QueryAnswerSubmitListener',
 		11 => 'DeleteQueryListener',
 		12 => 'RegisterAccountListener',
-		13 => 'RecoverAccount'
+		13 => 'RecoverAccount',
+		14 => 'ResetPassword'
 	));
 ?>
