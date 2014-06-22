@@ -14,6 +14,14 @@
 				$quiz->setAccepted(true);
 				$quiz->persist();
 				$this->setReturn('success', true);
+
+				$submitter = UserHandler::getUser($quiz->getSubmittedBy());
+				if ($submitter instanceof User)
+				{
+					EmailHandler::sendEmail($submitter, 'Quiz Submission Accepted', 'quiz_approved.txt', Array(
+						'{quiz}' => $quiz->getTitle()
+					));
+				}
 			}
 		}
 	}

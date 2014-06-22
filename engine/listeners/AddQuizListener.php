@@ -16,7 +16,8 @@
 
 			if (REST::Check($title, $charity, $description, $closing))
 			{
-				$quiz = new Quiz($title, $charity, $description, $extra == null ? '' : $extra, $closing, Authenticator::isLoggedInAsAdmin(), 0);
+				$user_id = Authenticator::getLoggedInUser()->getId();
+				$quiz = new Quiz($title, $charity, $description, $extra == null ? '' : $extra, $closing, $user_id, Authenticator::isLoggedInAsAdmin(), 0);
 				$quiz->persist();
 				$this->setReturn('success', true);
 			}

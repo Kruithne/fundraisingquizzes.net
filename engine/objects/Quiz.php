@@ -27,6 +27,7 @@
 			$this->extra = $extra;
 			$this->closing = $closing;
 			$this->update = $update;
+			$this->submitted_by = $submitter;
 			$this->accepted = $accepted;
 			$this->new = $new;
 			$this->queries = Array();

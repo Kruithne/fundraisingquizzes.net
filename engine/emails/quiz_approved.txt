@@ -1,0 +1,8 @@
+Hello!
+
+The quiz '{quiz}' that you submitted to Fundraising Quizzes has been accepted and is now visible on our quiz listing page!
+
+Thank you for submitting it to us! If possible, please consider submitting the answers on our site after the quiz has ended!
+
+Have a great day,
+All the monkeys behind the scenes at Fundraising Quizzes.
