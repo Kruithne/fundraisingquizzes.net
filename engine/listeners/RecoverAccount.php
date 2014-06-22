@@ -38,11 +38,16 @@
 				if ($user_id === FALSE)
 					return 'Error getting account details!';
 
-				$this->sendRecoverEmail($email, 'recover_both.txt', Array('{key}', '{username}'), Array(UserHandler::getPasswordResetKey($user_id), $username));
+				EmailHandler::sendEmail($email, 'Account Recovery', 'recover_both.txt', Array(
+					'{key}' => UserHandler::getPasswordResetKey($user_id),
+					'{username}' => $username
+				));
 			}
 			else
 			{
-				$this->sendRecoverEmail($email, 'recover_username.txt', '{username}', $username);
+				EmailHandler::sendEmail($email, 'Account Recovery', 'recover_username.txt', Array(
+					'{username}' => $username
+				));
 			}
 			return NULL;
 		}
@@ -62,18 +67,10 @@
 			if (!($user instanceof User))
 				return 'Error getting user info!';
 
-			$this->sendRecoverEmail($user->getEmailAddress(), 'recover_password.txt', '{key}', UserHandler::getPasswordResetKey($user_id));
+			EmailHandler::sendEmail($user, 'Account Recovery', 'recover_password.txt', Array(
+				'{key}' => UserHandler::getPasswordResetKey($user_id)
+			));
 			return NULL;
-		}
-
-		private function sendRecoverEmail($email, $file, $search, $replace)
-		{
-			$mail = new KW_Mail();
-			$mail->setSender('Fundraising Quizzes <noreply@fundraisingquizzes.net>');
-			$mail->addRecipients($email);
-			$mail->setSubject('Account Recovery - Fundraising Quizzes');
-			$mail->append(str_replace($search, $replace, file_get_contents('../engine/emails/' . $file)));
-			$mail->send();
 		}
 	}
 ?>
