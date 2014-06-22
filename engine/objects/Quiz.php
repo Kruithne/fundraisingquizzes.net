@@ -12,12 +12,13 @@
 		 * @param string $description First-line description of the quiz.
 		 * @param string $extra Extra description of the quiz.
 		 * @param int $closing The date which the quiz closes.
+		 * @param int $submitter The ID of the user who submitted the quiz.
 		 * @param boolean $accepted True if the quiz has been accepted.
 		 * @param int $update Days the quiz is flagged as updated for.
 		 * @param int $new Days the quiz is flagged as new for.
 		 * @param int $id ID of the quiz. Leave blank if the quiz has never been persisted.
 		 */
-		public function __construct($title, $charity, $description, $extra, $closing, $accepted = false, $update = self::DEFAULT_UPDATE_FLAG, $new = self::DEFAULT_NEW_FLAG, $id = Quiz::NONE)
+		public function __construct($title, $charity, $description, $extra, $closing, $submitter, $accepted = false, $update = self::DEFAULT_UPDATE_FLAG, $new = self::DEFAULT_NEW_FLAG, $id = Quiz::NONE)
 		{
 			$this->id = $id;
 			$this->title = $title;
@@ -136,6 +137,22 @@
 		}
 
 		/**
+		 * @param mixed $submitted_by
+		 */
+		public function setSubmittedBy($submitted_by)
+		{
+			$this->submitted_by = $submitted_by;
+		}
+
+		/**
+		 * @return mixed
+		 */
+		public function getSubmittedBy()
+		{
+			return $this->submitted_by;
+		}
+
+		/**
 		 * @param boolean $accepted
 		 */
 		public function setAccepted($accepted)
@@ -194,8 +211,8 @@
 			$query = null;
 			if ($this->id == Quiz::NONE)
 			{
-				$query = DB::get()->prepare('INSERT INTO quizzes (title, charity, description, description_extra, closing, new_flag, accepted)
-					VALUES(:title, :charity, :description, :extra, :closing, :new, :accepted)');
+				$query = DB::get()->prepare('INSERT INTO quizzes (title, charity, description, description_extra, closing, submitted_by, new_flag, accepted)
+					VALUES(:title, :charity, :description, :extra, :closing, :submitter, :new, :accepted)');
 
 				$query->setValue(':new', QUIZ::DEFAULT_NEW_FLAG);
 			}
@@ -207,6 +224,7 @@
 					description = :description,
 					description_extra = :extra,
 					closing = :closing,
+					submitted_by = :submitter,
 					accepted = :accepted,
 					updated_flag = :updated WHERE ID = :id');
 
@@ -219,6 +237,7 @@
 			$query->setValue(':description', $this->getDescription());
 			$query->setValue(':extra', $this->extra);
 			$query->setValue(':closing', $this->closing);
+			$query->setValue(':submitter', $this->submitted_by);
 			$query->setValue(':accepted', $this->accepted ? 1 : 0);
 
 			$query->execute();
@@ -234,7 +253,7 @@
 			if ($id == 0)
 				return QUIZ::NONE;
 
-			$query = DB::get()->prepare('SELECT title, charity, description, description_extra, closing, accepted, updated_flag, new_flag FROM quizzes WHERE ID = :id');
+			$query = DB::get()->prepare('SELECT title, charity, description, description_extra, closing, submitted_by, accepted, updated_flag, new_flag FROM quizzes WHERE ID = :id');
 			$query->setValue(':id', $id);
 
 			$result = $query->getFirstRow();
@@ -248,6 +267,7 @@
 				$result->description,
 				$result->description_extra,
 				$result->closing,
+				$result->submitted_by,
 				(bool) $result->accepted,
 				$result->updated_flag,
 				$result->new_flag,
@@ -265,7 +285,7 @@
 		 */
 		public static function getAll($acceptedOnly = true)
 		{
-			$query = DB::get()->prepare('SELECT ID, title, charity, description, description_extra, closing, accepted, updated_flag, new_flag FROM quizzes WHERE deleted = 0' . ($acceptedOnly ? ' AND accepted = 1' : '') . ' ORDER BY closing ASC');
+			$query = DB::get()->prepare('SELECT ID, title, charity, description, description_extra, closing, submitted_by, accepted, updated_flag, new_flag FROM quizzes WHERE deleted = 0' . ($acceptedOnly ? ' AND accepted = 1' : '') . ' ORDER BY closing ASC');
 			$return = Array();
 
 			foreach ($query->getRows() as $row)
@@ -276,6 +296,7 @@
 					$row->description,
 					$row->description_extra,
 					$row->closing,
+					$row->submitted_by,
 					(bool) $row->accepted,
 					$row->updated_flag,
 					$row->new_flag,
@@ -307,5 +328,6 @@
 		private $new;
 		private $accepted;
 		private $queries;
+		private $submitted_by;
 	}
 ?>
