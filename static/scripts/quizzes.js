@@ -131,6 +131,15 @@ $(function()
 				},
 				{
 					type: click,
+					element: '.flag_query',
+					func: function()
+					{
+						$(this).parent().parent().find('.quiz-option-queries').click();
+						handler.halt = false;
+					}
+				},
+				{
+					type: click,
 					element: '.quiz-query-submit a',
 					func: function()
 					{
