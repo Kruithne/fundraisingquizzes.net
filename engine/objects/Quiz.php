@@ -188,6 +188,12 @@
 			}
 		}
 
+		public function restore()
+		{
+			if ($this->id !== Quiz::NONE)
+				DB::get()->prepare('UPDATE quizzes SET deleted = 0 WHERE ID = :id')->setValue(':id', $this->id)->execute();
+		}
+
 		/**
 		 * Pull any queries for this quiz into the object.
 		 */
