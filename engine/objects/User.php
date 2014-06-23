@@ -104,6 +104,23 @@
 		}
 
 		/**
+		 * Return the join date for this user.
+		 * @return string|null
+		 */
+		public function getJoined()
+		{
+			if ($this->joined !== NULL)
+				return $this->joined;
+
+			$query = DB::get()->prepare('SELECT registered FROM users WHERE ID = :user');
+			$query->setValue(':user', $this->getId());
+
+			$result = $query->getFirstRow();
+			$this->joined = $result === NULL ? NULL : $result->registered;
+			return $this->joined;
+		}
+
+		/**
 		 * Returns the login key for this user.
 		 * @return string
 		 */
@@ -167,5 +184,10 @@
 		 * @var string E-mail address for this user, normally NULL until requested.
 		 */
 		private $email;
+
+		/**
+		 * @var string Date string for when the user joined the site.
+		 */
+		private $joined;
 	}
 ?>
