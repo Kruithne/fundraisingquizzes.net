@@ -10,7 +10,7 @@
 		{
 			if (is_array($node))
 				return array_map(array("PacketHandler", "convertChildren"), $node);
-			else if (is_object($node))
+			else if (is_object($node) && !($node instanceof JsonSerializable))
 				return array_map(array("PacketHandler", "convertChildren"), get_object_vars($node));
 			else if (is_string($node))
 				return html_entity_decode(self::convertCharacters($node), ENT_COMPAT, "UTF-8");
