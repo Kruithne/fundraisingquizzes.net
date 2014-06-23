@@ -9,4 +9,7 @@
 
 	// Delete any expired password keys.
 	DB::get()->execute('DELETE FROM password_resets WHERE created < DATE_SUB(NOW(), INTERVAL 1 DAY)');
+
+	// Delete any expired answer sets
+	DB::get()->execute('DELETE FROM quiz_answers WHERE closed < DATE_SUB(NOW(), INTERVAL 1 MONTH)');
 ?>
