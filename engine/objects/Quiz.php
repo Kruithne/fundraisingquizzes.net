@@ -183,9 +183,7 @@
 		public function delete()
 		{
 			if ($this->id !== Quiz::NONE)
-			{
 				DB::get()->prepare('UPDATE quizzes SET deleted = 1 WHERE ID = :id')->setValue(':id', $this->id)->execute();
-			}
 		}
 
 		public function restore()
