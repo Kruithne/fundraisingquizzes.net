@@ -70,12 +70,15 @@ $(function()
 
 		resetLoginForm: function()
 		{
-			$('#navigation-admin').remove();
+			$('#navigation-admin,#navigation-settings').hide();
+
 			if (handler.loggedIn != null)
 			{
 				handler.element.html('You are logged in as ' + handler.loggedIn + '. <a id="logout-button">Logout</a>.');
 				if (handler.isAdmin)
-					$('<li id="navigation-admin"><a href="admin.php">Admin</a></li>').appendTo($('#navigation'));
+					$('#navigation-admin').show();
+
+				$('#navigation-settings').show();
 			}
 			else
 			{
