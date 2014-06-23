@@ -179,17 +179,15 @@
 
 		/**
 		 * Delete the current quiz from the database.
+		 * @param boolean $restore If true, this will reverse a delete.
 		 */
-		public function delete()
+		public function delete($restore = false)
 		{
 			if ($this->id !== Quiz::NONE)
-				DB::get()->prepare('UPDATE quizzes SET deleted = 1 WHERE ID = :id')->setValue(':id', $this->id)->execute();
-		}
-
-		public function restore()
-		{
-			if ($this->id !== Quiz::NONE)
-				DB::get()->prepare('UPDATE quizzes SET deleted = 0 WHERE ID = :id')->setValue(':id', $this->id)->execute();
+			{
+				$val = $restore ? 1 : 0;
+				DB::get()->prepare("UPDATE quizzes SET deleted = $val WHERE ID = :id")->setValue(':id', $this->id)->execute();
+			}
 		}
 
 		/**
