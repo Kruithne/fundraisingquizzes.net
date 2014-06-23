@@ -3,7 +3,14 @@
 		<ul>
 			<li id="option-info" class="active" panel="panel-details">Account Details</li>
 			<li id="option-avatar" panel="panel-avatar">Avatar</li>
-			<li id="option-graveyard">Quiz Graveyard</li>
+			<?php
+				if (Authenticator::isLoggedInAsAdmin())
+				{
+					?>
+					<li id="option-graveyard" panel="panel-graveyard">Quiz Graveyard</li>
+					<?php
+				}
+			?>
 		</ul>
 	</div>
 	<div class="module module-padded settings-panel" id="panel-details">
@@ -28,6 +35,9 @@
 		</table>
 	</div>
 	<div class="module module-padded settings-panel" id="panel-avatar">
+		<p>Stuff about changing avatar</p>
+	</div>
+	<div class="module module-padded settings-panel" id="panel-graveyard">
 		<p>Stuff about changing avatar</p>
 	</div>
 </div>
