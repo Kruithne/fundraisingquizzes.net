@@ -33,6 +33,33 @@
 				<td><span class="time-period"><?php echo $this->user->getJoined(); ?></span> (<span class="time-formal"><?php echo $this->user->getJoined(); ?></span>)</td>
 			</tr>
 		</table>
+		<h2>Change E-mail Address</h2>
+		<form class="validatable preventDefault" error="changeEmailError" complete="changeEmailSuccess">
+			<p class="error-field" id="email-error"></p>
+			<table class="form-table">
+				<tr>
+					<th>New E-mail Address:</th>
+					<td><input type="text" class="input-text" id="new-email" validate="email" require="true"/> <input type="submit" class="input-button" value="Change"/></td>
+				</tr>
+			</table>
+		</form>
+		<h2>Change Password</h2>
+		<form class="validatable preventDefault" error="changePasswordError" complete="changePasswordSuccess">
+			<p class="error-field" id="password-error"></p>
+			<table class="form-table">
+				<tr>
+					<th>New Password:</th>
+					<td><input type="password" require="true" class="input-text" id="new-pass"/></td>
+				</tr>
+				<tr>
+					<th>Re-type Password:</th>
+					<td><input type="password" require="true" class="input-text" id="new-pass-confirm" validate="password" field="new-pass"/></td>
+				</tr>
+				<tr>
+					<td colspan="2" class="footer"><input type="submit" class="input-button" value="Change Password"/></td>
+				</tr>
+			</table>
+		</form>
 	</div>
 	<div class="module module-padded settings-panel" id="panel-avatar">
 		<h1 id="panel-header-avatar">Change Your Avatar</h1>

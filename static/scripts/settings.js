@@ -32,6 +32,14 @@ $(function()
 
 			handler.switchToPanel('panel-details');
 			PacketHandler.hook(Packet.RestoreQuiz, packetContext(handler, 'handleRestoreQuiz'));
+
+			window.changeEmailError = handler.changeEmailError;
+			window.changePasswordError = handler.changePasswordError;
+			window.changeEmailSuccess = handler.changeEmailSuccess;
+			window.changePasswordSuccess = handler.changePasswordSuccess;
+
+			PacketHandler.hook(Packet.ChangePassword, packetContext(handler, 'handleChangePassword'));
+			PacketHandler.hook(Packet.ChangeEmail, packetContext(handler, 'handleChangeEmail'));
 		},
 
 		switchToPanel: function(panelID)
@@ -60,6 +68,82 @@ $(function()
 					$(this).remove();
 				});
 			}
+		},
+
+		changePasswordError: function(e)
+		{
+			$('#password-error').setError('Make sure both passwords match!');
+		},
+
+		changeEmailError: function()
+		{
+			$('#email-error').setError('You must enter a valid e-mail address!');
+		},
+
+		changeEmailSuccess: function(form)
+		{
+			if (!form.hasClass('submitting'))
+			{
+				form.addClass('submitting');
+
+				PacketHandler.send(Packet.ChangeEmail, {
+					email: form.find('#new-email').val().trim()
+				},
+				{
+					form: form,
+					errorField: form.find('.error-field').setPending('Changing e-mail address...')
+				});
+			}
+		},
+
+		handleChangeEmail: function(data, callback)
+		{
+			var form = callback.form,
+				errorField = callback.errorField;
+
+			if (data.success != undefined && data.success == true)
+			{
+				errorField.setSuccess('E-mail address changed!');
+				form.find('.input-text').val('');
+			}
+			else
+			{
+				errorField.setError('Unable to change e-mail address, try again later!');
+			}
+			form.removeClass('submitting');
+		},
+
+		changePasswordSuccess: function(form)
+		{
+			if (!form.hasClass('submitting'))
+			{
+				form.addClass('submitting');
+
+				PacketHandler.send(Packet.ChangePassword, {
+					pass: form.find('#new-pass').val().trim()
+				},
+				{
+					form: form,
+					errorField: form.find('.error-field').setPending('Changing password...')
+				});
+			}
+		},
+
+		handleChangePassword: function(data, callback)
+		{
+			var form = callback.form,
+				errorField = callback.errorField;
+
+			if (data.success != undefined && data.success == true)
+			{
+				errorField.setSuccess('Password changed!');
+				form.find('.input-text').val('');
+			}
+			else
+			{
+				errorField.setError('Unable to change password, try again later!');
+			}
+			form.removeClass('submitting');
 		}
 	};
 	handler.load();

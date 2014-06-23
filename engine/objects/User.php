@@ -98,6 +98,20 @@
 		}
 
 		/**
+		 * Set the users e-mail address.
+		 * @param string $email
+		 */
+		public function setEmailAddress($email)
+		{
+			$this->email = $email;
+
+			$query = DB::get()->prepare('UPDATE users SET email = :email WHERE ID = :user');
+			$query->setValue(':email', $email);
+			$query->setValue(':user', $this->getId());
+			$query->execute();
+		}
+
+		/**
 		 * Returns the e-mail address of this user.
 		 * @return null|string
 		 */

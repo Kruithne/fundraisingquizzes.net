@@ -20,6 +20,8 @@
 		18 => 'DeleteAnswers',
 		19 => 'EditAnswers',
 		20 => 'AddAnswers',
-		21 => 'RestoreQuiz'
+		21 => 'RestoreQuiz',
+		22 => 'ChangePassword',
+		23 => 'ChangeEmail'
 	));
 ?>
