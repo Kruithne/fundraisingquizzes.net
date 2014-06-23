@@ -9,9 +9,11 @@
 		public static function convertChildren($node)
 		{
 			if (is_array($node))
-				return array_map(array("PacketHandler", "convertChildren"), $node);
-			else if (is_object($node) && !($node instanceof JsonSerializable))
-				return array_map(array("PacketHandler", "convertChildren"), get_object_vars($node));
+				return array_map(self::$convertFunction, $node);
+			else if ($node instanceof JsonSerializable)
+				return array_map(self::$convertFunction, $node->jsonSerialize());
+			else if (is_object($node))
+				return array_map(self::$convertFunction, get_object_vars($node));
 			else if (is_string($node))
 				return html_entity_decode(self::convertCharacters($node), ENT_COMPAT, "UTF-8");
 
@@ -55,5 +57,6 @@
 			'‘' => '\'',
 			'’' => '\''
 		);
+		private static $convertFunction = ["PacketHandler", "convertChildren"];
 	}
 ?>
