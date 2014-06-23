@@ -288,8 +288,8 @@
 		public static function getAll($acceptedOnly = true, $deletedOnly = false)
 		{
 			$accepted = ($acceptedOnly ? ' AND accepted = 1' : '');
-			$deleted = ($deletedOnly ? ' AND deleted = 1' : '');
-			$query = DB::get()->prepare("SELECT ID, title, charity, description, description_extra, closing, submitted_by, accepted, updated_flag, new_flag FROM quizzes WHERE deleted = 0$accepted$deleted ORDER BY closing ASC");
+			$deleted = ($deletedOnly ? 1 : 0);
+			$query = DB::get()->prepare("SELECT ID, title, charity, description, description_extra, closing, submitted_by, accepted, updated_flag, new_flag FROM quizzes WHERE deleted = $deleted$accepted ORDER BY closing ASC");
 			$return = Array();
 
 			foreach ($query->getRows() as $row)
