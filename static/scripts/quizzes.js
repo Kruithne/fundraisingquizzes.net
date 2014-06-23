@@ -377,7 +377,8 @@ $(function()
 				closing: form.find('.dateSelector').getDateSelectorValue()
 			};
 
-			if (isAnswerPage)
+			var isAnswer = typeof isAnswerPage !== "undefined";
+			if (isAnswer)
 			{
 				data.answers = form.find('#answers').val().trim();
 			}
@@ -388,7 +389,7 @@ $(function()
 			}
 
 			handler.submitting = true;
-			PacketHandler.send(isAnswerPage ? Packet.AddAnswers : Packet.AddQuiz, data);
+			PacketHandler.send(isAnswer ? Packet.AddAnswers : Packet.AddQuiz, data);
 		},
 
 		handleAddReply: function(data)
@@ -398,7 +399,7 @@ $(function()
 			{
 				handler.closeSubmitField();
 				$('#submit-button').addClass('quiz-submitted').html(
-					isAnswerPage ? 'Answers submitted! They\'ll appear on the listing after approval. Click here to submit another!' : 'Quiz submitted! It will appear on the listing after approval. Click here to submit another!'
+					typeof isAnswerPage !== "undefined" ? 'Answers submitted! They\'ll appear on the listing after approval. Click here to submit another!' : 'Quiz submitted! It will appear on the listing after approval. Click here to submit another!'
 				);
 			}
 		},
