@@ -1,0 +1,53 @@
+#settings-page
+{
+	position: relative;
+}
+
+#options
+{
+	position: absolute;
+	bottom: 0;
+	top: 0;
+	margin: 0;
+	width: 187px;
+}
+
+#options ul
+{
+	list-style: none;
+	margin-top: 10px;
+}
+
+#options li
+{
+	font-weight: bold;
+	padding: 10px 0 10px 40px;
+	cursor: pointer;
+	background-repeat: no-repeat;
+	background-position: 15px;
+}
+
+#options li:hover
+{
+	background-color: #CBCBDB;
+}
+
+#option-info
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/licence_16.png);
+}
+
+#option-avatar
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/user7_16.png);
+}
+
+#option-graveyard
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/reload_16.png);
+}
+
+#settings-panel
+{
+	margin-left: 200px;
+}
