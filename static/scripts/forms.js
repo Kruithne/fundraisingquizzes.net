@@ -4,7 +4,7 @@ $(function()
 		setFormMessage: function(msg)
 		{
 			if (!this.is(':visible'))
-				this.slideDown();
+				this.show();
 
 			return this.removeClass('form-error form-success form-pending').text(msg);
 		},
