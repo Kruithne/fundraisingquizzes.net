@@ -38,7 +38,7 @@ timeMachine.suffix = function(day)
 
 timeMachine.sqlToDate = function(date)
 {
-	var split = date.split("-");
+	var split = date.split(" ")[0].split("-");
 	return new Date(split[0], split[1] - 1, split[2]);
 };
 
