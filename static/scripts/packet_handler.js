@@ -18,7 +18,8 @@ var Packet = {
 	ApproveAnswers: 17,
 	DeleteAnswers: 18,
 	EditAnswers: 19,
-	AddAnswers: 20
+	AddAnswers: 20,
+	RestoreQuiz: 21
 };
 
 var PacketHandler = {

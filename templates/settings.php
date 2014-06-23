@@ -35,9 +35,22 @@
 		</table>
 	</div>
 	<div class="module module-padded settings-panel" id="panel-avatar">
+		<h1 id="panel-header-avatar">Change Your Avatar</h1>
 		<p>Stuff about changing avatar</p>
 	</div>
-	<div class="module module-padded settings-panel" id="panel-graveyard">
-		<p>Stuff about changing avatar</p>
-	</div>
+	<?php
+		if (Authenticator::isLoggedInAsAdmin())
+		{
+			?>
+			<div class="module module-padded settings-panel" id="panel-graveyard">
+				<h1 id="panel-header-graveyard">Quiz Graveyard</h1>
+				<?php
+					/** @var Quiz $quiz */
+					foreach ($this->deleted_quizzes as $quiz)
+						echo '<p id="' . $quiz->getId() . '">' . $quiz->getTitle() . ' in aid of ' . $quiz->getCharity() . ' <a>[Restore]</a></p>';
+				?>
+			</div>
+			<?php
+		}
+	?>
 </div>

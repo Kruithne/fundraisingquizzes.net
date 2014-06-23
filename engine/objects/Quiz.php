@@ -185,7 +185,7 @@
 		{
 			if ($this->id !== Quiz::NONE)
 			{
-				$val = $restore ? 1 : 0;
+				$val = $restore ? 0 : 1;
 				DB::get()->prepare("UPDATE quizzes SET deleted = $val WHERE ID = :id")->setValue(':id', $this->id)->execute();
 			}
 		}

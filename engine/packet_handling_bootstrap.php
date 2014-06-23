@@ -19,6 +19,7 @@
 		17 => 'ApproveAnswers',
 		18 => 'DeleteAnswers',
 		19 => 'EditAnswers',
-		20 => 'AddAnswers'
+		20 => 'AddAnswers',
+		21 => 'RestoreQuiz'
 	));
 ?>

@@ -10,6 +10,11 @@
 			$this->addScript('settings.js');
 
 			$template->user = Authenticator::getLoggedInUser();
+
+			if (Authenticator::isLoggedInAsAdmin())
+			{
+				$template->deleted_quizzes = Quiz::getAll(false, true);
+			}
 		}
 	}
 ?>

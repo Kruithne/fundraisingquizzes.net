@@ -71,8 +71,23 @@
 	background-image: url(http://static.fundraisingquizzes.net/images/licence_32.png);
 }
 
+#panel-header-avatar
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/user7_32.png);
+}
+
+#panel-header-graveyard
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/reload_32.png);
+}
+
 .field-hidden
 {
 	color: #9C9C9C;
 	font-style: italic;
+}
+
+#panel-graveyard p
+{
+	margin: 5px 0;
 }
