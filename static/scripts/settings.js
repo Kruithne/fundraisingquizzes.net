@@ -111,7 +111,10 @@ $(function()
 			}
 			else
 			{
-				errorField.setError('Unable to change e-mail address, try again later!');
+				if (data.error != undefined)
+					errorField.setError(data.error);
+				else
+					errorField.setError('Unable to change e-mail address, try again later!');
 			}
 			form.removeClass('submitting');
 		},
