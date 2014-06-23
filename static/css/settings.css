@@ -57,3 +57,22 @@
 	margin-left: 200px;
 	display: none;
 }
+
+.settings-panel h1
+{
+	padding-left: 45px;
+	background-repeat: no-repeat;
+	background-position: left;
+	margin-bottom: 10px;
+}
+
+#panel-header-details
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/licence_32.png);
+}
+
+.field-hidden
+{
+	color: #9C9C9C;
+	font-style: italic;
+}
