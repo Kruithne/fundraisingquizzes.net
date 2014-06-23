@@ -43,6 +43,7 @@
 				<li id="navigation-forum">Forum</li>
 				<li id="navigation-links"><a href="links.php">Links</a></li>
 				<li id="navigation-settings">Settings</li>
+				<li id="navigation-admin">Admin</li>
 			</ul>
 		</div>
 		<?php
