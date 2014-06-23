@@ -8,9 +8,19 @@
 				return;
 
 			$password = REST::Get('pass');
-			if ($password !== NULL)
+			$current = REST::Get('current');
+
+			if ($password !== NULL && $current !== NULL)
 			{
-				Authenticator::getLoggedInUser()->setPassword($password);
+				$user = Authenticator::getLoggedInUser();
+
+				if (Authenticator::authenticateUser($user->getUsername(), $current) == User::NONE)
+				{
+					$this->setReturn('error', 'Invalid current password!');
+					return;
+				}
+
+				$user->setPassword($password);
 				$this->setReturn('success', true);
 			}
 		}

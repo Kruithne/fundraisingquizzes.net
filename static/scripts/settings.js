@@ -72,12 +72,12 @@ $(function()
 
 		changePasswordError: function(e)
 		{
-			$('#password-error').setError('Make sure both passwords match!');
+			$('#password-error').setError('Make sure you enter your current password and both new passwords match!');
 		},
 
 		changeEmailError: function()
 		{
-			$('#email-error').setError('You must enter a valid e-mail address!');
+			$('#email-error').setError('You must enter your password and a valid e-mail address!');
 		},
 
 		changeEmailSuccess: function(form)
@@ -88,7 +88,8 @@ $(function()
 				var email = form.find('#new-email').val().trim();
 
 				PacketHandler.send(Packet.ChangeEmail, {
-					email: email
+					email: email,
+					pass: form.find('.current-password').val().trim()
 				},
 				{
 					form: form,
@@ -126,7 +127,8 @@ $(function()
 				form.addClass('submitting');
 
 				PacketHandler.send(Packet.ChangePassword, {
-					pass: form.find('#new-pass').val().trim()
+					pass: form.find('#new-pass').val().trim(),
+					current: form.find('.current-password').val().trim()
 				},
 				{
 					form: form,
@@ -147,7 +149,10 @@ $(function()
 			}
 			else
 			{
-				errorField.setError('Unable to change password, try again later!');
+				if (data.error != undefined)
+					errorField.setError(data.error);
+				else
+					errorField.setError('Unable to change password, try again later!');
 			}
 			form.removeClass('submitting');
 		}

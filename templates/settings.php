@@ -38,6 +38,10 @@
 			<p class="error-field" id="email-error"></p>
 			<table class="form-table">
 				<tr>
+					<th>Current Password:</th>
+					<td><input type="password" class="input-text  current-password" require="true"/></td>
+				</tr>
+				<tr>
 					<th>New E-mail Address:</th>
 					<td><input type="text" class="input-text" id="new-email" validate="email" require="true"/> <input type="submit" class="input-button" value="Change"/></td>
 				</tr>
@@ -47,6 +51,10 @@
 		<form class="validatable preventDefault" error="changePasswordError" complete="changePasswordSuccess">
 			<p class="error-field" id="password-error"></p>
 			<table class="form-table">
+				<tr>
+					<th>Current Password:</th>
+					<td><input type="password" require="true" class="input-text current-password"/></td>
+				</tr>
 				<tr>
 					<th>New Password:</th>
 					<td><input type="password" require="true" class="input-text" id="new-pass"/></td>
