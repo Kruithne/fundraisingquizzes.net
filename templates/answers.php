@@ -1,6 +1,4 @@
-<div class="module module-padded" id="submit-button">
-	Have the answers to a closed quiz not listed here? Click here to submit them!
-</div>
+<div class="module module-padded" id="submit-button" orig="Have the answers to a closed quiz not listed here? Click here to submit them!"></div>
 <div class="module module-padded quiz-listing editing" id="quiz-submit">
 	<form class="validatable preventDefault" complete="submitQuizSuccess" error="submitQuizError" submit="submitQuizSubmit">
 		<p class="quiz-title"><input type="text" id="title" require="true" placeholder="Title..."/> in aid of <input type="text" id="charity" require="true" placeholder="Charity..."/></p>

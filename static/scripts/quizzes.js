@@ -117,7 +117,8 @@ $(function()
 					func: function()
 					{
 						handler.showUserOptions();
-						$('#submit-button').show();
+						var subButton = $('#submit-button');
+						subButton.text(subButton.attr('orig')).removeClass('quiz-submitted').show();
 
 						if (userIsAdmin())
 							$('.admin-option').css('display', 'inline');

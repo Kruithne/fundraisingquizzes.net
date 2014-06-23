@@ -2,9 +2,7 @@
 	<p><b>Voting:</b> You can vote for three quizzes a week, the quiz with the highest vote at the end of each week becomes Quiz of the Week.</p>
 	<p><b>Bookmarking:</b> Quizzes you bookmark will show up at the top of the list for you regardless of their closing date.</p>
 </div>
-<div class="module module-padded" id="submit-button">
-	Want to add your own quiz to this list? Click here to submit one!
-</div>
+<div class="module module-padded" id="submit-button" orig="Want to add your own quiz to this list? Click here to submit one!"></div>
 <div class="module module-padded quiz-listing editing" id="quiz-submit">
 	<form class="validatable preventDefault" complete="submitQuizSuccess" error="submitQuizError" submit="submitQuizSubmit">
 		<p class="quiz-title"><input type="text" id="title" require="true" placeholder="Title..."/> in aid of <input type="text" id="charity" require="true" placeholder="Charity..."/></p>
