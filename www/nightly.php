@@ -5,11 +5,13 @@
 	if (REST::Get('key') !== NIGHTLY_KEY)
 		die();
 
-	DB::get()->execute('UPDATE quizzes SET deleted = 1 WHERE closing < CURDATE()');
+	$db = DB::get();
+
+	$db->execute('UPDATE quizzes SET deleted = 1 WHERE closing < CURDATE()');
 
 	// Delete any expired password keys.
-	DB::get()->execute('DELETE FROM password_resets WHERE created < DATE_SUB(NOW(), INTERVAL 1 DAY)');
+	$db->execute('DELETE FROM password_resets WHERE created < DATE_SUB(NOW(), INTERVAL 1 DAY)');
 
 	// Delete any expired answer sets
-	DB::get()->execute('DELETE FROM quiz_answers WHERE closed < DATE_SUB(NOW(), INTERVAL 1 MONTH)');
+	$db->execute('DELETE FROM quiz_answers WHERE closed < DATE_SUB(NOW(), INTERVAL 1 MONTH)');
 ?>
