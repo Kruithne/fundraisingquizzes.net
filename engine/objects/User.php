@@ -87,6 +87,17 @@
 		}
 
 		/**
+		 * @param string $password Set the users password.
+		 */
+		public function setPassword($password)
+		{
+			$query = DB::get()->prepare('UPDATE users SET password = :pass WHERE ID = :user');
+			$query->setValue(':pass', crypt($password));
+			$query->setValue(':user', $this->getId());
+			$query->execute();
+		}
+
+		/**
 		 * Returns the e-mail address of this user.
 		 * @return null|string
 		 */
