@@ -85,13 +85,15 @@ $(function()
 			if (!form.hasClass('submitting'))
 			{
 				form.addClass('submitting');
+				var email = form.find('#new-email').val().trim();
 
 				PacketHandler.send(Packet.ChangeEmail, {
-					email: form.find('#new-email').val().trim()
+					email: email
 				},
 				{
 					form: form,
-					errorField: form.find('.error-field').setPending('Changing e-mail address...')
+					errorField: form.find('.error-field').setPending('Changing e-mail address...'),
+					email: email
 				});
 			}
 		},
@@ -105,6 +107,7 @@ $(function()
 			{
 				errorField.setSuccess('E-mail address changed!');
 				form.find('.input-text').val('');
+				$('#email-address').text(callback.email);
 			}
 			else
 			{

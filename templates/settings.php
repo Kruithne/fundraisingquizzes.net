@@ -22,7 +22,7 @@
 			</tr>
 			<tr>
 				<th>E-mail Address:</th>
-				<td><?php echo $this->user->getEmailAddress(); ?></td>
+				<td id="email-address"><?php echo $this->user->getEmailAddress(); ?></td>
 			</tr>
 			<tr>
 				<th>Password:</th>
