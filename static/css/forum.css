@@ -1,0 +1,32 @@
+.topic
+{
+	cursor: pointer;
+	background: white url(http://static.fundraisingquizzes.net/images/bubble2_16.png) no-repeat 15px;
+	padding-left: 45px;
+}
+
+#listing-header
+{
+	padding-left: 45px;
+	font-weight: bold;
+}
+
+.topic.unread
+{
+	font-weight: bold;
+}
+
+.topic div, #listing-header div
+{
+	display: inline-block;
+}
+
+.topic .title, #listing-header .title
+{
+	width: 700px;
+}
+
+.topic .author, #listing-header .author
+{
+	width: 300px;
+}

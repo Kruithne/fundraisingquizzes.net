@@ -21,7 +21,8 @@ var Packet = {
 	AddAnswers: 20,
 	RestoreQuiz: 21,
 	ChangePassword: 22,
-	ChangeEmail: 23
+	ChangeEmail: 23,
+	GetForumTopics: 24
 };
 
 var PacketHandler = {

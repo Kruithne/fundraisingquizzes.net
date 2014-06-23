@@ -22,6 +22,7 @@
 		20 => 'AddAnswers',
 		21 => 'RestoreQuiz',
 		22 => 'ChangePassword',
-		23 => 'ChangeEmail'
+		23 => 'ChangeEmail',
+		24 => 'GetForumTopics'
 	));
 ?>
