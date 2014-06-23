@@ -350,7 +350,7 @@ $(function()
 			handler.submitQuizField.slideUp(400, function()
 			{
 				var t = $(this);
-				t.find('input,textarea').val('');
+				t.find('input,textarea,select').val('').removeClass('error');
 				t.find('.dateSelector').setDateSelectorValue(new Date());
 			}).find('.quiz-options').fadeOut('fast');
 		},
