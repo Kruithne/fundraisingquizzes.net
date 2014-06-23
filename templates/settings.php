@@ -36,7 +36,7 @@
 	</div>
 	<div class="module module-padded settings-panel" id="panel-avatar">
 		<h1 id="panel-header-avatar">Change Your Avatar</h1>
-		<p>Stuff about changing avatar</p>
+		<p>Changing your avatar is currently not possible, but it will be soon!</p>
 	</div>
 	<?php
 		if (Authenticator::isLoggedInAsAdmin())
