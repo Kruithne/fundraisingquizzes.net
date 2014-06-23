@@ -5,10 +5,16 @@ $(function()
 		{
 			var doc = $(document);
 
+			var option_selector = '#options li',
+				options = $(option_selector),
+				minHeight = options.first().outerHeight(true) * options.length;
+
+			$('.settings-panel').css('min-height', minHeight + 'px');
+
 			doc.on('fqLogout', function()
 			{
 				window.location.href = 'index.php';
-			}).on('click', '#options li', function()
+			}).on('click', option_selector, function()
 			{
 				var option = $(this);
 
