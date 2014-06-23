@@ -32,6 +32,11 @@
 	background-color: #CBCBDB;
 }
 
+#options li.active
+{
+	background-color: #ADCF9C;
+}
+
 #option-info
 {
 	background-image: url(http://static.fundraisingquizzes.net/images/licence_16.png);
@@ -47,7 +52,8 @@
 	background-image: url(http://static.fundraisingquizzes.net/images/reload_16.png);
 }
 
-#settings-panel
+.settings-panel
 {
 	margin-left: 200px;
+	display: none;
 }
