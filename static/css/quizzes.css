@@ -1,9 +1,15 @@
-.quiz-listing input, .quiz-listing select
+.quiz-listing input, .quiz-listing select, .quiz-extra textarea
 {
 	padding: 2px;
 	margin: 2px;
 	font-family: 'Noto Sans', sans-serif;
 	border: 1px solid #999;
+	resize: none;
+}
+
+.quiz-listing input.error, .quiz-listing textarea.error, .quiz-listing select.error
+{
+	border: 1px solid red;
 }
 
 .quiz-listing.bookmarked
@@ -39,9 +45,19 @@
 	margin-top: 10px;
 }
 
-.quiz-extra input
+.quiz-extra input, .quiz-extra textarea
 {
 	width: 700px;
+}
+
+.quiz-extra textarea
+{
+	height: 200px;
+}
+
+.quiz-answers .break
+{
+	margin-top: 10px;
 }
 
 .quiz-listing

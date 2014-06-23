@@ -124,7 +124,8 @@ $(function()
 
 						$('.quiz-query-question').append('<div class="delete"><div></div></div>');
 
-						PacketHandler.send(Packet.QuizData);
+						if (typeof isAnswerPage == 'undefined')
+							PacketHandler.send(Packet.QuizData);
 					}
 				},
 				{
@@ -233,6 +234,13 @@ $(function()
 				}
 			];
 
+			$.fn.extend({
+				isAnswer: function()
+				{
+					return this.hasClass('answer');
+				}
+			});
+
 			for (var hookIndex in hooks)
 			{
 				var hookObj = hooks[hookIndex];
@@ -267,9 +275,13 @@ $(function()
 			}
 
 			hook(Packet.EditQuiz, 'handleEditReply');
+			hook(Packet.EditAnswers, 'handleEditReply');
 			hook(Packet.AddQuiz, 'handleAddReply');
+			hook(Packet.AddAnswers, 'handleAddReply');
 			hook(Packet.ApproveQuiz, 'handleApproval');
+			hook(Packet.ApproveAnswers, 'handleApproval');
 			hook(Packet.DeleteQuiz, 'handleDelete');
+			hook(Packet.DeleteAnswers, 'handleDelete');
 			hook(Packet.QuizData, 'applyData');
 			hook(Packet.SubmitQuery, 'handleQuerySubmit');
 			hook(Packet.SubmitQueryAnswer, 'handleQueryAnswerSubmit');
@@ -338,27 +350,35 @@ $(function()
 			handler.submitQuizField.slideUp(400, function()
 			{
 				var t = $(this);
-				t.find('input').val('');
+				t.find('input,textarea').val('');
 				t.find('.dateSelector').setDateSelectorValue(new Date());
 			}).find('.quiz-options').fadeOut('fast');
 		},
 
 		handleQuizSuccess: function(form)
 		{
-			if (handler.submitted)
+			if (handler.submitting)
 				return;
 
 			var data =
 			{
 				title: form.find('#title').val().trim(),
 				charity: form.find('#charity').val().trim(),
-				closing: form.find('.dateSelector').getDateSelectorValue(),
-				description: form.find('#description').val().trim(),
-				extra: form.find('#extra').val().trim()
+				closing: form.find('.dateSelector').getDateSelectorValue()
 			};
 
+			if (isAnswerPage)
+			{
+				data.answers = form.find('#answers').val().trim();
+			}
+			else
+			{
+				data.description = form.find('#description').val().trim();
+				data.extra = form.find('#extra').val().trim();
+			}
+
 			handler.submitting = true;
-			PacketHandler.send(Packet.AddQuiz, data);
+			PacketHandler.send(isAnswerPage ? Packet.AddAnswers : Packet.AddQuiz, data);
 		},
 
 		handleAddReply: function(data)
@@ -367,7 +387,9 @@ $(function()
 			if (data.success != undefined && data.success == true)
 			{
 				handler.closeSubmitField();
-				$('#submit-button').addClass('quiz-submitted').html('Quiz submitted! It will appear on the listing after approval. Click here to submit another!');
+				$('#submit-button').addClass('quiz-submitted').html(
+					isAnswerPage ? 'Answers submitted! They\'ll appear on the listing after approval. Click here to submit another!' : 'Quiz submitted! It will appear on the listing after approval. Click here to submit another!'
+				);
 			}
 		},
 
@@ -376,8 +398,8 @@ $(function()
 			handler.submitting = false;
 			if (data.success != undefined && data.success == true)
 			{
-				var id = 'quiz-' + callback.id, listing = $('#' + id);
-				delete handler.old[id];
+				var listing = callback.listing;
+				delete handler.old[listing.attr('id')];
 
 				handler.cancelEditing(listing, callback);
 
@@ -388,7 +410,7 @@ $(function()
 
 		handleEditSubmit: function(form)
 		{
-			form.find('input,select').removeClass('error');
+			form.find('input,select,textarea').removeClass('error');
 		},
 
 		handleEditErrors: function(errorList)
@@ -409,17 +431,29 @@ $(function()
 		{
 			if (handler.submitting)
 				return;
-			var data = {
+
+			var listing = form.parent(), data = {
 				id: handler.getListingID(form.parent()),
 				title: form.find('.quiz-title-title input').val().trim(),
 				charity: form.find('.quiz-title-charity input').val().trim(),
-				closing: form.find('.quiz-closing').getDateSelectorValue(),
-				description: form.find('.quiz-description input').val().trim(),
-				extra: form.find('.quiz-description-extra input').val().trim()
+				closing: form.find('.quiz-closing').getDateSelectorValue()
 			};
 
+			if (listing.isAnswer())
+			{
+				data.answers = form.find('.quiz-answers textarea').val().trim();
+			}
+			else
+			{
+				data.description = form.find('.quiz-description input').val().trim();
+				data.extra = form.find('.quiz-description-extra input').val().trim();
+			}
+
+			var callback = $.extend({}, data);
+			callback.listing = listing;
+
 			handler.submitting = true;
-			PacketHandler.send(Packet.EditQuiz, data, data);
+			PacketHandler.send(listing.isAnswer() ? Packet.EditAnswers : Packet.EditQuiz, data, callback);
 		},
 
 		handleApproval: function(data, callback)
@@ -451,10 +485,15 @@ $(function()
 		prepareEditField: function(listing, fieldClass, required)
 		{
 			var field = listing.find('.quiz-' + fieldClass),
-				old = field.text();
+				isLarge = field.hasClass('large');
+
+			if (isLarge)
+				field.revertFormatting();
+
+			var old = field.text();
 
 			field.empty();
-			var input = $('<input/>').val(old).appendTo(field);
+			var input = $(isLarge ? '<textarea/>' : '<input/>').val(old).appendTo(field);
 			if (required)
 				input.attr('require', 'true');
 
@@ -479,7 +518,7 @@ $(function()
 
 		confirmDelete: function(listing)
 		{
-			handler.sendIDListingPacket(listing, Packet.DeleteQuiz);
+			handler.sendIDListingPacket(listing, listing.isAnswer() ? Packet.DeleteAnswers : Packet.DeleteQuiz);
 		},
 
 		bookmark: function(listing, submit)
@@ -510,12 +549,24 @@ $(function()
 		editQuiz: function(listing)
 		{
 			listing.addClass('editing').find('.quiz-vote').hide();
-			handler.old[listing.attr('id')] = {
+
+
+			var data = {
 				title: handler.prepareEditField(listing, 'title-title', true),
-				charity: handler.prepareEditField(listing, 'title-charity', true),
-				description: handler.prepareEditField(listing, 'description', true),
-				extra: handler.prepareEditField(listing, 'description-extra', false)
+				charity: handler.prepareEditField(listing, 'title-charity', true)
 			};
+
+			if (listing.isAnswer())
+			{
+				data.answers = handler.prepareEditField(listing, 'answers', true);
+			}
+			else
+			{
+				data.description = handler.prepareEditField(listing, 'description', true);
+				data.extra = handler.prepareEditField(listing, 'description-extra', false)
+			}
+
+			handler.old[listing.attr('id')] = data;
 
 			var dateField = listing.find('.quiz-closing').empty(), s = '<select/>';
 
@@ -536,7 +587,7 @@ $(function()
 
 		approveQuiz: function(listing)
 		{
-			handler.sendIDListingPacket(listing, Packet.ApproveQuiz);
+			handler.sendIDListingPacket(listing, listing.isAnswer() ? Packet.ApproveAnswers : Packet.ApproveQuiz);
 		},
 
 		sendIDListingPacket: function(listing, packet)
@@ -550,7 +601,11 @@ $(function()
 
 		resetField: function(listing, fieldName, data)
 		{
-			return listing.find('.quiz-' + fieldName).html(data);
+			var field = listing.find('.quiz-' + fieldName).html(data);
+			if (field.hasClass('large'))
+				field.formatText();
+
+			return field;
 		},
 
 		cancelEditing: function(listing, data)
@@ -564,10 +619,18 @@ $(function()
 
 			handler.resetField(listing, 'title-title', data.title);
 			handler.resetField(listing, 'title-charity', data.charity);
-			handler.resetField(listing, 'description', data.description).parseLinks();
-			handler.resetField(listing, 'description-extra', data.extra).parseLinks();
 
-			dateField.html('Closes in <span class="time-period">' + data.closing + '</span> (<span class="time-formal">' + data.closing + '</span>)').formatTime();
+			if (listing.isAnswer())
+			{
+				handler.resetField(listing, 'answers', data.answers);
+			}
+			else
+			{
+				handler.resetField(listing, 'description', data.description).parseLinks();
+				handler.resetField(listing, 'description-extra', data.extra).parseLinks();
+			}
+
+			dateField.html((listing.isAnswer() ? 'Closed' : 'Closes in') + ' <span class="time-period">' + data.closing + '</span> (<span class="time-formal">' + data.closing + '</span>)').formatTime();
 
 			listing.find('.quiz-option-cancel,.quiz-option-save').remove();
 			listing.find('.quiz-options ul').prepend('<li class="quiz-option-edit">Edit</li>');

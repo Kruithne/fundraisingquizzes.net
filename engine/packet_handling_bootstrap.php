@@ -15,6 +15,10 @@
 		13 => 'RecoverAccount',
 		14 => 'ResetPassword',
 		15 => 'DeleteSiteLink',
-		16 => 'EditSiteLink'
+		16 => 'EditSiteLink',
+		17 => 'ApproveAnswers',
+		18 => 'DeleteAnswers',
+		19 => 'EditAnswers',
+		20 => 'AddAnswers'
 	));
 ?>
