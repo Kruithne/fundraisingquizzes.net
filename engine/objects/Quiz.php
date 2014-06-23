@@ -282,11 +282,14 @@
 		/**
 		 * Retrieve an array of quizzes available.
 		 * @param bool $acceptedOnly Should only accepted quizzes be queried?
+		 * @param bool $deletedOnly If true, only deleted quizzes will be returned.
 		 * @return array
 		 */
-		public static function getAll($acceptedOnly = true)
+		public static function getAll($acceptedOnly = true, $deletedOnly = false)
 		{
-			$query = DB::get()->prepare('SELECT ID, title, charity, description, description_extra, closing, submitted_by, accepted, updated_flag, new_flag FROM quizzes WHERE deleted = 0' . ($acceptedOnly ? ' AND accepted = 1' : '') . ' ORDER BY closing ASC');
+			$accepted = ($acceptedOnly ? ' AND accepted = 1' : '');
+			$deleted = ($deletedOnly ? ' AND deleted = 1' : '');
+			$query = DB::get()->prepare("SELECT ID, title, charity, description, description_extra, closing, submitted_by, accepted, updated_flag, new_flag FROM quizzes WHERE deleted = 0$accepted$deleted ORDER BY closing ASC");
 			$return = Array();
 
 			foreach ($query->getRows() as $row)
