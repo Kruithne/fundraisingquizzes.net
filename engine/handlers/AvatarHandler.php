@@ -15,7 +15,7 @@
 			if ($user instanceof User)
 				$user = $user->getId();
 
-			$query = DB::get()->prepare('SELECT ID, image FROM avatars WHERE ((avail_start >= CURDATE() OR avail_start IS NULL) AND (avail_end <= CURDATE() OR avail_end IS NULL)) OR (SELECT COUNT(*) FROM avatar_override WHERE avatar = ID AND user = :user) > 0');
+			$query = DB::get()->prepare('SELECT ID, image FROM avatars WHERE (avail = MONTH(CURDATE()) OR avail IS NULL) OR (SELECT COUNT(*) FROM avatar_override WHERE avatar = ID AND user = :user) > 0');
 			$query->setValue(':user', $user);
 
 			foreach ($query->getRows() as $row)
@@ -38,7 +38,7 @@
 			if ($user instanceof User)
 				$user = $user->getId();
 
-			$query = DB::get()->prepare('SELECT COUNT(*) AS amount FROM avatars WHERE ID = :id AND ((avail_start >= CURDATE() OR avail_start IS NULL) AND (avail_end <= CURDATE() OR avail_end IS NULL)) OR (SELECT COUNT(*) FROM avatar_override WHERE avatar = ID AND user = :user) > 0');
+			$query = DB::get()->prepare('SELECT COUNT(*) AS amount FROM avatars WHERE ID = :id AND (avail = MONTH(CURDATE()) OR avail IS NULL) OR (SELECT COUNT(*) FROM avatar_override WHERE avatar = ID AND user = :user) > 0');
 			$query->setValue(':id', $avatar);
 			$query->setValue(':user', $user);
 
