@@ -1,18 +1,25 @@
 $(function()
 {
 	var handler = {
+		threadLimit: 30,
+		submitting: false,
 		load: function()
 		{
 			this.listing = $('#thread-listing');
+			this.commentBox = $('.comment-box');
 			this.thread = thread;
-			this.threadLimit = 30;
 
+			PacketHandler.hook(Packet.TopicComment, packetContext(this, 'handleCommentSubmit'));
 			PacketHandler.hook(Packet.GetForumReplies, packetContext(this, 'renderThread'));
 			this.pageCount = Math.ceil(this.thread.replyCount / this.threadLimit);
 
-			this.selectPage(1);
+			this.selectPage(1, false);
 
-			$(document).on('click', '.page-bar a', this.handlePageBarClick);
+			var click = 'click';
+
+			$(document)
+				.on(click, '.page-bar a', this.handlePageBarClick)
+				.on(click, '#comment-button', this.handleCommentButtonClick);
 		},
 
 		updatePageBars: function()
@@ -34,23 +41,23 @@ $(function()
 
 			if (link.hasClass('first'))
 			{
-				handler.selectPage(1);
+				handler.selectPage(1, false);
 			}
 			else if (link.hasClass('next'))
 			{
-				handler.selectPage(handler.page + 1);
+				handler.selectPage(handler.page + 1, false);
 			}
 			else if (link.hasClass('previous'))
 			{
-				handler.selectPage(handler.page - 1)
+				handler.selectPage(handler.page - 1, false)
 			}
 			else if (link.hasClass('last'))
 			{
-				handler.selectPage(handler.pageCount);
+				handler.selectPage(handler.pageCount, false);
 			}
 		},
 
-		selectPage: function(page)
+		selectPage: function(page, bottom)
 		{
 			this.page = page;
 			$('#thread-header .right').text('Page ' + this.page + ' / ' + this.pageCount);
@@ -61,6 +68,9 @@ $(function()
 			});
 
 			this.updatePageBars();
+
+			if (bottom)
+				window.location.hash = 'comment';
 		},
 
 		renderThread: function(data)
@@ -82,6 +92,44 @@ $(function()
 
 					this.listing.append(element);
 				}
+			}
+		},
+
+		handleCommentButtonClick: function()
+		{
+			if (handler.submitting)
+				return;
+
+			var message = handler.commentBox.val().trim(),
+				button = $(this);
+
+			if (message.length > 0)
+			{
+				handler.submitting = true;
+				button.val('Posting...');
+
+				PacketHandler.send(Packet.TopicComment, {
+					id: handler.thread.id,
+					message: message
+				},
+				{
+					button: button
+				});
+			}
+		},
+
+		handleCommentSubmit: function(data, callback)
+		{
+			handler.submitting = false;
+			if (data.success != undefined && data.success == true)
+			{
+				handler.commentBox.val('');
+				handler.selectPage(handler.pageCount, true);
+				callback.button.val('Post Reply');
+			}
+			else
+			{
+				callback.button.val('Error!');
 			}
 		}
 	};

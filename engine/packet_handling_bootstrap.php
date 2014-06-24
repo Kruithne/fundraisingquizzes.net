@@ -24,6 +24,7 @@
 		22 => 'ChangePassword',
 		23 => 'ChangeEmail',
 		24 => 'GetForumTopics',
-		25 => 'GetForumReplies'
+		25 => 'GetForumReplies',
+		26 => 'TopicComment'
 	));
 ?>
