@@ -8,6 +8,8 @@
 			$this->addStylesheet('forum.css');
 			$this->addScript('time.js');
 			$this->addScript('forum.js');
+
+			$template->post_count = ForumTopic::getTotalCount();
 		}
 	}
 ?>

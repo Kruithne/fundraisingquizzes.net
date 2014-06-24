@@ -2,11 +2,15 @@ $(function()
 {
 	var handler = {
 		submitting: false,
+		threadLimit: 30,
 		load: function()
 		{
 			this.listing = $('#forum-listing');
 			this.commentBox = $('.comment-box textarea');
 			this.titleBox = $('.comment-box .title');
+			this.postCount = typeof postCount == "undefined" ? 0 : postCount;
+
+			this.pageCount = Math.floor(this.postCount / this.threadLimit);
 
 			var click = 'click';
 
@@ -15,9 +19,32 @@ $(function()
 				.on(click, '#comment-button', this.createTopic);
 
 			PacketHandler.hook(Packet.GetForumTopics, packetContext(this, 'renderTopicList'));
-			PacketHandler.send(Packet.GetForumTopics);
-
 			PacketHandler.hook(Packet.CreateTopic, packetContext(this, 'handleTopicCreation'));
+
+			this.selectPage(1);
+		},
+
+		selectPage: function(page)
+		{
+			this.page = page;
+			PacketHandler.send(Packet.GetForumTopics, {
+				offset: (this.page - 1) * this.threadLimit
+			});
+
+			this.updatePageBars();
+		},
+
+		updatePageBars: function()
+		{
+			var bars = $('.page-bar');
+
+			bars.find('a').addClass('disabled');
+
+			if (this.page > 1)
+				bars.find('.first, .previous').removeClass('disabled');
+
+			if (this.page < this.pageCount)
+				bars.find('.last, .next').removeClass('disabled');
 		},
 
 		renderTopicList: function(data)

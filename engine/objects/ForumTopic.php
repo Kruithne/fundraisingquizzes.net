@@ -167,6 +167,15 @@
 		}
 
 		/**
+		 * Get the total amount of forum posts.
+		 * @return int
+		 */
+		public static function getTotalCount()
+		{
+			return DB::get()->prepare('SELECT COUNT(*) AS amount FROM topics')->getFirstRow()->amount;
+		}
+
+		/**
 		 * Create a new forum topic.
 		 * @param string $title
 		 * @param string $message
