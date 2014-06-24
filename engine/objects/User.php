@@ -153,14 +153,14 @@
 
 		/**
 		 * Return the join date for this user.
-		 * @return string|null
+		 * @return int|null
 		 */
 		public function getJoined()
 		{
 			if ($this->joined !== NULL)
 				return $this->joined;
 
-			$query = DB::get()->prepare('SELECT registered FROM users WHERE ID = :user');
+			$query = DB::get()->prepare('SELECT UNIX_TIMESTAMP(registered) AS registered FROM users WHERE ID = :user');
 			$query->setValue(':user', $this->getId());
 
 			$result = $query->getFirstRow();
@@ -235,7 +235,7 @@
 		private $email;
 
 		/**
-		 * @var string Date string for when the user joined the site.
+		 * @var int Timestamp for when the user joined the site.
 		 */
 		private $joined;
 

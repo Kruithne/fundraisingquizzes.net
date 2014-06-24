@@ -144,7 +144,7 @@
 		{
 			$replies = Array();
 
-			$query = DB::get()->prepare("SELECT ID, text, posted, edited, poster FROM topic_replies WHERE topic = :id ORDER BY posted ASC LIMIT $offset, $limit");
+			$query = DB::get()->prepare("SELECT ID, text, UNIX_TIMESTAMP(posted) AS posted, UNIX_TIMESTAMP(edited) AS edited, poster FROM topic_replies WHERE topic = :id ORDER BY posted ASC LIMIT $offset, $limit");
 			$query->setValue(':id', $topic);
 
 			foreach ($query->getRows() as $reply)
@@ -160,7 +160,7 @@
 		 */
 		public static function get($id)
 		{
-			$query = DB::get()->prepare('SELECT topic, text, posted, edited, poster FROM topic_replies WHERE ID = :id');
+			$query = DB::get()->prepare('SELECT topic, text, UNIX_TIMESTAMP(posted) AS posted, UNIX_TIMESTAMP(edited) AS edited, poster FROM topic_replies WHERE ID = :id');
 			$query->setValue(':id', $id);
 
 			$result = $query->getFirstRow();

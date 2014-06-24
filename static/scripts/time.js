@@ -38,15 +38,7 @@ timeMachine.suffix = function(day)
 
 timeMachine.sqlToDate = function(date)
 {
-	var parts = date.split(" "),
-		split = parts[0].split("-");
-
-	if (parts.length > 1)
-	{
-		var time = parts[1].split(':');
-		return new Date(split[0], split[1] - 1, split[2], time[0], time[1], time[2]);
-	}
-	return new Date(split[0], split[1] - 1, split[2]);
+	return new Date(date * 1000);
 };
 
 timeMachine.getFormalDateString = function(date)

@@ -214,7 +214,7 @@
 			$query = null;
 			if ($this->id == Quiz::NONE)
 			{
-				$query = DB::get()->prepare('INSERT INTO quizzes (title, charity, description, description_extra, closing, submitted_by, new_flag, accepted)
+				$query = DB::get()->prepare('INSERT INTO quizzes (title, charity, description, description_extra, closing AS closing, submitted_by, new_flag, accepted)
 					VALUES(:title, :charity, :description, :extra, :closing, :submitter, :new, :accepted)');
 
 				$query->setValue(':new', QUIZ::DEFAULT_NEW_FLAG);
@@ -256,7 +256,7 @@
 			if ($id == 0)
 				return QUIZ::NONE;
 
-			$query = DB::get()->prepare('SELECT title, charity, description, description_extra, closing, submitted_by, accepted, updated_flag, new_flag FROM quizzes WHERE ID = :id');
+			$query = DB::get()->prepare('SELECT title, charity, description, description_extra, UNIX_TIMESTAMP(closing) AS closing, submitted_by, accepted, updated_flag, new_flag FROM quizzes WHERE ID = :id');
 			$query->setValue(':id', $id);
 
 			$result = $query->getFirstRow();
@@ -291,7 +291,7 @@
 		{
 			$accepted = ($acceptedOnly ? ' AND accepted = 1' : '');
 			$deleted = ($deletedOnly ? 1 : 0);
-			$query = DB::get()->prepare("SELECT ID, title, charity, description, description_extra, closing, submitted_by, accepted, updated_flag, new_flag FROM quizzes WHERE deleted = $deleted$accepted ORDER BY closing ASC");
+			$query = DB::get()->prepare("SELECT ID, title, charity, description, description_extra, UNIX_TIMESTAMP(closing) AS closing, submitted_by, accepted, updated_flag, new_flag FROM quizzes WHERE deleted = $deleted$accepted ORDER BY closing ASC");
 			$return = Array();
 
 			foreach ($query->getRows() as $row)

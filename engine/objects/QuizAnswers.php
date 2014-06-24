@@ -71,7 +71,7 @@
 		}
 
 		/**
-		 * @return string
+		 * @return int
 		 */
 		public function getClosed()
 		{
@@ -148,7 +148,7 @@
 		 */
 		public static function get($id)
 		{
-			$query = DB::get()->prepare('SELECT title, charity, closed, answers, accepted, submitter FROM quiz_answers WHERE ID = :id');
+			$query = DB::get()->prepare('SELECT title, charity, UNIX_TIMESTAMP(closed) AS closed, answers, accepted, submitter FROM quiz_answers WHERE ID = :id');
 			$query->setValue(':id', $id);
 
 			$result = $query->getFirstRow();
@@ -163,7 +163,7 @@
 		{
 			$objects = Array();
 
-			$query = DB::get()->prepare('SELECT ID, title, charity, closed, answers, accepted, submitter FROM quiz_answers ORDER BY closed DESC');
+			$query = DB::get()->prepare('SELECT ID, title, charity, UNIX_TIMESTAMP(closed) AS closed, answers, accepted, submitter FROM quiz_answers ORDER BY closed DESC');
 			foreach ($query->getRows() as $row)
 				$objects[$row->ID] = new QuizAnswers($row->ID, $row->title, $row->charity, $row->closed, $row->answers, $row->accepted, $row->submitter);
 
@@ -210,7 +210,7 @@
 		private $charity;
 
 		/**
-		 * @var string
+		 * @var int
 		 */
 		private $closed;
 
