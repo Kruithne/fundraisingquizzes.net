@@ -11,6 +11,7 @@
 				parent::__construct($thread->getTitle(), $template);
 				$this->addStylesheet('forum.css');
 				$this->addScript('time.js');
+				$this->addScript('formatting.js');
 				$this->addScript('thread.js');
 
 				$template->thread = $thread;

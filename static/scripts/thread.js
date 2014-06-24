@@ -73,7 +73,7 @@ $(function()
 					var reply = data.replies[replyIndex],
 						element = $('<div class="module module-padded reply"/>').attr('id', reply.id),
 						user = $('<div class="user-frame"/>'),
-						msg = $('<div class="message-frame"/>').html(reply.text);
+						msg = $('<div class="message-frame"/>').html(reply.text).formatText();
 
 					$('<div class="footer"/>').html('Posted <span class="time-period">' + reply.posted + '</span>').formatPeriods().appendTo(msg);
 					$('<div class="username"/>').html(reply.posterName).appendTo(user);
