@@ -50,7 +50,7 @@
 		?>
 		<div class="module module-padded">
 			<div id="copyright">Copyright &copy; Fundraising Quizzes</div>
-			<div id="author">Website by <a href="http://www.kruithne.net/">Hannah Batch</a> | Source on <a href="https://github.com/Kruithne/FundraisingQuizzes">GitHub</a> | Avatars by <a href="http://turbomilk.com/">Turbomilk</a> | Icons by <a href="http://www.pixel-mixer.com">PixelMixer</a></div><div class="float-block"></div>
+			<div id="author">Website by <a href="http://www.kruithne.net/">Hannah Batch</a> | Source on <a href="https://github.com/Kruithne/FundraisingQuizzes">GitHub</a> | Avatars by <a href="http://turbomilk.com/">Turbomilk</a> | Icons by <a href="http://www.iconarchive.com/artist/pixelmixer.html">PixelMixer</a></div><div class="float-block"></div>
 		</div>
 		</div>
 	</body>
