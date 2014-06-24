@@ -91,6 +91,9 @@ $(function()
 					var title = 'User',
 						title_ele = $('<div class="title"/>');
 
+					if (reply.posterIsContributor)
+						title = 'Contributor';
+
 					if (reply.posterIsAdmin)
 						title = 'Admin';
 

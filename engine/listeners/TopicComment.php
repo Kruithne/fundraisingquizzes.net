@@ -13,8 +13,11 @@
 				$message = REST::Get('message');
 				if ($message !== NULL)
 				{
-					$thread->addReply($message, Authenticator::getLoggedInUser());
+					$user = Authenticator::getLoggedInUser();
+					$thread->addReply($message, $user);
 					$this->setReturn('success', true);
+
+					UserHandler::checkContributorStatus($user);
 				}
 			}
 		}

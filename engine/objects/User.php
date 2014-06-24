@@ -5,6 +5,7 @@
 
 		const FLAG_ADMIN = 0x1;
 		const FLAG_BANNED = 0x2;
+		const FLAG_CONTRIBUTOR = 0x4;
 
 		public function __construct($id, $username, $flags, $avatar)
 		{
@@ -30,6 +31,11 @@
 		public function isBanned()
 		{
 			return $this->hasFlag(User::FLAG_BANNED);
+		}
+
+		public function isContributor()
+		{
+			return $this->hasFlag(User::FLAG_CONTRIBUTOR);
 		}
 
 		/**

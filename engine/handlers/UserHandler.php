@@ -152,6 +152,22 @@
 			return true;
 		}
 
+		/**
+		 * Check if the user is eligble to be flagged as a contributor and flag them if so.
+		 * @param User $user
+		 */
+		public static function checkContributorStatus($user)
+		{
+			$query = DB::get()->prepare('SELECT COUNT(*) AS amount FROM topic_replies WHERE poster = :user');
+			$query->setValue(':user', $user->getId());
+
+			if ($query->getFirstRow()->amount >= 100)
+			{
+				$user->addFlag(User::FLAG_CONTRIBUTOR);
+				$user->persist();
+			}
+		}
+
 		private static $cache = Array();
 	}
 ?>

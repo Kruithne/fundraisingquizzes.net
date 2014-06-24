@@ -104,6 +104,7 @@
 				'posterName' => $user->getUsername(),
 				'posterAvatar' => AvatarHandler::getAvatarImage($user->getAvatar()),
 				'posterIsAdmin' => (int) $user->isAdmin(),
+				'posterIsContributor' => (int) $user->isContributor(),
 				'posterIsBanned' => (int) $user->isBanned(),
 				'edited' => $this->getEdited()
 			];
