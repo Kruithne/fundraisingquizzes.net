@@ -141,7 +141,7 @@
 			if ($id == ForumTopic::NONE)
 				return $id;
 
-			$query = DB::get()->prepare('SELECT title, creator, posted, sticky, (SELECT COUNT(*) FROM topic_replies AS b WHERE b.ID = ID) AS replyCount FROM topics WHERE ID = :id');
+			$query = DB::get()->prepare('SELECT title, creator, posted, sticky, (SELECT COUNT(*) FROM topic_replies AS r WHERE r.topic = t.ID) AS replyCount FROM topics AS t WHERE t.ID = :id');
 			$query->setValue(':id', $id);
 			$query->execute();
 
@@ -159,7 +159,7 @@
 		{
 			$topics = Array();
 
-			$query = DB::get()->prepare("SELECT ID, title, creator, posted, sticky, (SELECT COUNT(*) FROM topic_replies AS b WHERE b.ID = ID) AS replyCount FROM topics ORDER BY sticky DESC, posted DESC LIMIT $start, $limit");
+			$query = DB::get()->prepare("SELECT ID, title, creator, posted, sticky, (SELECT COUNT(*) FROM topic_replies AS r WHERE r.topic = t.ID) AS replyCount FROM topics AS t ORDER BY sticky DESC, posted DESC LIMIT $start, $limit");
 			foreach ($query->getRows() as $topic)
 				$topics[] = new ForumTopic($topic->ID, $topic->title, $topic->creator, $topic->posted, $topic->sticky, $topic->replyCount);
 
