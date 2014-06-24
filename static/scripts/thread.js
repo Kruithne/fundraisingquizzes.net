@@ -88,6 +88,8 @@ $(function()
 					$('<div class="footer"/>').html('Posted <span class="time-period">' + reply.posted + '</span>').formatPeriods().appendTo(msg);
 					$('<div class="username"/>').html(reply.posterName).appendTo(user);
 
+					user.css('background-image', 'url(http://static.fundraisingquizzes.net/images/avatars/' + reply.posterAvatar + ')')
+
 					element.append(user, msg);
 
 					this.listing.append(element);

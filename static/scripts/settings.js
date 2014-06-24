@@ -1,6 +1,7 @@
 $(function()
 {
 	var handler = {
+		changingAvatar: false,
 		load: function()
 		{
 			var doc = $(document), click = 'click';
@@ -28,7 +29,7 @@ $(function()
 			}).on(click, '#panel-graveyard p', function()
 			{
 				handler.restoreQuiz($(this));
-			});
+			}).on(click, '#avatar-selector img', this.switchAvatar);
 
 			handler.switchToPanel('panel-details');
 			PacketHandler.hook(Packet.RestoreQuiz, packetContext(handler, 'handleRestoreQuiz'));
@@ -40,6 +41,7 @@ $(function()
 
 			PacketHandler.hook(Packet.ChangePassword, packetContext(handler, 'handleChangePassword'));
 			PacketHandler.hook(Packet.ChangeEmail, packetContext(handler, 'handleChangeEmail'));
+			PacketHandler.hook(Packet.ChangeAvatar, packetContext(handler, 'handleAvatarChange'));
 		},
 
 		switchToPanel: function(panelID)
@@ -155,6 +157,34 @@ $(function()
 					errorField.setError('Unable to change password, try again later!');
 			}
 			form.removeClass('submitting');
+		},
+
+		switchAvatar: function()
+		{
+			var avatar = $(this);
+			if (!handler.changingAvatar && !avatar.hasClass('selected'))
+			{
+				handler.changingAvatar = true;
+
+				PacketHandler.send(Packet.ChangeAvatar, {
+					avatar: parseInt(avatar.addClass('selecting').attr('id'))
+				},
+				{
+					avatar: avatar
+				});
+			}
+		},
+
+		handleAvatarChange: function(data, callback)
+		{
+			handler.changingAvatar = false;
+			var selector = $('#avatar-selector');
+			selector.find('.selected,.selecting').removeClass('selected selecting');
+
+			if (data.success != undefined && data.success == true)
+			{
+				callback.avatar.addClass('selected');
+			}
 		}
 	};
 	handler.load();

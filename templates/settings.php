@@ -71,7 +71,16 @@
 	</div>
 	<div class="module module-padded settings-panel" id="panel-avatar">
 		<h1 id="panel-header-avatar">Change Your Avatar</h1>
-		<p>Changing your avatar is currently not possible, but it will be soon!</p>
+		<p>Changing your avatar is easy, simply click on the one below which you like the look of!</p>
+		<div id="avatar-selector">
+			<?php
+				foreach ($this->avatars as $avatar_id => $avatar_image)
+				{
+					$class = $avatar_id == $this->user->getAvatar() ? ' class="selected"' : '';
+					echo "<img id=\"$avatar_id\" src=\"http://static.fundraisingquizzes.net/images/avatars/$avatar_image\"$class/>";
+				}
+			?>
+		</div>
 	</div>
 	<?php
 		if (Authenticator::isLoggedInAsAdmin())

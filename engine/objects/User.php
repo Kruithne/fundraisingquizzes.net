@@ -6,11 +6,12 @@
 		const FLAG_ADMIN = 0x1;
 		const FLAG_BANNED = 0x2;
 
-		public function __construct($id, $username, $flags)
+		public function __construct($id, $username, $flags, $avatar)
 		{
 			$this->id = $id;
 			$this->username = $username;
 			$this->flags = $flags;
+			$this->avatar = $avatar;
 		}
 
 		/**
@@ -84,6 +85,22 @@
 		public function getUsername()
 		{
 			return $this->username;
+		}
+
+		/**
+		 * @param int $avatar
+		 */
+		public function setAvatar($avatar)
+		{
+			$this->avatar = $avatar;
+		}
+
+		/**
+		 * @return int
+		 */
+		public function getAvatar()
+		{
+			return $this->avatar;
 		}
 
 		/**
@@ -179,8 +196,9 @@
 		 */
 		public function persist()
 		{
-			$query = DB::get()->prepare('UPDATE users SET flags = :flags WHERE ID = :id');
+			$query = DB::get()->prepare('UPDATE users SET flags = :flags, avatar = :avatar WHERE ID = :id');
 			$query->setValue(':flags', $this->flags);
+			$query->setValue(':avatar', $this->avatar);
 			$query->setValue(':id', $this->id);
 			$query->execute();
 		}
@@ -214,5 +232,10 @@
 		 * @var string Date string for when the user joined the site.
 		 */
 		private $joined;
+
+		/**
+		 * @var int
+		 */
+		private $avatar;
 	}
 ?>

@@ -95,12 +95,14 @@
 		 */
 		public function jsonSerialize()
 		{
+			$user = UserHandler::getUser($this->getPoster());
 			return [
 				'id' => $this->getId(),
 				'text' => $this->getText(),
 				'posted' => $this->getPosted(),
 				'poster' => $this->getPoster(),
-				'posterName' => UserHandler::getUser($this->getPoster())->getUsername(),
+				'posterName' => $user->getUsername(),
+				'posterAvatar' => AvatarHandler::getAvatarImage($user->getAvatar()),
 				'edited' => $this->getEdited()
 			];
 		}

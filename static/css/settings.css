@@ -101,3 +101,31 @@
 	margin-bottom: 10px;
 	display: none;
 }
+
+#avatar-selector
+{
+	margin: 20px;
+}
+
+#avatar-selector img
+{
+	padding: 5px;
+	margin: 5px;
+	cursor: pointer;
+	border: 1px solid white;
+}
+
+#avatar-selector img:hover
+{
+	border-color: #999;
+}
+
+#avatar-selector img.selecting
+{
+	border-color: orange;
+}
+
+#avatar-selector img.selected
+{
+	border-color: green;
+}
