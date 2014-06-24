@@ -10,7 +10,7 @@ $(function()
 			this.titleBox = $('.comment-box .title');
 			this.postCount = typeof postCount == "undefined" ? 0 : postCount;
 
-			this.pageCount = Math.floor(this.postCount / this.threadLimit);
+			this.pageCount = Math.ceil(this.postCount / this.threadLimit);
 
 			var click = 'click';
 
