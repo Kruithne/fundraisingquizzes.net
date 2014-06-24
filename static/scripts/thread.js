@@ -117,7 +117,13 @@ $(function()
 						msg = $('<div class="message-frame"/>').html(reply.text).formatText(),
 						anc = $('<a/>').attr('name', reply.id);
 
-					var footer = $('<div class="footer"/>').html('Posted <span class="time-period">' + reply.posted + '</span>').formatPeriods();
+					var footer = $('<div class="footer"/>').html('Posted <span class="time-period">' + reply.posted + '</span>');
+
+					if (reply.edited != null)
+						footer.append(', last edited <span class="time-period">' + reply.edited + '</span>');
+
+					footer.formatPeriods();
+
 					$('<div class="username"/>').html(reply.posterName).appendTo(user);
 
 					if (reply.posterName == getLoggedInUser())
