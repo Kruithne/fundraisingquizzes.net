@@ -52,6 +52,9 @@
 			return $this->sticky;
 		}
 
+		/**
+		 * @param bool|int $sticky
+		 */
 		public function setSticky($sticky)
 		{
 			$this->sticky = (int) $sticky;
