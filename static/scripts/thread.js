@@ -11,7 +11,7 @@ $(function()
 
 			PacketHandler.hook(Packet.TopicComment, packetContext(this, 'handleCommentSubmit'));
 			PacketHandler.hook(Packet.GetForumReplies, packetContext(this, 'renderThread'));
-			this.pageCount = Math.ceil(this.thread.replyCount / this.threadLimit);
+			this.pageCount = Math.floor(this.thread.replyCount / this.threadLimit);
 
 			this.selectPage(1, false);
 
