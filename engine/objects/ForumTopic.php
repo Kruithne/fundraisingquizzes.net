@@ -126,7 +126,7 @@
 				'creator' => $this->getCreator(),
 				'creatorName' => $this->getCreatorName(),
 				'posted' => $this->getPosted(),
-				'sticky' => $this->isSticky(),
+				'sticky' => (int) $this->isSticky(),
 				'replyCount' => $this->getReplyCount()
 			];
 		}
