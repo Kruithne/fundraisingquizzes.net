@@ -1,14 +1,23 @@
 $(function()
 {
 	var handler = {
+		submitting: false,
 		load: function()
 		{
 			this.listing = $('#forum-listing');
+			this.commentBox = $('.comment-box textarea');
+			this.titleBox = $('.comment-box .title');
 
-			$(document).on('click', '.topic', this.handleTopicClick);
+			var click = 'click';
+
+			$(document)
+				.on(click, '.topic', this.handleTopicClick)
+				.on(click, '#comment-button', this.createTopic);
 
 			PacketHandler.hook(Packet.GetForumTopics, packetContext(this, 'renderTopicList'));
 			PacketHandler.send(Packet.GetForumTopics);
+
+			PacketHandler.hook(Packet.CreateTopic, packetContext(this, 'handleTopicCreation'));
 		},
 
 		renderTopicList: function(data)
@@ -36,6 +45,38 @@ $(function()
 		handleTopicClick: function()
 		{
 			window.location.href = 'thread.php?id=' + $(this).attr('id');
+		},
+
+		createTopic: function()
+		{
+			if (!handler.submitting)
+			{
+				var message = handler.commentBox.val().trim(),
+					title = handler.titleBox.val().trim();
+
+				if (message.length > 0 && title.length > 0)
+				{
+					$(this).val('Posting...');
+					handler.submitting = true;
+
+					PacketHandler.send(Packet.CreateTopic, {
+						message: message,
+						title: title
+					});
+				}
+			}
+		},
+
+		handleTopicCreation: function(data, callback)
+		{
+			if (data.success != undefined && data.success == true)
+			{
+				window.location.href = 'thread.php?id=' + data.id;
+			}
+			else
+			{
+				callback.button.val('Error!');
+			}
 		}
 	};
 	handler.load();

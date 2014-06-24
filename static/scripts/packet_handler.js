@@ -25,7 +25,8 @@ var Packet = {
 	GetForumTopics: 24,
 	GetForumReplies: 25,
 	TopicComment: 26,
-	ChangeAvatar: 27
+	ChangeAvatar: 27,
+	CreateTopic: 28
 };
 
 var PacketHandler = {

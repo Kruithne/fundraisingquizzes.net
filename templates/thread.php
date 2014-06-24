@@ -31,8 +31,8 @@
 	</div>
 	<div class="float-block"></div>
 </div>
-<div class="module-padded module">
+<div class="module-padded module comment-box">
 	<h1>Post a Reply...</h1><a name="comment"></a>
-	<textarea class="input-text comment-box" placeholder="Treat everyone with the same respect you would expect in return!"></textarea>
+	<textarea class="input-text" placeholder="Treat everyone with the same respect you would expect in return!"></textarea>
 	<input type="button" value="Post Reply" id="comment-button" class="input-button"/>
 </div>

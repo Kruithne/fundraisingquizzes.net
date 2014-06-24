@@ -6,7 +6,7 @@ $(function()
 		load: function()
 		{
 			this.listing = $('#thread-listing');
-			this.commentBox = $('.comment-box');
+			this.commentBox = $('.comment-box textarea');
 			this.thread = thread;
 
 			PacketHandler.hook(Packet.TopicComment, packetContext(this, 'handleCommentSubmit'));

@@ -167,6 +167,29 @@
 		}
 
 		/**
+		 * Create a new forum topic.
+		 * @param string $title
+		 * @param string $message
+		 * @param int $poster
+		 * @return ForumTopic|int
+		 */
+		public static function create($title, $message, $poster)
+		{
+			if ($poster instanceof User)
+				$poster = $poster->getId();
+
+			$query = DB::get()->prepare('INSERT INTO topics (title, creator, posted) VALUES(:title, :creator, NOW())');
+			$query->setValue(':title', $title);
+			$query->setValue(':creator', $poster);
+			$query->execute();
+
+			$topic = self::get(DB::get()->getLastInsertID('topics'));
+			$topic->addReply($message, $poster);
+
+			return $topic;
+		}
+
+		/**
 		 * @var int
 		 */
 		private $id;

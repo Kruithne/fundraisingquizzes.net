@@ -4,3 +4,9 @@
 	<div class="posted">Posted</div>
 </div>
 <div id="forum-listing"></div>
+<div class="module-padded module comment-box">
+	<h1>Create New Topic...</h1><a name="comment"></a>
+	<input type="text" class="input-text title" placeholder="Topic title..."/>
+	<textarea class="input-text" placeholder="Remember, our site is based around a no-answer policy!"></textarea>
+	<input type="button" value="Post Topic" id="comment-button" class="input-button"/>
+</div>
