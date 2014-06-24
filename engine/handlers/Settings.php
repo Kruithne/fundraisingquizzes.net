@@ -26,5 +26,14 @@
 				ON DUPLICATE KEY UPDATE settingValue = :value');
 			$query->setValue(':key', $key)->setValue(':value', $value)->execute();
 		}
+
+		/**
+		 * Delete a site-wide setting.
+		 * @param string $key
+		 */
+		public static function delete($key)
+		{
+			DB::get()->prepare('DELETE FROM settings WHERE settingKey = :key')->setValue(':key', $key)->execute();
+		}
 	}
 ?>

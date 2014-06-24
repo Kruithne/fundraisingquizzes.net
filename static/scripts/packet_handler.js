@@ -27,7 +27,8 @@ var Packet = {
 	TopicComment: 26,
 	ChangeAvatar: 27,
 	CreateTopic: 28,
-	EditMessage: 29
+	EditMessage: 29,
+	SetBroadcast: 30
 };
 
 var PacketHandler = {

@@ -25,12 +25,19 @@
 	</head>
 	<body>
 		<div id="container">
-		<div class="module module-padded">
-			<p id="maintenance">
-				<b>20th June:</b> The following features are now operational - Voting, bookmarking, viewing/submitting quiz queries/query answers, account registration.<br/>
-				<b>22nd June:</b> The links page and account recovery are now fully working!
-			</p>
-		</div>
+		<?php
+			$broadcast = Settings::get('broadcast');
+			if ($broadcast !== NULL)
+			{
+				?>
+				<div class="module module-padded">
+					<p id="broadcast">
+						<?php echo $broadcast; ?>
+					</p>
+				</div>
+				<?php
+			}
+		?>
 		<div class="module" id="header">
 			<a href="http://www.fundraisingquizzes.net/">
 				<img id="logo" src="http://static.fundraisingquizzes.net/images/logo.png" alt="Fundraising Quizzes"/>

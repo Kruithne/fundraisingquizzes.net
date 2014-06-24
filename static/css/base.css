@@ -239,10 +239,8 @@ body
 	margin-top: 10px;
 }
 
-/** Temp **/
-#maintenance
+#broadcast
 {
-	padding: 7px 0 0 50px;
-	height: 42px;
+	padding: 7px 0 7px 50px;
 	background: url(http://static.fundraisingquizzes.net/images/info_32.png) no-repeat center left;
 }

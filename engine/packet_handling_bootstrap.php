@@ -28,6 +28,7 @@
 		26 => 'TopicComment',
 		27 => 'ChangeAvatar',
 		28 => 'CreateTopic',
-		29 => 'EditMessage'
+		29 => 'EditMessage',
+		30 => 'SetBroadcast'
 	));
 ?>

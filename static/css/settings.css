@@ -52,6 +52,11 @@
 	background-image: url(http://static.fundraisingquizzes.net/images/reload_16.png);
 }
 
+#option-broadcast
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/megaphone_16.png);
+}
+
 .settings-panel
 {
 	margin-left: 200px;
@@ -84,6 +89,11 @@
 #panel-header-graveyard
 {
 	background-image: url(http://static.fundraisingquizzes.net/images/reload_32.png);
+}
+
+#panel-header-broadcast
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/megaphone_32.png);
 }
 
 .field-hidden
@@ -128,4 +138,9 @@
 #avatar-selector img.selected
 {
 	border-color: green;
+}
+
+#panel-broadcast p
+{
+	margin-bottom: 10px;
 }

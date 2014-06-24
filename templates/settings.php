@@ -8,6 +8,7 @@
 				{
 					?>
 					<li id="option-graveyard" panel="panel-graveyard">Quiz Graveyard</li>
+					<li id="option-broadcast" panel="panel-broadcast">Broadcast</li>
 					<?php
 				}
 			?>
@@ -93,6 +94,11 @@
 					foreach ($this->deleted_quizzes as $quiz)
 						echo '<p id="' . $quiz->getId() . '">' . $quiz->getTitle() . ' in aid of ' . $quiz->getCharity() . ' <a>[Restore]</a></p>';
 				?>
+			</div>
+			<div class="module module-padded settings-panel" id="panel-broadcast">
+				<h1 id="panel-header-broadcast">Broadcast</h1>
+				<p>Broadcast a message that will display at the top of the site.</p>
+				<input type="text" class="input-text" id="broadcast-field"/> <input type="button" class="input-button" id="broadcast-button" value="Broadcast"/>
 			</div>
 			<?php
 		}

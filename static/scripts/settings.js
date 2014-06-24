@@ -29,7 +29,8 @@ $(function()
 			}).on(click, '#panel-graveyard p', function()
 			{
 				handler.restoreQuiz($(this));
-			}).on(click, '#avatar-selector img', this.switchAvatar);
+			}).on(click, '#avatar-selector img', this.switchAvatar)
+				.on(click, '#broadcast-button', this.broadcastMessage);
 
 			handler.switchToPanel('panel-details');
 			PacketHandler.hook(Packet.RestoreQuiz, packetContext(handler, 'handleRestoreQuiz'));
@@ -42,6 +43,26 @@ $(function()
 			PacketHandler.hook(Packet.ChangePassword, packetContext(handler, 'handleChangePassword'));
 			PacketHandler.hook(Packet.ChangeEmail, packetContext(handler, 'handleChangeEmail'));
 			PacketHandler.hook(Packet.ChangeAvatar, packetContext(handler, 'handleAvatarChange'));
+			PacketHandler.hook(Packet.SetBroadcast, packetContext(handler, 'handleBroadcastSet'));
+		},
+
+		broadcastMessage: function()
+		{
+			var button = $(this).val('Processing...');
+			PacketHandler.send(Packet.SetBroadcast, {
+				message: $('#broadcast-field').val().trim()
+			},
+			{
+				button: button
+			});
+		},
+
+		handleBroadcastSet: function(data, callback)
+		{
+			if (data.success !== undefined && data.success == true)
+				callback.button.val('Done!');
+			else
+				callback.button.val('Error!');
 		},
 
 		switchToPanel: function(panelID)
