@@ -22,7 +22,8 @@ var Packet = {
 	RestoreQuiz: 21,
 	ChangePassword: 22,
 	ChangeEmail: 23,
-	GetForumTopics: 24
+	GetForumTopics: 24,
+	GetForumReplies: 25
 };
 
 var PacketHandler = {

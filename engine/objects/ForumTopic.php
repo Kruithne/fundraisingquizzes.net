@@ -3,13 +3,14 @@
 	{
 		const NONE = 0;
 
-		public function __construct($id, $title, $creator, $posted, $sticky)
+		public function __construct($id, $title, $creator, $posted, $sticky, $replyCount)
 		{
 			$this->id = $id;
 			$this->title = $title;
 			$this->creator = $creator;
 			$this->posted = $posted;
 			$this->sticky = $sticky;
+			$this->replyCount = $replyCount;
 		}
 
 		/**
@@ -18,6 +19,14 @@
 		public function getCreator()
 		{
 			return $this->creator;
+		}
+
+		/**
+		 * @return string
+		 */
+		public function getCreatorName()
+		{
+			return UserHandler::getUser($this->getCreator())->getUsername();
 		}
 
 		/**
@@ -61,6 +70,48 @@
 		}
 
 		/**
+		 * @return int
+		 */
+		public function getReplyCount()
+		{
+			return $this->replyCount;
+		}
+
+		/**
+		 * Return all replies linked to this topic.
+		 * @param int $offset
+		 * @param int $limit
+		 * @return ForumReply[]
+		 */
+		public function getReplies($offset = 0, $limit = 30)
+		{
+			return ForumReply::getTopicReplies($this->getId(), $offset, $limit);
+		}
+
+		/**
+		 * This this topic and all linked replies.
+		 */
+		public function delete()
+		{
+			DB::get()->prepare('DELETE FROM topic_replies WHERE topic = :id')->setValue(':id', $this->getId())->execute();
+			DB::get()->prepare('DELETE FROM topics WHERE ID = :id')->setValue(':id', $this->getId())->execute();
+		}
+
+		/**
+		 * Create a new reply linked to this topic.
+		 * @param string $text
+		 * @param int|user $poster
+		 * @return ForumReply
+		 */
+		public function addReply($text, $poster)
+		{
+			if ($poster instanceof User)
+				$poster = $poster->getId();
+
+			return ForumReply::create($this->getId(), $text, $poster);
+		}
+
+		/**
 		 * (PHP 5 &gt;= 5.4.0)<br/>
 		 * Specify data which should be serialized to JSON
 		 * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -73,9 +124,10 @@
 				'id' => $this->getId(),
 				'title' => $this->title,
 				'creator' => $this->getCreator(),
-				'creatorName' => UserHandler::getUser($this->getCreator())->getUsername(),
+				'creatorName' => $this->getCreatorName(),
 				'posted' => $this->getPosted(),
-				'sticky' => $this->isSticky()
+				'sticky' => $this->isSticky(),
+				'replyCount' => $this->getReplyCount()
 			];
 		}
 
@@ -89,12 +141,12 @@
 			if ($id == ForumTopic::NONE)
 				return $id;
 
-			$query = DB::get()->prepare('SELECT title, creator, posted, sticky FROM topics WHERE ID = :id');
+			$query = DB::get()->prepare('SELECT title, creator, posted, sticky, (SELECT COUNT(*) FROM topic_replies AS b WHERE b.ID = ID) AS replyCount FROM topics WHERE ID = :id');
 			$query->setValue(':id', $id);
 			$query->execute();
 
 			$topic = $query->getFirstRow();
-			return $topic !== NULL ? new ForumTopic($id, $topic->title, $topic->creator, $topic->posted, $topic->sticky) : ForumTopic::NONE;
+			return $topic !== NULL ? new ForumTopic($id, $topic->title, $topic->creator, $topic->posted, $topic->sticky, $topic->replyCount) : ForumTopic::NONE;
 		}
 
 		/**
@@ -107,9 +159,9 @@
 		{
 			$topics = Array();
 
-			$query = DB::get()->prepare("SELECT ID, title, creator, posted, sticky FROM topics ORDER BY sticky DESC, posted DESC LIMIT $start, $limit");
+			$query = DB::get()->prepare("SELECT ID, title, creator, posted, sticky, (SELECT COUNT(*) FROM topic_replies AS b WHERE b.ID = ID) AS replyCount FROM topics ORDER BY sticky DESC, posted DESC LIMIT $start, $limit");
 			foreach ($query->getRows() as $topic)
-				$topics[] = new ForumTopic($topic->ID, $topic->title, $topic->creator, $topic->posted, $topic->sticky);
+				$topics[] = new ForumTopic($topic->ID, $topic->title, $topic->creator, $topic->posted, $topic->sticky, $topic->replyCount);
 
 			return $topics;
 		}
@@ -138,5 +190,10 @@
 		 * @var int
 		 */
 		private $sticky;
+
+		/**
+		 * @var int
+		 */
+		private $replyCount;
 	}
 ?>

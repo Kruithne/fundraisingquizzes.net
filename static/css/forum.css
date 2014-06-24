@@ -30,3 +30,77 @@
 {
 	width: 300px;
 }
+
+.left, .right
+{
+	width: 40%;
+}
+
+.left
+{
+	float: left;
+}
+
+.right
+{
+	float: right;
+	text-align: right;
+}
+
+.reply
+{
+	position: relative;
+	min-height: 70px;
+	padding-left: 0;
+}
+
+.reply .user-frame
+{
+	position: absolute;
+	top: 10px;
+	bottom: 10px;
+	width: 150px;
+	border-right: 1px dashed #999;
+	background: url(http://static.fundraisingquizzes.net/images/user2_48.png) no-repeat center top;
+	padding-top: 55px;
+	text-align: center;
+}
+
+.reply .user-frame .username
+{
+	font-weight: bold;
+}
+
+.reply .message-frame
+{
+	margin-left: 150px;
+	padding-left: 20px;
+}
+
+.reply .footer
+{
+	position: absolute;
+	bottom: 10px;
+	font-style: italic;
+	color: #999;
+}
+
+.page-bar a
+{
+	margin: 0 20px;
+}
+
+.page-bar a.disabled
+{
+	cursor: default;
+	color: #999;
+}
+
+.comment-box
+{
+	resize: none;
+	margin: 10px;
+	padding: 10px;
+	width: 90%;
+	height: 100px;
+}
