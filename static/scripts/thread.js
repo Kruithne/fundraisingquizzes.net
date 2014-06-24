@@ -88,6 +88,20 @@ $(function()
 					$('<div class="footer"/>').html('Posted <span class="time-period">' + reply.posted + '</span>').formatPeriods().appendTo(msg);
 					$('<div class="username"/>').html(reply.posterName).appendTo(user);
 
+					var title = 'User',
+						title_ele = $('<div class="title"/>');
+
+					if (reply.posterIsAdmin)
+						title = 'Admin';
+
+					if (reply.posterIsBanned)
+					{
+						title = 'Banned';
+						title_ele.css('color', 'red');
+					}
+
+					title_ele.html(title).appendTo(user);
+
 					user.css('background-image', 'url(http://static.fundraisingquizzes.net/images/avatars/' + reply.posterAvatar + ')')
 
 					element.append(user, msg);

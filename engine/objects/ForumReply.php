@@ -103,6 +103,8 @@
 				'poster' => $this->getPoster(),
 				'posterName' => $user->getUsername(),
 				'posterAvatar' => AvatarHandler::getAvatarImage($user->getAvatar()),
+				'posterIsAdmin' => (int) $user->isAdmin(),
+				'posterIsBanned' => (int) $user->isBanned(),
 				'edited' => $this->getEdited()
 			];
 		}

@@ -61,8 +61,8 @@
 	bottom: 10px;
 	width: 150px;
 	border-right: 1px dashed #999;
-	background: url(http://static.fundraisingquizzes.net/images/user2_48.png) no-repeat center top;
-	padding-top: 50px;
+	background: url(http://static.fundraisingquizzes.net/images/user2_48.png) no-repeat center -5px;
+	padding-top: 40px;
 	text-align: center;
 }
 
