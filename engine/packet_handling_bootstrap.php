@@ -27,6 +27,7 @@
 		25 => 'GetForumReplies',
 		26 => 'TopicComment',
 		27 => 'ChangeAvatar',
-		28 => 'CreateTopic'
+		28 => 'CreateTopic',
+		29 => 'EditMessage'
 	));
 ?>

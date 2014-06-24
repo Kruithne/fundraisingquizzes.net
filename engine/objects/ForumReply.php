@@ -144,13 +144,27 @@
 		{
 			$replies = Array();
 
-			$query = DB::get()->prepare("SELECT ID, text, posted, edited, poster FROM topic_replies WHERE topic = :id LIMIT $offset, $limit");
+			$query = DB::get()->prepare("SELECT ID, text, posted, edited, poster FROM topic_replies WHERE topic = :id ORDER BY posted ASC LIMIT $offset, $limit");
 			$query->setValue(':id', $topic);
 
 			foreach ($query->getRows() as $reply)
 				$replies[] = new ForumReply($reply->ID, $topic, $reply->text, $reply->poster, $reply->posted, $reply->edited);
 
 			return $replies;
+		}
+
+		/**
+		 * Retrieve a forum reply by it's ID.
+		 * @param int $id
+		 * @return ForumReply|null
+		 */
+		public static function get($id)
+		{
+			$query = DB::get()->prepare('SELECT topic, text, posted, edited, poster FROM topic_replies WHERE ID = :id');
+			$query->setValue(':id', $id);
+
+			$result = $query->getFirstRow();
+			return $result === NULL ? NULL : new ForumReply($id, $result->topic, $result->text, $result->poster, $result->posted, $result->edited);
 		}
 
 		/**

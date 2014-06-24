@@ -3,13 +3,17 @@ $(function()
 	var handler = {
 		threadLimit: 30,
 		submitting: false,
+		editing: null,
 		load: function()
 		{
 			this.listing = $('#thread-listing');
 			this.commentBox = $('.comment-box textarea');
 			this.thread = thread;
 
-			PacketHandler.hook(Packet.TopicComment, packetContext(this, 'handleCommentSubmit'));
+			var context = packetContext(this, 'handleCommentSubmit');
+			PacketHandler.hook(Packet.TopicComment, context);
+			PacketHandler.hook(Packet.EditMessage, context);
+
 			PacketHandler.hook(Packet.GetForumReplies, packetContext(this, 'renderThread'));
 			this.pageCount = Math.ceil(this.thread.replyCount / this.threadLimit);
 
@@ -19,6 +23,8 @@ $(function()
 
 			$(document)
 				.on(click, '.page-bar a', this.handlePageBarClick)
+				.on(click, '#reset-button', this.cancelEdit)
+				.on(click, '.edit-button', this.editPost)
 				.on(click, '#comment-button', this.handleCommentButtonClick);
 		},
 
@@ -57,6 +63,31 @@ $(function()
 			}
 		},
 
+		editPost: function()
+		{
+			window.location.hash = '';
+			var post = $(this).parent();
+
+			var temp = $('<div/>').html(post.find('.message-frame').html()).revertFormatting();
+			handler.commentBox.val(temp.html());
+
+			$('#comment-button').val('Save Edit');
+			$('#reset-button').show();
+
+			$('.comment-box h1').text('Edit Post...');
+			window.location.hash = 'comment';
+
+			handler.editing = post.attr('id');
+		},
+
+		cancelEdit: function()
+		{
+			$('.comment-box h1').text('Post a Reply...');
+			$('#comment-button').val('Post Reply');
+			handler.commentBox.val('');
+			handler.editing = null;
+		},
+
 		selectPage: function(page, bottom)
 		{
 			this.page = page;
@@ -83,10 +114,14 @@ $(function()
 					var reply = data.replies[replyIndex],
 						element = $('<div class="module module-padded reply"/>').attr('id', reply.id),
 						user = $('<div class="user-frame"/>'),
-						msg = $('<div class="message-frame"/>').html(reply.text).formatText();
+						msg = $('<div class="message-frame"/>').html(reply.text).formatText(),
+						anc = $('<a/>').attr('name', reply.id);
 
-					$('<div class="footer"/>').html('Posted <span class="time-period">' + reply.posted + '</span>').formatPeriods().appendTo(msg);
+					var footer = $('<div class="footer"/>').html('Posted <span class="time-period">' + reply.posted + '</span>').formatPeriods();
 					$('<div class="username"/>').html(reply.posterName).appendTo(user);
+
+					if (reply.posterName == getLoggedInUser())
+						$('<div class="edit-button"/>').appendTo(element);
 
 					var title = 'User',
 						title_ele = $('<div class="title"/>');
@@ -105,9 +140,8 @@ $(function()
 
 					title_ele.html(title).appendTo(user);
 
-					user.css('background-image', 'url(http://static.fundraisingquizzes.net/images/avatars/' + reply.posterAvatar + ')')
-
-					element.append(user, msg);
+					user.css('background-image', 'url(http://static.fundraisingquizzes.net/images/avatars/' + reply.posterAvatar + ')');
+					element.append(anc, user, msg, footer);
 
 					this.listing.append(element);
 				}
@@ -125,15 +159,28 @@ $(function()
 			if (message.length > 0)
 			{
 				handler.submitting = true;
-				button.val('Posting...');
 
-				PacketHandler.send(Packet.TopicComment, {
-					id: handler.thread.id,
-					message: message
-				},
+				var data = {message: message},
+					packet = 0,
+					callback = {button: button};
+
+
+				if (handler.editing != null)
 				{
-					button: button
-				});
+					button.val('Editing...');
+					data.id = handler.editing;
+					packet = Packet.EditMessage;
+					callback.id = handler.editing;
+					callback.message = message;
+				}
+				else
+				{
+					button.val('Posting...');
+					data.id = handler.thread.id;
+					packet = Packet.TopicComment;
+				}
+
+				PacketHandler.send(packet, data, callback);
 			}
 		},
 
@@ -142,9 +189,17 @@ $(function()
 			handler.submitting = false;
 			if (data.success != undefined && data.success == true)
 			{
-				handler.commentBox.val('');
-				handler.selectPage(handler.pageCount, true);
-				callback.button.val('Post Reply');
+				if (handler.editing == null)
+				{
+					handler.selectPage(handler.pageCount, true);
+				}
+				else
+				{
+					window.location.hash = callback.id;
+					$('#' + callback.id).find('.message-frame').html(callback.message).formatText();
+				}
+
+				handler.cancelEdit();
 			}
 			else
 			{

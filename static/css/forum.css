@@ -73,7 +73,7 @@
 
 .reply .message-frame
 {
-	margin-left: 150px;
+	margin: 0 0 20px 150px;
 	padding-left: 20px;
 }
 
@@ -81,6 +81,7 @@
 {
 	position: absolute;
 	bottom: 10px;
+	left: 170px;
 	font-style: italic;
 	color: #999;
 }
@@ -100,7 +101,7 @@
 {
 	resize: none;
 	margin: 10px;
-	width: 90%;
+	width: 95%;
 	height: 100px;
 	font: 10pt 'Noto Sans', sans-serif;
 }
@@ -115,4 +116,20 @@
 .comment-box .title
 {
 	margin-bottom: 0;
+}
+
+.edit-button
+{
+	width: 16px;
+	height: 16px;
+	position: absolute;
+	top: 15px;
+	right: 15px;
+	background: url(http://static.fundraisingquizzes.net/images/pencil_16.png) no-repeat;
+	cursor: pointer;
+}
+
+#reset-button
+{
+	display: none;
 }
