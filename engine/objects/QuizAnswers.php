@@ -79,6 +79,15 @@
 		}
 
 		/**
+		 * Return the date this quiz closed as a date string.
+		 * @return bool|string
+		 */
+		public function getClosedDate()
+		{
+			return Date('Y-m-d', $this->getClosed());
+		}
+
+		/**
 		 * @param string $title
 		 */
 		public function setTitle($title)

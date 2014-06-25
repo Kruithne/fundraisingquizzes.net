@@ -90,6 +90,15 @@
 		}
 
 		/**
+		 * Return the closing date as a date string.
+		 * @return bool|string
+		 */
+		public function getClosingDate()
+		{
+			return date('Y-m-d', $this->getClosing());
+		}
+
+		/**
 		 * @param string $description
 		 */
 		public function setDescription($description)
@@ -214,7 +223,7 @@
 			$query = null;
 			if ($this->id == Quiz::NONE)
 			{
-				$query = DB::get()->prepare('INSERT INTO quizzes (title, charity, description, description_extra, closing AS closing, submitted_by, new_flag, accepted)
+				$query = DB::get()->prepare('INSERT INTO quizzes (title, charity, description, description_extra, closing, submitted_by, new_flag, accepted)
 					VALUES(:title, :charity, :description, :extra, :closing, :submitter, :new, :accepted)');
 
 				$query->setValue(':new', QUIZ::DEFAULT_NEW_FLAG);

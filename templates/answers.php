@@ -34,7 +34,7 @@
 				<form class="validatable preventDefault" complete="quizEditSuccess" error="quizEditError" submit="quizEditSubmit">
 					<div class="quiz-arrow"></div>
 					<p class="quiz-title"><span class="quiz-title-title"><?php echo $answer->getTitle(); ?></span> in aid of <span class="quiz-title-charity"><?php echo $answer->getCharity(); ?></span></p>
-					<p class="quiz-closing" class="dateSelector" validate=">" date="<?php echo $answer->getClosed(); ?>">Closed: <span class="time-period"><?php echo $answer->getClosed(); ?></span> (<span class="time-formal"><?php echo $answer->getClosed(); ?></span>)</p>
+					<p class="quiz-closing" class="dateSelector" validate=">" date="<?php echo $answer->getClosedDate(); ?>" timestamp="<?php echo $answer->getClosed(); ?>">Closed: <span class="time-period"><?php echo $answer->getClosed(); ?></span> (<span class="time-formal"><?php echo $answer->getClosed(); ?></span>)</p>
 					<div class="quiz-extra">
 						<p class="quiz-answers large formatted"><?php echo $answer->getAnswers(); ?></p>
 					</div>

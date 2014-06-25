@@ -463,6 +463,9 @@ $(function()
 			var callback = $.extend({}, data);
 			callback.listing = listing;
 
+			var dateSplit = data.closing.split('-');
+			callback.closing = new Date(dateSplit[0], dateSplit[1] - 1, dateSplit[2]).getTime() / 1000;
+
 			handler.submitting = true;
 			PacketHandler.send(listing.isAnswer() ? Packet.EditAnswers : Packet.EditQuiz, data, callback);
 		},
@@ -625,7 +628,7 @@ $(function()
 			if (data == undefined)
 			{
 				data = handler.old[listing.attr('id')];
-				data.closing = dateField.attr('date');
+				data.closing = dateField.attr('timestamp');
 			}
 
 			handler.resetField(listing, 'title-title', data.title);

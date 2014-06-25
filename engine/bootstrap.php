@@ -2,6 +2,8 @@
 	require_once('constants.php');
 	require_once('../lib/KrameWork/KrameWork/KrameSystem.php');
 
+	date_default_timezone_set('Europe/London');
+
 	KW_ClassLoader::addClassPath('../modules');
 	KW_ClassLoader::addClassPath('../engine');
 	KW_ClassLoader::addClassPath('../engine/objects');
@@ -11,6 +13,8 @@
 
 	$system = new KrameSystem();
 	$system->getErrorHandler()->addEmailOutputRecipient('kruithne+fquizzes@gmail.com');
+
+	REST::setEncoding('ISO-8859-1');
 
 	Authenticator::checkLoginKey();
 ?>
