@@ -23,12 +23,27 @@
 
 .topic .title, #listing-header .title
 {
-	width: 700px;
+	width: 500px;
 }
 
 .topic .author, #listing-header .author
 {
-	width: 300px;
+	width: 200px;
+}
+
+.posted
+{
+	width: 200px;
+}
+
+.reply-count
+{
+	width: 70px;
+}
+
+.topic .reply-count
+{
+	text-align: center;
 }
 
 .left, .right

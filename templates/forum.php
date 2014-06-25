@@ -16,6 +16,7 @@
 	<div class="title">Topic Title</div>
 	<div class="author">Author</div>
 	<div class="posted">Posted</div>
+	<div class="reply-count">Replies</div>
 </div>
 <div id="forum-listing"></div>
 <div class="page-bar module module-padded">
