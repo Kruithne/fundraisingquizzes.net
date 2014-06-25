@@ -3,7 +3,7 @@
 	{
 		const NONE = 0;
 
-		public function __construct($id, $title, $creator, $posted, $sticky, $replyCount)
+		public function __construct($id, $title, $creator, $posted, $sticky, $replyCount, $unread = 0)
 		{
 			$this->id = $id;
 			$this->title = $title;
@@ -11,6 +11,7 @@
 			$this->posted = $posted;
 			$this->sticky = $sticky;
 			$this->replyCount = $replyCount;
+			$this->unread = $unread;
 		}
 
 		/**
@@ -78,6 +79,32 @@
 		}
 
 		/**
+		 * @return int
+		 */
+		public function isUnread()
+		{
+			return $this->unread;
+		}
+
+		/**
+		 * Mark this topic as read.
+		 * @param null|int|User $user
+		 */
+		public function markAsRead($user = null)
+		{
+			if ($user === NULL)
+				$user = Authenticator::getLoggedInUser()->getId();
+			else if ($user instanceof User)
+				$user = $user->getId();
+
+			$this->unread = 0;
+			$query = DB::get()->prepare('INSERT INTO unread (userID, topicID) VALUES(:user, :topic)');
+			$query->setValue(':user', $user);
+			$query->setValue(':topic', $this->getId());
+			$query->execute();
+		}
+
+		/**
 		 * Return all replies linked to this topic.
 		 * @param int $offset
 		 * @param int $limit
@@ -108,7 +135,16 @@
 			if ($poster instanceof User)
 				$poster = $poster->getId();
 
+			$this->setAsUnread();
 			return ForumReply::create($this->getId(), $text, $poster);
+		}
+
+		/**
+		 * Set this topic as unread for all forum members.
+		 */
+		public function setAsUnread()
+		{
+			DB::get()->prepare('DELETE FROM unread WHERE topicID = :id')->setValue(':id', $this->getId())->execute();
 		}
 
 		/**
@@ -127,7 +163,8 @@
 				'creatorName' => $this->getCreatorName(),
 				'posted' => $this->getPosted(),
 				'sticky' => (int) $this->isSticky(),
-				'replyCount' => $this->getReplyCount()
+				'replyCount' => $this->getReplyCount(),
+				'unread' => (int) $this->unread
 			];
 		}
 
@@ -141,12 +178,13 @@
 			if ($id == ForumTopic::NONE)
 				return $id;
 
-			$query = DB::get()->prepare('SELECT title, creator, UNIX_TIMESTAMP(posted) AS posted, sticky, (SELECT COUNT(*) FROM topic_replies AS r WHERE r.topic = t.ID) AS replyCount FROM topics AS t WHERE t.ID = :id');
+			$query = DB::get()->prepare('SELECT title, creator, UNIX_TIMESTAMP(posted) AS posted, sticky, (SELECT COUNT(*) = 0 FROM unread WHERE topicID = t.ID AND userID = :user) AS unread, (SELECT COUNT(*) FROM topic_replies AS r WHERE r.topic = t.ID) AS replyCount FROM topics AS t WHERE t.ID = :id');
 			$query->setValue(':id', $id);
+			$query->setValue(':user', Authenticator::getLoggedInUser()->getId());
 			$query->execute();
 
 			$topic = $query->getFirstRow();
-			return $topic !== NULL ? new ForumTopic($id, $topic->title, $topic->creator, $topic->posted, $topic->sticky, $topic->replyCount) : ForumTopic::NONE;
+			return $topic !== NULL ? new ForumTopic($id, $topic->title, $topic->creator, $topic->posted, $topic->sticky, $topic->replyCount, $topic->unread) : ForumTopic::NONE;
 		}
 
 		/**
@@ -159,9 +197,11 @@
 		{
 			$topics = Array();
 
-			$query = DB::get()->prepare("SELECT ID, title, creator, UNIX_TIMESTAMP(posted) AS posted, sticky, (SELECT COUNT(*) FROM topic_replies AS r WHERE r.topic = t.ID) AS replyCount FROM topics AS t ORDER BY sticky DESC, posted DESC LIMIT $start, $limit");
+			$query = DB::get()->prepare("SELECT ID, title, creator, UNIX_TIMESTAMP(posted) AS posted, sticky, (SELECT COUNT(*) = 0 FROM unread WHERE topicID = t.ID AND userID = :user) AS unread, (SELECT COUNT(*) FROM topic_replies AS r WHERE r.topic = t.ID) AS replyCount FROM topics AS t ORDER BY sticky DESC, posted DESC LIMIT $start, $limit");
+			$query->setValue(':user', Authenticator::getLoggedInUser()->getId());
+
 			foreach ($query->getRows() as $topic)
-				$topics[] = new ForumTopic($topic->ID, $topic->title, $topic->creator, $topic->posted, $topic->sticky, $topic->replyCount);
+				$topics[] = new ForumTopic($topic->ID, $topic->title, $topic->creator, $topic->posted, $topic->sticky, $topic->replyCount, $topic->unread);
 
 			return $topics;
 		}
@@ -227,5 +267,10 @@
 		 * @var int
 		 */
 		private $replyCount;
+
+		/**
+		 * @var int
+		 */
+		private $unread;
 	}
 ?>

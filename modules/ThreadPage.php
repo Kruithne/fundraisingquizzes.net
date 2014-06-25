@@ -14,6 +14,9 @@
 				$this->addScript('formatting.js');
 				$this->addScript('thread.js');
 
+				if ($thread->isUnread())
+					$thread->markAsRead();
+
 				$template->thread = $thread;
 			}
 			else
