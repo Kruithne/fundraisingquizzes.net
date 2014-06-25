@@ -25,7 +25,8 @@ $(function()
 				.on(click, '.page-bar a', this.handlePageBarClick)
 				.on(click, '#reset-button', this.cancelEdit)
 				.on(click, '.edit-button', this.editPost)
-				.on(click, '#comment-button', this.handleCommentButtonClick);
+				.on(click, '#comment-button', this.handleCommentButtonClick)
+				.on('fqLogout', function() {window.location.href='index.php';});
 		},
 
 		updatePageBars: function()
