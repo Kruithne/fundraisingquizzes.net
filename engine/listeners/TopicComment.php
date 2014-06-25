@@ -15,6 +15,7 @@
 				{
 					$user = Authenticator::getLoggedInUser();
 					$thread->addReply($message, $user);
+					$thread->setAsUnread();
 					$this->setReturn('success', true);
 
 					UserHandler::checkContributorStatus($user);
