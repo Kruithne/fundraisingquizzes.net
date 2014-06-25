@@ -90,13 +90,12 @@
 {
 	margin: 0 0 20px 150px;
 	padding-left: 20px;
+	min-height: 35px;
 }
 
 .reply .footer
 {
-	position: absolute;
-	bottom: 10px;
-	left: 170px;
+	margin-left: 165px;
 	font-style: italic;
 	color: #999;
 }
