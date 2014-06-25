@@ -30,7 +30,8 @@ $(function()
 			{
 				handler.restoreQuiz($(this));
 			}).on(click, '#avatar-selector img', this.switchAvatar)
-				.on(click, '#broadcast-button', this.broadcastMessage);
+				.on(click, '#broadcast-button', this.broadcastMessage)
+				.on(click, '#signature-button', this.changeSignature);
 
 			handler.switchToPanel('panel-details');
 			PacketHandler.hook(Packet.RestoreQuiz, packetContext(handler, 'handleRestoreQuiz'));
@@ -43,7 +44,21 @@ $(function()
 			PacketHandler.hook(Packet.ChangePassword, packetContext(handler, 'handleChangePassword'));
 			PacketHandler.hook(Packet.ChangeEmail, packetContext(handler, 'handleChangeEmail'));
 			PacketHandler.hook(Packet.ChangeAvatar, packetContext(handler, 'handleAvatarChange'));
-			PacketHandler.hook(Packet.SetBroadcast, packetContext(handler, 'handleBroadcastSet'));
+
+			var setHandler = packetContext(handler, 'handleBroadcastSet');
+			PacketHandler.hook(Packet.SetBroadcast, setHandler);
+			PacketHandler.hook(Packet.ChangeForumSignature, setHandler);
+		},
+
+		changeSignature: function()
+		{
+			var button = $(this).val('Changing...');
+			PacketHandler.send(Packet.ChangeForumSignature, {
+				sig: $('#signature').val().trim()
+			},
+			{
+				button: button
+			});
 		},
 
 		broadcastMessage: function()

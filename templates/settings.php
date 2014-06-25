@@ -69,6 +69,14 @@
 				</tr>
 			</table>
 		</form>
+		<h2>Change Forum Signature</h2>
+		<p class="signature-tip">Tip: If you leave the field blank and hit change, it will remove your signature!</p>
+		<table class="form-table">
+			<tr>
+				<th>Signature:</th>
+				<td><input type="text" class="input-text" id="signature" value="<?php echo Authenticator::getLoggedInUser()->getSignature(); ?>"/> <input type="button" class="input-button" id="signature-button" value="Change"/></td>
+			</tr>
+		</table>
 	</div>
 	<div class="module module-padded settings-panel" id="panel-avatar">
 		<h1 id="panel-header-avatar">Change Your Avatar</h1>

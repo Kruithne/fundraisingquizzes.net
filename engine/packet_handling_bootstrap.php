@@ -29,6 +29,7 @@
 		27 => 'ChangeAvatar',
 		28 => 'CreateTopic',
 		29 => 'EditMessage',
-		30 => 'SetBroadcast'
+		30 => 'SetBroadcast',
+		31 => 'ChangeForumSignature'
 	));
 ?>

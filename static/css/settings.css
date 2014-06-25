@@ -140,7 +140,12 @@
 	border-color: green;
 }
 
-#panel-broadcast p
+#panel-broadcast p, .signature-tip
 {
 	margin-bottom: 10px;
+}
+
+#signature
+{
+	width: 500px;
 }
