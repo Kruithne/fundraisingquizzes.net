@@ -106,6 +106,7 @@
 				'posterIsAdmin' => (int) $user->isAdmin(),
 				'posterIsContributor' => (int) $user->isContributor(),
 				'posterIsBanned' => (int) $user->isBanned(),
+				'posterSig' => $user->getSignature(),
 				'edited' => $this->getEdited()
 			];
 		}

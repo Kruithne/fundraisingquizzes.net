@@ -148,6 +148,8 @@ $(function()
 
 					user.css('background-image', 'url(http://static.fundraisingquizzes.net/images/avatars/' + reply.posterAvatar + ')');
 					element.append(anc, user, msg, footer);
+					if (reply.posterSig != null)
+						$('<div class="signature"/>').html(reply.posterSig).appendTo(element);
 
 					this.listing.append(element);
 				}

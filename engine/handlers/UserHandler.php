@@ -18,13 +18,13 @@
 			if ($current_user instanceof User && $user_id == $current_user->getId())
 				return $current_user;
 
-			$query = DB::get()->prepare('SELECT username, flags, avatar FROM users WHERE ID = :user');
+			$query = DB::get()->prepare('SELECT username, flags, avatar, forum_sig FROM users WHERE ID = :user');
 			$query->setValue(':user', $user_id);
 
 			$row = $query->getFirstRow();
 			if ($row !== null)
 			{
-				$user = new User($user_id, $row->username, $row->flags, $row->avatar);
+				$user = new User($user_id, $row->username, $row->flags, $row->avatar, $row->forum_sig);
 				self::$cache[$user_id] = $user;
 				return $user;
 			}

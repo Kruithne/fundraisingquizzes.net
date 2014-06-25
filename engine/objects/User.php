@@ -7,12 +7,13 @@
 		const FLAG_BANNED = 0x2;
 		const FLAG_CONTRIBUTOR = 0x4;
 
-		public function __construct($id, $username, $flags, $avatar)
+		public function __construct($id, $username, $flags, $avatar, $signature)
 		{
 			$this->id = $id;
 			$this->username = $username;
 			$this->flags = $flags;
 			$this->avatar = $avatar;
+			$this->signature = $signature;
 		}
 
 		/**
@@ -110,6 +111,22 @@
 		}
 
 		/**
+		 * @param null|string $signature
+		 */
+		public function setSignature($signature)
+		{
+			$this->signature = $signature;
+		}
+
+		/**
+		 * @return null|string
+		 */
+		public function getSignature()
+		{
+			return $this->signature;
+		}
+
+		/**
 		 * @param string $password Set the users password.
 		 */
 		public function setPassword($password)
@@ -202,9 +219,10 @@
 		 */
 		public function persist()
 		{
-			$query = DB::get()->prepare('UPDATE users SET flags = :flags, avatar = :avatar WHERE ID = :id');
+			$query = DB::get()->prepare('UPDATE users SET flags = :flags, avatar = :avatar, forum_sig = :signature WHERE ID = :id');
 			$query->setValue(':flags', $this->flags);
 			$query->setValue(':avatar', $this->avatar);
+			$query->setValue(':signature', $this->signature);
 			$query->setValue(':id', $this->id);
 			$query->execute();
 		}
@@ -243,5 +261,10 @@
 		 * @var int
 		 */
 		private $avatar;
+
+		/**
+		 * @var string|null
+		 */
+		private $signature;
 	}
 ?>
