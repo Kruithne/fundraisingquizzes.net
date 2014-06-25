@@ -67,6 +67,7 @@ $(function()
 					$('<div class="author"/>').html(topic.creatorName).appendTo(element);
 					$('<div class="posted time-period"/>').html(topic.posted).appendTo(element);
 					$('<div class="reply-count"/>').html(topic.replyCount - 1).appendTo(element);
+					$('<div class="view-count"/>').html(topic.views).appendTo(element);
 
 					element.formatPeriods().appendTo(this.listing);
 				}

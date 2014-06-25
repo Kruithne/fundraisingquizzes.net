@@ -23,7 +23,7 @@
 
 .topic .title, #listing-header .title
 {
-	width: 500px;
+	width: 600px;
 }
 
 .topic .author, #listing-header .author
@@ -36,12 +36,12 @@
 	width: 200px;
 }
 
-.reply-count
+.reply-count, .view-count
 {
 	width: 70px;
 }
 
-.topic .reply-count
+.topic .reply-count, .topic .view-count
 {
 	text-align: center;
 }

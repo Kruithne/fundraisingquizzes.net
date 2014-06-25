@@ -3,7 +3,7 @@
 	{
 		const NONE = 0;
 
-		public function __construct($id, $title, $creator, $posted, $sticky, $replyCount, $unread = 0)
+		public function __construct($id, $title, $creator, $posted, $sticky, $replyCount, $unread = 0, $views = 0)
 		{
 			$this->id = $id;
 			$this->title = $title;
@@ -12,6 +12,7 @@
 			$this->sticky = $sticky;
 			$this->replyCount = $replyCount;
 			$this->unread = $unread;
+			$this->views = $views;
 		}
 
 		/**
@@ -84,6 +85,14 @@
 		public function isUnread()
 		{
 			return $this->unread;
+		}
+
+		/**
+		 * @return int
+		 */
+		public function getViews()
+		{
+			return $this->views;
 		}
 
 		/**
@@ -164,7 +173,8 @@
 				'posted' => $this->getPosted(),
 				'sticky' => (int) $this->isSticky(),
 				'replyCount' => $this->getReplyCount(),
-				'unread' => (int) $this->unread
+				'unread' => (int) $this->unread,
+				'views' => (int) $this->views
 			];
 		}
 
@@ -178,13 +188,13 @@
 			if ($id == ForumTopic::NONE)
 				return $id;
 
-			$query = DB::get()->prepare('SELECT title, creator, UNIX_TIMESTAMP(posted) AS posted, sticky, (SELECT COUNT(*) = 0 FROM unread WHERE topicID = t.ID AND userID = :user) AS unread, (SELECT COUNT(*) FROM topic_replies AS r WHERE r.topic = t.ID) AS replyCount FROM topics AS t WHERE t.ID = :id');
+			$query = DB::get()->prepare('SELECT title, creator, views, UNIX_TIMESTAMP(posted) AS posted, sticky, (SELECT COUNT(*) = 0 FROM unread WHERE topicID = t.ID AND userID = :user) AS unread, (SELECT COUNT(*) FROM topic_replies AS r WHERE r.topic = t.ID) AS replyCount FROM topics AS t WHERE t.ID = :id');
 			$query->setValue(':id', $id);
 			$query->setValue(':user', Authenticator::getLoggedInUser()->getId());
 			$query->execute();
 
 			$topic = $query->getFirstRow();
-			return $topic !== NULL ? new ForumTopic($id, $topic->title, $topic->creator, $topic->posted, $topic->sticky, $topic->replyCount, $topic->unread) : ForumTopic::NONE;
+			return $topic !== NULL ? new ForumTopic($id, $topic->title, $topic->creator, $topic->posted, $topic->sticky, $topic->replyCount, $topic->unread, $topic->views) : ForumTopic::NONE;
 		}
 
 		/**
@@ -197,11 +207,11 @@
 		{
 			$topics = Array();
 
-			$query = DB::get()->prepare("SELECT ID, title, creator, UNIX_TIMESTAMP(posted) AS posted, sticky, (SELECT COUNT(*) = 0 FROM unread WHERE topicID = t.ID AND userID = :user) AS unread, (SELECT COUNT(*) FROM topic_replies AS r WHERE r.topic = t.ID) AS replyCount FROM topics AS t ORDER BY sticky DESC, posted DESC LIMIT $start, $limit");
+			$query = DB::get()->prepare("SELECT ID, title, creator, views, UNIX_TIMESTAMP(posted) AS posted, sticky, (SELECT COUNT(*) = 0 FROM unread WHERE topicID = t.ID AND userID = :user) AS unread, (SELECT COUNT(*) FROM topic_replies AS r WHERE r.topic = t.ID) AS replyCount FROM topics AS t ORDER BY sticky DESC, posted DESC LIMIT $start, $limit");
 			$query->setValue(':user', Authenticator::getLoggedInUser()->getId());
 
 			foreach ($query->getRows() as $topic)
-				$topics[] = new ForumTopic($topic->ID, $topic->title, $topic->creator, $topic->posted, $topic->sticky, $topic->replyCount, $topic->unread);
+				$topics[] = new ForumTopic($topic->ID, $topic->title, $topic->creator, $topic->posted, $topic->sticky, $topic->replyCount, $topic->unread, $topic->views);
 
 			return $topics;
 		}
@@ -272,5 +282,10 @@
 		 * @var int
 		 */
 		private $unread;
+
+		/**
+		 * @var int
+		 */
+		private $views;
 	}
 ?>
