@@ -96,6 +96,14 @@
 		}
 
 		/**
+		 * Add a view to this topic.
+		 */
+		public function addView()
+		{
+			DB::get()->prepare('UPDATE topics SET views = views + 1 WHERE ID = :id')->setValue(':id', $this->getId())->execute();
+		}
+
+		/**
 		 * Mark this topic as read.
 		 * @param null|int|User $user
 		 */

@@ -17,6 +17,8 @@
 				if ($thread->isUnread())
 					$thread->markAsRead();
 
+				$thread->addView();
+
 				$template->thread = $thread;
 			}
 			else
