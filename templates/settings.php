@@ -98,7 +98,7 @@
 			<div class="module module-padded settings-panel" id="panel-broadcast">
 				<h1 id="panel-header-broadcast">Broadcast</h1>
 				<p>Broadcast a message that will display at the top of the site.</p>
-				<input type="text" class="input-text" id="broadcast-field"/> <input type="button" class="input-button" id="broadcast-button" value="Broadcast"/>
+				<input type="text" class="input-text" id="broadcast-field" value="<?php echo Settings::get('broadcast'); ?>"/> <input type="button" class="input-button" id="broadcast-button" value="Broadcast"/>
 			</div>
 			<?php
 		}
