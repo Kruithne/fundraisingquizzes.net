@@ -248,7 +248,7 @@
 			$query->setValue(':charity', $this->charity);
 			$query->setValue(':description', $this->getDescription());
 			$query->setValue(':extra', $this->extra);
-			$query->setValue(':closing', $this->closing);
+			$query->setValue(':closing', $this->getClosingDate());
 			$query->setValue(':submitter', $this->submitted_by);
 			$query->setValue(':accepted', $this->accepted ? 1 : 0);
 
