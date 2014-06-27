@@ -216,7 +216,7 @@
 		{
 			$topics = Array();
 
-			$query = DB::get()->prepare("SELECT ID, title, creator, views, UNIX_TIMESTAMP(posted) AS posted, sticky, (SELECT COUNT(*) = 0 FROM unread WHERE topicID = t.ID AND userID = :user) AS unread, (SELECT COUNT(*) FROM topic_replies AS r WHERE r.topic = t.ID) AS replyCount FROM topics AS t ORDER BY sticky DESC, posted DESC LIMIT $start, $limit");
+			$query = DB::get()->prepare("SELECT ID, title, creator, views, UNIX_TIMESTAMP(posted) AS posted, sticky, (SELECT COUNT(*) = 0 FROM unread WHERE topicID = t.ID AND userID = :user) AS unread, (SELECT COUNT(*) FROM topic_replies AS r WHERE r.topic = t.ID) AS replyCount FROM topics AS t ORDER BY sticky DESC, edited DESC, posted DESC LIMIT $start, $limit");
 			$query->setValue(':user', Authenticator::getLoggedInUser()->getId());
 
 			foreach ($query->getRows() as $topic)
