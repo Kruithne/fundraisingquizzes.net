@@ -78,7 +78,7 @@
 		 */
 		public function setClosing($closing)
 		{
-			$this->closing = $closing;
+			$this->closing = strtotime($closing);
 		}
 
 		/**

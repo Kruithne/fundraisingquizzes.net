@@ -67,7 +67,7 @@
 		 */
 		public function setClosed($closed)
 		{
-			$this->closed = $closed;
+			$this->closed = strtotime($closed);
 		}
 
 		/**
