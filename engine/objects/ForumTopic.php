@@ -246,7 +246,7 @@
 			if ($poster instanceof User)
 				$poster = $poster->getId();
 
-			$query = DB::get()->prepare('INSERT INTO topics (title, creator, posted) VALUES(:title, :creator, NOW())');
+			$query = DB::get()->prepare('INSERT INTO topics (title, creator, posted, edited) VALUES(:title, :creator, NOW(), NOW())');
 			$query->setValue(':title', $title);
 			$query->setValue(':creator', $poster);
 			$query->execute();
