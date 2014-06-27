@@ -162,6 +162,7 @@
 		public function setAsUnread()
 		{
 			DB::get()->prepare('DELETE FROM unread WHERE topicID = :id')->setValue(':id', $this->getId())->execute();
+			DB::get()->prepare('UPDATE topics SET edited = NOW() WHERE ID = :id')->setValue(':id', $this->getId())->execute();
 		}
 
 		/**
