@@ -135,7 +135,7 @@
 			$query = DB::get()->prepare('UPDATE quiz_answers SET title = :title, charity = :charity, closed = :closed, answers = :answers, accepted = :accepted WHERE ID = :id');
 			$query->setValue(':title', $this->getTitle());
 			$query->setValue(':charity', $this->getCharity());
-			$query->setValue(':closed', $this->getClosed());
+			$query->setValue(':closed', $this->getClosedDate());
 			$query->setValue(':answers', $this->getAnswers());
 			$query->setValue(':accepted', $this->isAccepted());
 			$query->setValue(':id', $this->getId());
