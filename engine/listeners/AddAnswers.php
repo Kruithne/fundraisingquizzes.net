@@ -15,6 +15,7 @@
 
 			if (REST::Check($title, $charity, $answers, $closed))
 			{
+				$closed = strtotime($closed);
 				QuizAnswers::create($title, $charity, $closed, $answers, (int) Authenticator::isLoggedInAsAdmin(), Authenticator::getLoggedInUser()->getId());
 				$this->setReturn('success', true);
 			}
