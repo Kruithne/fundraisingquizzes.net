@@ -7,6 +7,9 @@
 
 	$db = DB::get();
 
+	$db->execute('UPDATE quizzes SET new_flag = new_flag - 1');
+	$db->execute('UPDATE quizzes SET updated_flag = updated_flag - 1');
+
 	$db->execute('UPDATE quizzes SET deleted = 1 WHERE closing < CURDATE()');
 
 	// Delete any expired password keys.
