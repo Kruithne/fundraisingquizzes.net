@@ -7,8 +7,8 @@
 
 	$db = DB::get();
 
-	$db->execute('UPDATE quizzes SET new_flag = new_flag - 1');
-	$db->execute('UPDATE quizzes SET updated_flag = updated_flag - 1');
+	$db->execute('UPDATE quizzes SET new_flag = new_flag - 1 WHERE new_flag > 0');
+	$db->execute('UPDATE quizzes SET updated_flag = updated_flag - 1 WHERE updated_flag > 0');
 
 	$db->execute('UPDATE quizzes SET deleted = 1 WHERE closing < CURDATE()');
 
