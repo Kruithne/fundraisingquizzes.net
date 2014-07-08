@@ -3,7 +3,7 @@
 	{
 		public function run()
 		{
-			$this->setReturn('success', true);
+			$this->setReturn('success', false);
 			if (!Authenticator::isLoggedInAsAdmin())
 				return;
 
