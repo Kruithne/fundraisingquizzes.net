@@ -1,6 +1,9 @@
 <script>
 	var postCount = <?php echo $this->post_count; ?>;
 </script>
+<div class="module-padded module">
+	<b>Did you know: </b> <?php echo RandomFact::getRandom()->getText(); ?>
+</div>
 <div class="page-bar module module-padded">
 	<div class="left">
 		<a class="first">&laquo; First Page</a>

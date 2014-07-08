@@ -9,6 +9,7 @@
 					?>
 					<li id="option-graveyard" panel="panel-graveyard">Quiz Graveyard</li>
 					<li id="option-broadcast" panel="panel-broadcast">Broadcast</li>
+					<li id="option-facts" panel="panel-facts">Random Facts</li>
 					<?php
 				}
 			?>
@@ -107,6 +108,16 @@
 				<h1 id="panel-header-broadcast">Broadcast</h1>
 				<p>Broadcast a message that will display at the top of the site.</p>
 				<input type="text" class="input-text" id="broadcast-field" value="<?php echo Settings::get('broadcast'); ?>"/> <input type="button" class="input-button" id="broadcast-button" value="Broadcast"/>
+			</div>
+			<div class="module module-padded settings-panel" id="panel-facts">
+				<h1 id="panel-header-facts">Random Facts</h1>
+				<div id="fact-list">
+					<?php
+						foreach (RandomFact::getAll() as $fact)
+							echo '<p id="' . $fact->getId() . '">' . $fact->getText() . ' <a>[Delete]</a></p>';
+					?>
+				</div>
+				<input type="text" class="input-text" id="new-fact" placeholder="New fact..."/> <input type="button" class="input-button" id="new-fact-button" value="Add Fact"/>
 			</div>
 			<?php
 		}

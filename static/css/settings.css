@@ -57,6 +57,11 @@
 	background-image: url(http://static.fundraisingquizzes.net/images/megaphone_16.png);
 }
 
+#option-facts
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/info_16.png);
+}
+
 .settings-panel
 {
 	margin-left: 200px;
@@ -94,6 +99,11 @@
 #panel-header-broadcast
 {
 	background-image: url(http://static.fundraisingquizzes.net/images/megaphone_32.png);
+}
+
+#panel-header-facts
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/info_32.png);
 }
 
 .field-hidden
@@ -148,4 +158,10 @@
 #signature
 {
 	width: 500px;
+}
+
+#new-fact
+{
+	margin-top: 20px;
+	width: 400px;
 }

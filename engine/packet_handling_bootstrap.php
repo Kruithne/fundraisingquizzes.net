@@ -30,6 +30,8 @@
 		28 => 'CreateTopic',
 		29 => 'EditMessage',
 		30 => 'SetBroadcast',
-		31 => 'ChangeForumSignature'
+		31 => 'ChangeForumSignature',
+		32 => 'AddNewFact',
+		33 => 'DeleteFact'
 	));
 ?>

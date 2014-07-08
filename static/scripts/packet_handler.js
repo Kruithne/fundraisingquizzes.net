@@ -29,7 +29,9 @@ var Packet = {
 	CreateTopic: 28,
 	EditMessage: 29,
 	SetBroadcast: 30,
-	ChangeForumSignature: 31
+	ChangeForumSignature: 31,
+	AddNewFact: 32,
+	DeleteFact: 33
 };
 
 var PacketHandler = {

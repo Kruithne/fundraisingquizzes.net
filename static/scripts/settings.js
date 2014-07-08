@@ -2,6 +2,7 @@ $(function()
 {
 	var handler = {
 		changingAvatar: false,
+		submittingFact: false,
 		load: function()
 		{
 			var doc = $(document), click = 'click';
@@ -31,7 +32,9 @@ $(function()
 				handler.restoreQuiz($(this));
 			}).on(click, '#avatar-selector img', this.switchAvatar)
 				.on(click, '#broadcast-button', this.broadcastMessage)
-				.on(click, '#signature-button', this.changeSignature);
+				.on(click, '#signature-button', this.changeSignature)
+				.on(click, '#new-fact-button', this.addNewFact)
+				.on(click, '#fact-list a', this.deleteFact);
 
 			handler.switchToPanel('panel-details');
 			PacketHandler.hook(Packet.RestoreQuiz, packetContext(handler, 'handleRestoreQuiz'));
@@ -44,6 +47,8 @@ $(function()
 			PacketHandler.hook(Packet.ChangePassword, packetContext(handler, 'handleChangePassword'));
 			PacketHandler.hook(Packet.ChangeEmail, packetContext(handler, 'handleChangeEmail'));
 			PacketHandler.hook(Packet.ChangeAvatar, packetContext(handler, 'handleAvatarChange'));
+			PacketHandler.hook(Packet.AddNewFact, packetContext(handler, 'handleAddNewFact'));
+			PacketHandler.hook(Packet.DeleteFact, packetContext(handler, 'handleDeleteFact'));
 
 			var setHandler = packetContext(handler, 'handleBroadcastSet');
 			PacketHandler.hook(Packet.SetBroadcast, setHandler);
@@ -220,6 +225,51 @@ $(function()
 			if (data.success != undefined && data.success == true)
 			{
 				callback.avatar.addClass('selected');
+			}
+		},
+
+		addNewFact: function()
+		{
+			if (handler.submittingFact)
+				return;
+
+			handler.submittingFact = true;
+			var text = $('#new-fact').val().trim();
+
+			if (text.length > 0)
+			{
+				var data = { text: text };
+				PacketHandler.send(Packet.AddNewFact, data, data);
+			}
+		},
+
+		handleAddNewFact: function(data, callback)
+		{
+			handler.submittinFact = false;
+			if (data.success != undefined && data.success == true)
+				$('<p/>').html(callback.text).appendTo($('#fact-list')).append(' <a>[Delete]</a>');
+		},
+
+		deleteFact: function()
+		{
+			var t = $(this).parent();
+			var id = parseInt(t.attr('id'));
+			PacketHandler.send(Packet.DeleteFact, {
+				id: id
+			},
+			{
+				field: t
+			});
+		},
+
+		handleDeleteFact: function(data, callback)
+		{
+			if (data.success != undefined && data.success == true)
+			{
+				callback.field.fadeOut(400, function()
+				{
+					$(this).remove();
+				});
 			}
 		}
 	};
