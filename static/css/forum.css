@@ -154,3 +154,8 @@
 {
 	display: none;
 }
+
+#random-fact a
+{
+	float: right;
+}

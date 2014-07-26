@@ -10,6 +10,7 @@
 			$this->addScript('forum.js');
 
 			$template->post_count = ForumTopic::getTotalCount();
+			$template->fact = RandomFact::getRandom();
 		}
 	}
 ?>

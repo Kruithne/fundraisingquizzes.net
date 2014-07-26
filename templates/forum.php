@@ -1,8 +1,8 @@
 <script>
 	var postCount = <?php echo $this->post_count; ?>;
 </script>
-<div class="module-padded module">
-	<b>Did you know: </b> <?php echo RandomFact::getRandom()->getText(); ?>
+<div id="random-fact" class="module-padded module">
+	<b>Did you know: </b> <?php echo $this->fact->getText(); ?> <a href="thread.php?id=<?php echo $this->fact->getThreadId(); ?>"><?php echo $this->fact->getThread()->getReplyCount(); ?> Comments</a>
 </div>
 <div class="page-bar module module-padded">
 	<div class="left">

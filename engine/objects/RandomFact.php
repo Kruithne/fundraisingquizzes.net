@@ -4,11 +4,13 @@
 		/**
 		 * @param int $id
 		 * @param string $text
+		 * @param $thread
 		 */
-		public function __construct($id, $text)
+		public function __construct($id, $text, $thread)
 		{
 			$this->id = $id;
 			$this->text = $text;
+			$this->thread = $thread;
 		}
 
 		/**
@@ -28,6 +30,25 @@
 		}
 
 		/**
+		 * @return ForumTopic
+		 */
+		public function getThread()
+		{
+			return ForumTopic::get($this->getThreadId());
+		}
+
+		/**
+		 * @return int
+		 */
+		public function getThreadId()
+		{
+			if ($this->thread == null)
+				$this->thread = self::createThread($this->getText())->getId();
+
+			return $this->thread;
+		}
+
+		/**
 		 * Delete this random fact from the database.
 		 */
 		public function delete()
@@ -41,8 +62,8 @@
 		 */
 		public static function getRandom()
 		{
-			$result = DB::get()->prepare('SELECT ID, text FROM random_facts ORDER BY RAND() LIMIT 1')->getFirstRow();
-			return $result == NULL ? NULL : new RandomFact($result->ID, $result->text);
+			$result = DB::get()->prepare('SELECT ID, text, threadID FROM random_facts ORDER BY RAND() LIMIT 1')->getFirstRow();
+			return $result == NULL ? NULL : new RandomFact($result->ID, $result->text, $result->threadID);
 		}
 
 		/**
@@ -52,8 +73,8 @@
 		public static function getAll()
 		{
 			$return = Array();
-			foreach (DB::get()->prepare('SELECT ID, text FROM random_facts')->getRows() as $fact)
-				$return[] = new RandomFact($fact->ID, $fact->text);
+			foreach (DB::get()->prepare('SELECT ID, text, threadID FROM random_facts')->getRows() as $fact)
+				$return[] = new RandomFact($fact->ID, $fact->text, $fact->threadID);
 
 			return $return;
 		}
@@ -67,11 +88,11 @@
 			if ($id == NULL)
 				return NULL;
 
-			$query = DB::get()->prepare('SELECT text FROM random_facts WHERE ID = :id');
+			$query = DB::get()->prepare('SELECT text, threadID FROM random_facts WHERE ID = :id');
 			$query->setValue(':id', $id);
 
 			$result = $query->getFirstRow();
-			return $result == NULL ? NULL : new RandomFact($id, $result->text);
+			return $result == NULL ? NULL : new RandomFact($id, $result->text, $result->threadID);
 		}
 
 		/**
@@ -81,14 +102,27 @@
 		 */
 		public static function create($text)
 		{
-			$query = DB::get()->prepare('INSERT INTO random_facts (text) VALUES(:text)');
+			$thread = self::createThread($text);
+
+			$query = DB::get()->prepare('INSERT INTO random_facts (text, threadID) VALUES(:text, :thread)');
 			$query->setValue(':text', $text);
+			$query->setValue(':thread', $thread->getId());
 			$query->execute();
 
-			return new RandomFact(DB::get()->getLastInsertID('random_facts'), $text);
+			return new RandomFact(DB::get()->getLastInsertID('random_facts'), $text, $thread->getId());
+		}
+
+		/**
+		 * @param string $text
+		 * @return ForumTopic|int
+		 */
+		private static function createThread($text)
+		{
+			return ForumTopic::create('Did you know...', "Did you know: " . $text, 1, ForumTopic::TYPE_FACT);
 		}
 
 		private $id;
 		private $text;
+		private $thread;
 	}
 ?>

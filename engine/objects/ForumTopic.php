@@ -2,8 +2,10 @@
 	class ForumTopic implements JsonSerializable
 	{
 		const NONE = 0;
+		const TYPE_NORMAL = 1;
+		const TYPE_FACT = 2;
 
-		public function __construct($id, $title, $creator, $posted, $sticky, $replyCount, $unread = 0, $views = 0)
+		public function __construct($id, $title, $creator, $posted, $sticky, $replyCount, $unread = 0, $views = 0, $type = self::TYPE_NORMAL)
 		{
 			$this->id = $id;
 			$this->title = $title;
@@ -13,6 +15,7 @@
 			$this->replyCount = $replyCount;
 			$this->unread = $unread;
 			$this->views = $views;
+			$this->type = $type;
 		}
 
 		/**
@@ -93,6 +96,14 @@
 		public function getViews()
 		{
 			return $this->views;
+		}
+
+		/**
+		 * @return int
+		 */
+		public function getType()
+		{
+			return $this->type;
 		}
 
 		/**
@@ -197,30 +208,32 @@
 			if ($id == ForumTopic::NONE)
 				return $id;
 
-			$query = DB::get()->prepare('SELECT title, creator, views, UNIX_TIMESTAMP(posted) AS posted, sticky, (SELECT COUNT(*) = 0 FROM unread WHERE topicID = t.ID AND userID = :user) AS unread, (SELECT COUNT(*) FROM topic_replies AS r WHERE r.topic = t.ID) AS replyCount FROM topics AS t WHERE t.ID = :id');
+			$query = DB::get()->prepare('SELECT title, creator, views, postType, UNIX_TIMESTAMP(posted) AS posted, sticky, (SELECT COUNT(*) = 0 FROM unread WHERE topicID = t.ID AND userID = :user) AS unread, (SELECT COUNT(*) FROM topic_replies AS r WHERE r.topic = t.ID) AS replyCount FROM topics AS t WHERE t.ID = :id');
 			$query->setValue(':id', $id);
 			$query->setValue(':user', Authenticator::getLoggedInUser()->getId());
 			$query->execute();
 
 			$topic = $query->getFirstRow();
-			return $topic !== NULL ? new ForumTopic($id, $topic->title, $topic->creator, $topic->posted, $topic->sticky, $topic->replyCount, $topic->unread, $topic->views) : ForumTopic::NONE;
+			return $topic !== NULL ? new ForumTopic($id, $topic->title, $topic->creator, $topic->posted, $topic->sticky, $topic->replyCount, $topic->unread, $topic->views, $topic->postType) : ForumTopic::NONE;
 		}
 
 		/**
 		 * Retrieve all available forum topics.
 		 * @param int $start
 		 * @param int $limit
+		 * @param int $type
 		 * @return array
 		 */
-		public static function getAll($start = 0, $limit = 30)
+		public static function getAll($start = 0, $limit = 30, $type = self::TYPE_NORMAL)
 		{
 			$topics = Array();
 
-			$query = DB::get()->prepare("SELECT ID, title, creator, views, UNIX_TIMESTAMP(posted) AS posted, sticky, (SELECT COUNT(*) = 0 FROM unread WHERE topicID = t.ID AND userID = :user) AS unread, (SELECT COUNT(*) FROM topic_replies AS r WHERE r.topic = t.ID) AS replyCount FROM topics AS t ORDER BY sticky DESC, edited DESC, posted DESC LIMIT $start, $limit");
+			$query = DB::get()->prepare("SELECT ID, title, creator, views, postType, UNIX_TIMESTAMP(posted) AS posted, sticky, (SELECT COUNT(*) = 0 FROM unread WHERE topicID = t.ID AND userID = :user) AS unread, (SELECT COUNT(*) FROM topic_replies AS r WHERE r.topic = t.ID) AS replyCount FROM topics AS t WHERE t.postType = :type ORDER BY sticky DESC, edited DESC, posted DESC LIMIT $start, $limit");
 			$query->setValue(':user', Authenticator::getLoggedInUser()->getId());
+			$query->setValue(':type', $type);
 
 			foreach ($query->getRows() as $topic)
-				$topics[] = new ForumTopic($topic->ID, $topic->title, $topic->creator, $topic->posted, $topic->sticky, $topic->replyCount, $topic->unread, $topic->views);
+				$topics[] = new ForumTopic($topic->ID, $topic->title, $topic->creator, $topic->posted, $topic->sticky, $topic->replyCount, $topic->unread, $topic->views, $topic->postType);
 
 			return $topics;
 		}
@@ -239,16 +252,18 @@
 		 * @param string $title
 		 * @param string $message
 		 * @param int $poster
+		 * @param int $type
 		 * @return ForumTopic|int
 		 */
-		public static function create($title, $message, $poster)
+		public static function create($title, $message, $poster, $type = self::TYPE_NORMAL)
 		{
 			if ($poster instanceof User)
 				$poster = $poster->getId();
 
-			$query = DB::get()->prepare('INSERT INTO topics (title, creator, posted, edited) VALUES(:title, :creator, NOW(), NOW())');
+			$query = DB::get()->prepare('INSERT INTO topics (title, creator, posted, edited, postType) VALUES(:title, :creator, NOW(), NOW(), :type)');
 			$query->setValue(':title', $title);
 			$query->setValue(':creator', $poster);
+			$query->setValue(':type', $type);
 			$query->execute();
 
 			$topic = self::get(DB::get()->getLastInsertID('topics'));
@@ -296,5 +311,10 @@
 		 * @var int
 		 */
 		private $views;
+
+		/**
+		 * @var int
+		 */
+		private $type;
 	}
 ?>
