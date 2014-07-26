@@ -2,7 +2,7 @@
 	var postCount = <?php echo $this->post_count; ?>;
 </script>
 <div id="random-fact" class="module-padded module">
-	<b>Did you know: </b> <?php echo $this->fact->getText(); ?> <a href="thread.php?id=<?php echo $this->fact->getThreadId(); ?>"><?php echo $this->fact->getThread()->getReplyCount(); ?> Comments</a>
+	<b>Did you know: </b> <?php echo $this->fact->getText(); ?> <a href="thread.php?id=<?php echo $this->fact->getThreadId(); ?>"><?php echo $this->fact->getThread()->getReplyCount() - 1; ?> Comment(s)</a>
 </div>
 <div class="page-bar module module-padded">
 	<div class="left">
