@@ -194,7 +194,7 @@
 			$query = DB::get()->prepare('INSERT INTO quiz_answers (title, charity, closed, answers, accepted, submitter) VALUES(:title, :charity, :closed, :answers, :accepted, :submitter)');
 			$query->setValue(':title', $title);
 			$query->setValue(':charity', $charity);
-			$query->setValue(':closed', $closed);
+			$query->setValue(':closed', Date('Y-m-d', $closed));
 			$query->setValue(':answers', $answers);
 			$query->setValue(':accepted', $accepted);
 			$query->setValue(':submitter', $submitter);
