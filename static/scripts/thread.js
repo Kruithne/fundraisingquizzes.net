@@ -155,6 +155,7 @@ $(function()
 					this.listing.append(element);
 				}
 			}
+			window.scrollTo(0, 0);
 		},
 
 		handleCommentButtonClick: function()

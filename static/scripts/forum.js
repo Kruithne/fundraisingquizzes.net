@@ -72,6 +72,7 @@ $(function()
 					element.formatPeriods().appendTo(this.listing);
 				}
 			}
+			window.scrollTo(0, 0);
 		},
 
 		handleTopicClick: function()
