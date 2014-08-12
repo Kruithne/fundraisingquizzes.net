@@ -15,6 +15,7 @@ $(function()
 			var click = 'click';
 
 			$(document)
+				.on(click, '.page-bar a', this.handlePageBarClick)
 				.on(click, '.topic', this.handleTopicClick)
 				.on(click, '#comment-button', this.createTopic);
 
@@ -22,6 +23,28 @@ $(function()
 			PacketHandler.hook(Packet.CreateTopic, packetContext(this, 'handleTopicCreation'));
 
 			this.selectPage(1);
+		},
+
+		handlePageBarClick: function()
+		{
+			var link = $(this);
+
+			if (link.hasClass('first'))
+			{
+				handler.selectPage(1, false);
+			}
+			else if (link.hasClass('next'))
+			{
+				handler.selectPage(handler.page + 1, false);
+			}
+			else if (link.hasClass('previous'))
+			{
+				handler.selectPage(handler.page - 1, false)
+			}
+			else if (link.hasClass('last'))
+			{
+				handler.selectPage(handler.pageCount, false);
+			}
 		},
 
 		selectPage: function(page)
