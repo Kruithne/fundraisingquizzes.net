@@ -62,17 +62,19 @@
 			$user = UserHandler::getUser($user_id);
 			Session::Set('LoggedInUser', $user);
 
+			$loginKey = $user->getLoginKey();
+
 			if ($new)
 			{
 				$loginKey = hash('md5', $user->getUsername() . time());
 				$user->setLoginKey($loginKey);
-
-				$date = new DateTime();
-				$date->add(new DateInterval('P1Y'));
-
-				Cookie::Set('LoginKey', $loginKey, $date);
-				Cookie::Set('LoginUser', $user->getId(), $date);
 			}
+
+			$date = new DateTime();
+			$date->add(new DateInterval('P1Y'));
+
+			Cookie::Set('LoginKey', $loginKey, $date);
+			Cookie::Set('LoginUser', $user->getId(), $date);
 		}
 
 		/**
