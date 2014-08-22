@@ -51,6 +51,16 @@
 	width: 40%;
 }
 
+#thread-header .left
+{
+	width: 70%;
+}
+
+#thread-header .right
+{
+	width: 20%;
+}
+
 .left
 {
 	float: left;
