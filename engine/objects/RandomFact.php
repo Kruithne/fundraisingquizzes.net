@@ -43,7 +43,13 @@
 		public function getThreadId()
 		{
 			if ($this->thread == null)
+			{
 				$this->thread = self::createThread($this->getText())->getId();
+				$query = DB::get()->prepare('UPDATE random_facts SET threadID = :threadID WHERE ID = :id');
+				$query->setValue(':threadID', $this->thread);
+				$query->setValue(':id', $this->getId());
+				$query->execute();
+			}
 
 			return $this->thread;
 		}
