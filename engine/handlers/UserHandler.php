@@ -168,6 +168,18 @@
 			}
 		}
 
+		/**
+		 * Get the amount of users registered on the site.
+		 * @return int
+		 */
+		public static function getUserCount()
+		{
+			$query = DB::get()->prepare('SELECT COUNT(*) AS amount FROM users');
+			$row = $query->getFirstRow();
+
+			return $row == null ? 0 : $row->amount;
+		}
+
 		private static $cache = Array();
 	}
 ?>
