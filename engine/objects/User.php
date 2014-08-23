@@ -187,30 +187,51 @@
 
 		/**
 		 * Returns the login key for this user.
-		 * @return string
+		 * @return string[]
 		 */
-		public function getLoginKey()
+		public function getLoginKeys()
 		{
-			if ($this->loginKey == null)
+			if ($this->loginKeys == null)
 			{
-				$query = DB::get()->prepare('SELECT loginKey FROM users WHERE ID = :id');
+				$this->loginKeys = Array();
+				$query = DB::get()->prepare('SELECT loginKey FROM login_keys WHERE userID = :id');
 				$query->setValue(':id', $this->id);
 
-				$result = $query->getFirstRow();
-				if ($result != null)
-					$this->loginKey = $result->loginKey;
+				foreach ($query->getRows() as $result)
+					$this->loginKeys[] = $result->loginKey;
 			}
-			return $this->loginKey;
+			return $this->loginKeys;
 		}
 
 		/**
-		 * Set the login key for this user.
+		 * Add a log-in key for this user.
 		 * @param $key string
 		 */
-		public function setLoginKey($key)
+		public function addLoginKey($key)
 		{
-			$this->loginKey = $key;
-			DB::get()->prepare('UPDATE users SET loginKey = :key WHERE ID = :id')->setValue(':key', $key)->setValue(':id', $this->id)->execute();
+			$this->loginKeys[] = $key;
+			DB::get()->prepare('INSERT IGNORE INTO login_keys (userID, loginKey) VALUES(:id, :key)')->setValue(':key', $key)->setValue(':id', $this->id)->execute();
+		}
+
+		/**
+		 * Delete an existing login key for the user.
+		 * @param $key
+		 */
+		public function deleteLoginKey($key)
+		{
+			DB::get()->prepare('DELETE FROM login_keys WHERE userID = :id AND loginKey = :key')->setValue(':key', $key)->setValue(':id', $this->id)->execute();
+			if (($index = array_search($key, $this->loginKeys)) !== false)
+				unset($this->loginkeys[$index]);
+		}
+
+		/**
+		 * Check if the given login key is valid for this user.
+		 * @param string $key
+		 * @return bool
+		 */
+		public function isValidLoginKey($key)
+		{
+			return in_array($key, $this->getLoginKeys());
 		}
 
 		/**
@@ -243,9 +264,9 @@
 		private $flags;
 
 		/**
-		 * @var string Login key for this user, normally NULL until requested.
+		 * @var string[] Login key for this user, normally NULL until requested.
 		 */
-		private $loginKey;
+		private $loginKeys;
 
 		/**
 		 * @var string E-mail address for this user, normally NULL until requested.

@@ -62,19 +62,17 @@
 			$user = UserHandler::getUser($user_id);
 			Session::Set('LoggedInUser', $user);
 
-			$loginKey = $user->getLoginKey();
-
 			if ($new)
 			{
 				$loginKey = hash('md5', $user->getUsername() . time());
-				$user->setLoginKey($loginKey);
+				$user->addLoginKey($loginKey);
+
+				$date = new DateTime();
+				$date->add(new DateInterval('P1Y'));
+
+				Cookie::Set('LoginKey', $loginKey, $date);
+				Cookie::Set('LoginUser', $user->getId(), $date);
 			}
-
-			$date = new DateTime();
-			$date->add(new DateInterval('P1Y'));
-
-			Cookie::Set('LoginKey', $loginKey, $date);
-			Cookie::Set('LoginUser', $user->getId(), $date);
 		}
 
 		/**
@@ -82,8 +80,14 @@
 		 */
 		public static function logoutUser()
 		{
+			$loginKey = Cookie::Get('LoginKey');
+			if ($loginKey != null)
+			{
+				Authenticator::getLoggedInUser()->deleteLoginKey($loginKey);
+				Cookie::Delete('LoginKey');
+			}
+
 			Session::Delete('LoggedInUser');
-			Cookie::Delete('LoginKey');
 			Cookie::Delete('LoginUser');
 		}
 
@@ -98,7 +102,7 @@
 			if ($loginUser !== null && $loginKey !== null)
 			{
 				$user = UserHandler::getUser($loginUser);
-				if ($user instanceof User && $user->getLoginKey() === $loginKey)
+				if ($user instanceof User && $user->isValidLoginKey($loginKey))
 					Authenticator::loginUser($user->getId(), false);
 			}
 		}
