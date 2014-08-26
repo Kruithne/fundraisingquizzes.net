@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<title><?php echo $this->title; ?> - Fundraising Quizzes</title>
+		<link rel="shortcut icon" href="http://static.fundraisingquizzes.net/images/icon.ico"/>
 		<link rel="stylesheet" type="text/css" href="http://static.fundraisingquizzes.net/css/base.css"/>
 		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Noto+Sans"/>
 		<?php
