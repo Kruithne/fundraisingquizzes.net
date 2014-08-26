@@ -11,6 +11,9 @@
 			$this->id = $id;
 			$this->text = $text;
 			$this->thread = $thread;
+
+			if (strpos($this->text, '%usercount%') !== false)
+				$this->text = str_replace('%usercount%', UserHandler::getUserCount(), $this->text);
 		}
 
 		/**
