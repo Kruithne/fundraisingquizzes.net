@@ -25,6 +25,7 @@
 		?>
 	</head>
 	<body>
+		<div id="btt_button" title="Return to top"></div>
 		<div id="container">
 		<?php
 			$broadcast = Settings::get('broadcast');

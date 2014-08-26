@@ -6,6 +6,7 @@ $(function()
 			this.element = $('#account-status');
 			this.loggedIn = (typeof loggedIn == 'undefined' ? null : loggedIn);
 			this.isAdmin = (typeof isAdmin == 'undefined' ? false : isAdmin);
+			this.btt_button = $('#btt_button');
 
 			this.resetLoginForm();
 
@@ -13,6 +14,10 @@ $(function()
 			$(d).on(c, '#login-button', handler.loginButtonClick);
 			$(d).on(c, '#login-cancel', handler.resetLoginForm);
 			$(d).on(c, '#logout-button', handler.logoutButtonClick);
+			$(d).on(c, '#btt_button', function()
+			{
+				window.scrollTo(0, 0);
+			});
 
 			PacketHandler.hook(Packet.Login, packetContext(this, 'loginResult'));
 
@@ -49,6 +54,14 @@ $(function()
 					pass: $('#password-field').val().trim()
 				});
 			};
+
+			$(window).scroll(function()
+			{
+				if (this.scrollY >= 135 && !handler.btt_button.is(':visible'))
+					handler.btt_button.stop().fadeIn();
+				else if (this.scrollY < 135 && handler.btt_button.is(':visible'))
+					handler.btt_button.stop().fadeOut();
+			});
 		},
 
 		loginButtonClick: function()
