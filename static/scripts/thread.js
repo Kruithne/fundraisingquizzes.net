@@ -4,6 +4,8 @@ $(function()
 		threadLimit: 30,
 		submitting: false,
 		editing: null,
+		loadingFrame: $('#loading'),
+
 		load: function()
 		{
 			this.listing = $('#thread-listing');
@@ -94,6 +96,9 @@ $(function()
 			this.page = page;
 			$('#thread-header .right').text('Page ' + this.page + ' / ' + this.pageCount);
 
+			this.listing.empty();
+			this.loadingFrame.show();
+
 			PacketHandler.send(Packet.GetForumReplies, {
 				id: this.thread.id,
 				offset: (this.page - 1) * this.threadLimit
@@ -107,9 +112,9 @@ $(function()
 
 		renderThread: function(data)
 		{
-			this.listing.empty();
 			if (data.replies != undefined)
 			{
+				this.loadingFrame.hide();
 				for (var replyIndex in data.replies)
 				{
 					var reply = data.replies[replyIndex],

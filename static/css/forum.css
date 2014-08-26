@@ -9,6 +9,7 @@
 {
 	padding-left: 45px;
 	font-weight: bold;
+	display: none;
 }
 
 .topic.unread
@@ -168,4 +169,10 @@
 #random-fact a
 {
 	float: right;
+}
+
+#loading
+{
+	text-align: center;
+	font-weight: bold;
 }

@@ -20,6 +20,10 @@
 	<div class="float-block"></div>
 </div>
 <div id="thread-listing"></div>
+<div class="module module-padded" id="loading">
+	<p><img src="http://static.fundraisingquizzes.net/images/loading.gif"/></p>
+	<p>Loading...</p>
+</div>
 <div class="page-bar module module-padded">
 	<div class="left">
 		<a class="first">&laquo; First Page</a>

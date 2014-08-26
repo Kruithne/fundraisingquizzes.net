@@ -3,6 +3,9 @@ $(function()
 	var handler = {
 		submitting: false,
 		threadLimit: 30,
+		loadingFrame: $('#loading'),
+		forumHeader: $('#listing-header'),
+
 		load: function()
 		{
 			this.listing = $('#forum-listing');
@@ -50,6 +53,11 @@ $(function()
 		selectPage: function(page)
 		{
 			this.page = page;
+
+			this.listing.empty();
+			this.loadingFrame.show();
+			this.forumHeader.hide();
+
 			PacketHandler.send(Packet.GetForumTopics, {
 				offset: (this.page - 1) * this.threadLimit
 			});
@@ -72,9 +80,10 @@ $(function()
 
 		renderTopicList: function(data)
 		{
-			this.listing.empty();
 			if (data.topics != undefined)
 			{
+				this.loadingFrame.hide();
+				this.forumHeader.show();
 				for (var topic_index in data.topics)
 				{
 					var topic = data.topics[topic_index],
