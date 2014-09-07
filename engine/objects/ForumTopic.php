@@ -72,6 +72,12 @@
 		public function setSticky($sticky)
 		{
 			$this->sticky = (int) $sticky;
+
+			// Persist change.
+			$query = DB::get()->prepare('UPDATE topics SET sticky = :sticky WHERE ID = :id');
+			$query->setValue(':sticky', $this->sticky);
+			$query->setValue(':id', $this->getId());
+			$query->execute();
 		}
 
 		/**
