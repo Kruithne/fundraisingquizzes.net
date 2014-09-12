@@ -20,7 +20,7 @@
 .quiz-title, .quiz-title input
 {
 	font-weight: bold;
-	font-size: 20px;
+	font-size: 19px;
 }
 
 .quiz-title input
@@ -245,4 +245,72 @@
 .query-answer-form
 {
 	margin: 10px;
+}
+
+.quiz-type
+{
+	float: left;
+	width: 60px;
+	height: 50px;
+	position: relative;
+}
+
+.quiz-type-image
+{
+	background: url(http://static.fundraisingquizzes.net/images/quiz_type_icons.png) no-repeat;
+	width: 60px;
+	height: 60px;
+	position: absolute;
+	left: -10px;
+	top: -5px;
+}
+
+.quiz-type-0
+{
+	background-position: -240px -60px;
+}
+
+.quiz-type-1
+{
+	background-position: -60px 0;
+}
+
+.quiz-type-2
+{
+	background-position: -120px 0;
+}
+
+.quiz-type-3
+{
+	background-position: -180px 0;
+}
+
+.quiz-type-4
+{
+	background-position: -240px 0;
+}
+
+.quiz-type-5
+{
+	background-position: 0 -60px;
+}
+
+.quiz-type-6
+{
+	background-position: -120px -60px;
+}
+
+.quiz-type-7
+{
+	background-position: -180px -60px;
+}
+
+.quiz-type-9
+{
+	background-position: 0 -120px;
+}
+
+.quiz-type-10
+{
+	background-position: -240px -60px;
 }

@@ -5,6 +5,20 @@
 		const DEFAULT_UPDATE_FLAG = 4;
 		const DEFAULT_NEW_FLAG = 7;
 
+		public static $QUIZ_TYPES = Array(
+			'Miscellaneous',
+			'Picture Quiz',
+			'Dingbats',
+			'Anagrams',
+			'Cryptic',
+			'Odd Man Out',
+			'Homophones',
+			'Rhyming',
+			'General Knowledge',
+			'Story',
+			'Ditloids'
+		);
+
 		/**
 		 * Construct a new quiz object.
 		 * @param string $title Title of the quiz.
@@ -13,12 +27,13 @@
 		 * @param string $extra Extra description of the quiz.
 		 * @param int $closing The date which the quiz closes.
 		 * @param int $submitter The ID of the user who submitted the quiz.
+		 * @param int $type The type of quiz relative to Quiz::QUIZ_TYPES
 		 * @param boolean $accepted True if the quiz has been accepted.
 		 * @param int $update Days the quiz is flagged as updated for.
 		 * @param int $new Days the quiz is flagged as new for.
 		 * @param int $id ID of the quiz. Leave blank if the quiz has never been persisted.
 		 */
-		public function __construct($title, $charity, $description, $extra, $closing, $submitter, $accepted = false, $update = self::DEFAULT_UPDATE_FLAG, $new = self::DEFAULT_NEW_FLAG, $id = Quiz::NONE)
+		public function __construct($title, $charity, $description, $extra, $closing, $submitter, $type = 0, $accepted = false, $update = self::DEFAULT_UPDATE_FLAG, $new = self::DEFAULT_NEW_FLAG, $id = Quiz::NONE)
 		{
 			$this->id = $id;
 			$this->title = $title;
@@ -30,6 +45,7 @@
 			$this->submitted_by = $submitter;
 			$this->accepted = $accepted;
 			$this->new = $new;
+			$this->quiz_type = $type;
 			$this->queries = Array();
 		}
 
@@ -187,6 +203,22 @@
 		}
 
 		/**
+		 * @return int
+		 */
+		public function getQuizType()
+		{
+			return $this->quiz_type;
+		}
+
+		/**
+		 * @return string
+		 */
+		public function getQuizTypeName()
+		{
+			return self::$QUIZ_TYPES[$this->getQuizType()];
+		}
+
+		/**
 		 * Delete the current quiz from the database.
 		 * @param boolean $restore If true, this will reverse a delete.
 		 */
@@ -265,7 +297,7 @@
 			if ($id == 0)
 				return QUIZ::NONE;
 
-			$query = DB::get()->prepare('SELECT title, charity, description, description_extra, UNIX_TIMESTAMP(closing) AS closing, submitted_by, accepted, updated_flag, new_flag FROM quizzes WHERE ID = :id');
+			$query = DB::get()->prepare('SELECT title, quizType, charity, description, description_extra, UNIX_TIMESTAMP(closing) AS closing, submitted_by, accepted, updated_flag, new_flag FROM quizzes WHERE ID = :id');
 			$query->setValue(':id', $id);
 
 			$result = $query->getFirstRow();
@@ -280,6 +312,7 @@
 				$result->description_extra,
 				$result->closing,
 				$result->submitted_by,
+				$result->quizType,
 				(bool) $result->accepted,
 				$result->updated_flag,
 				$result->new_flag,
@@ -300,7 +333,7 @@
 		{
 			$accepted = ($acceptedOnly ? ' AND accepted = 1' : '');
 			$deleted = ($deletedOnly ? 1 : 0);
-			$query = DB::get()->prepare("SELECT ID, title, charity, description, description_extra, UNIX_TIMESTAMP(closing) AS closing, submitted_by, accepted, updated_flag, new_flag FROM quizzes WHERE deleted = $deleted$accepted ORDER BY closing ASC");
+			$query = DB::get()->prepare("SELECT ID, title, quizType, charity, description, description_extra, UNIX_TIMESTAMP(closing) AS closing, submitted_by, accepted, updated_flag, new_flag FROM quizzes WHERE deleted = $deleted$accepted ORDER BY closing ASC");
 			$return = Array();
 
 			foreach ($query->getRows() as $row)
@@ -312,6 +345,7 @@
 					$row->description_extra,
 					$row->closing,
 					$row->submitted_by,
+					$row->quizType,
 					(bool) $row->accepted,
 					$row->updated_flag,
 					$row->new_flag,
@@ -344,5 +378,6 @@
 		private $accepted;
 		private $queries;
 		private $submitted_by;
+		private $quiz_type;
 	}
 ?>

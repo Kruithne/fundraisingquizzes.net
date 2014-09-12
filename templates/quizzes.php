@@ -48,6 +48,7 @@
 			<div class="module module-padded quiz-listing<?php echo implode($classes); ?>" id="quiz-<?php echo $quiz->getId(); ?>">
 				<form class="validatable preventDefault" complete="quizEditSuccess" error="quizEditError" submit="quizEditSubmit">
 					<div class="quiz-arrow"></div>
+					<div class="quiz-type"><div class="quiz-type-image quiz-type-<?php echo $quiz->getQuizType(); ?>" title="<?php echo $quiz->getQuizTypeName(); ?>"></div></div>
 					<p class="quiz-title"><span class="quiz-title-title"><?php echo $quiz->getTitle(); ?></span> in aid of <span class="quiz-title-charity"><?php echo $quiz->getCharity(); ?></span></p>
 					<p class="dateSelector quiz-closing" validate=">" date="<?php echo $quiz->getClosingDate(); ?>" timestamp="<?php echo $quiz->getClosing(); ?>">Closes in <span class="time-period"><?php echo $quiz->getClosing(); ?></span> (<span class="time-formal"><?php echo $quiz->getClosing(); ?></span>)</p>
 					<div class="quiz-extra">
