@@ -219,6 +219,14 @@
 		}
 
 		/**
+		 * @param int $quiz_type
+		 */
+		public function setQuizType($quiz_type)
+		{
+			$this->quiz_type = $quiz_type;
+		}
+
+		/**
 		 * Delete the current quiz from the database.
 		 * @param boolean $restore If true, this will reverse a delete.
 		 */
@@ -255,8 +263,8 @@
 			$query = null;
 			if ($this->id == Quiz::NONE)
 			{
-				$query = DB::get()->prepare('INSERT INTO quizzes (title, charity, description, description_extra, closing, submitted_by, new_flag, accepted)
-					VALUES(:title, :charity, :description, :extra, :closing, :submitter, :new, :accepted)');
+				$query = DB::get()->prepare('INSERT INTO quizzes (title, quizType, charity, description, description_extra, closing, submitted_by, new_flag, accepted)
+					VALUES(:title, :type, :charity, :description, :extra, :closing, :submitter, :new, :accepted)');
 
 				$query->setValue(':new', QUIZ::DEFAULT_NEW_FLAG);
 			}
@@ -264,6 +272,7 @@
 			{
 				$query = DB::get()->prepare('UPDATE quizzes SET
 					title = :title,
+					quizType = :type,
 					charity = :charity,
 					description = :description,
 					description_extra = :extra,
@@ -283,6 +292,7 @@
 			$query->setValue(':closing', $this->getClosingDate());
 			$query->setValue(':submitter', $this->submitted_by);
 			$query->setValue(':accepted', $this->accepted ? 1 : 0);
+			$query->setValue(':type', $this->getQuizType());
 
 			$query->execute();
 		}

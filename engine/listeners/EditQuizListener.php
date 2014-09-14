@@ -12,15 +12,20 @@
 			$description = REST::Get('description');
 			$extra = REST::Get('extra');
 			$closing = REST::Get('closing');
+			$quizType = REST::Get('quizType');
 
 			$quiz = Quiz::get((int) REST::Get('id'));
-			if ($quiz instanceof Quiz && REST::Check($title, $charity, $description, $extra, $closing))
+			if ($quiz instanceof Quiz && REST::Check($title, $charity, $description, $closing))
 			{
 				$quiz->setTitle($title);
 				$quiz->setCharity($charity);
 				$quiz->setDescription($description);
-				$quiz->setExtra($extra);
+
+				if ($extra !== NULL)
+					$quiz->setExtra($extra);
+
 				$quiz->setClosing($closing);
+				$quiz->setQuizType($quizType);
 				$quiz->persist();
 				$this->setReturn('success', true);
 			}

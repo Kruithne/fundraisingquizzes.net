@@ -1,3 +1,13 @@
+<script>
+	var quizTypeCount = <?php echo count(Quiz::$QUIZ_TYPES); ?>;
+	var quizTypes = [<?php
+		$types = Array();
+		foreach (Quiz::$QUIZ_TYPES as $type)
+			$types[] = '"' . $type . '"';
+
+		echo implode(', ', $types);
+ 	?>];
+</script>
 <div class="module module-padded">
 	<p><b>Voting:</b> You can vote for three quizzes a week, the quiz with the highest vote at the end of each week becomes Quiz of the Week.</p>
 	<p><b>Bookmarking:</b> Quizzes you bookmark will show up at the top of the list for you regardless of their closing date.</p>
@@ -12,6 +22,19 @@
 			<select range="year-year+5" type="year"></select>
 		</p>
 		<div class="quiz-extra visible">
+			<p class="quiz-type-input">
+				<select id="quiz-type-field">
+					<option value="-1" noselect="true" selected>Select a quiz type...</option>
+					<?php
+						$index = 0;
+						foreach (Quiz::$QUIZ_TYPES as $type)
+						{
+							echo '<option value="' . $index . '">' . $type . '</option>';
+							$index++;
+						}
+					?>
+				</select>
+			</p>
 			<p class="quiz-description"><input type="text" id="description" require="true" placeholder="Description..."/></p>
 			<p class="quiz-description-extra"><input type="text" id="extra" placeholder="(Optional) Extra Information... "/></p>
 		</div>
@@ -48,7 +71,7 @@
 			<div class="module module-padded quiz-listing<?php echo implode($classes); ?>" id="quiz-<?php echo $quiz->getId(); ?>">
 				<form class="validatable preventDefault" complete="quizEditSuccess" error="quizEditError" submit="quizEditSubmit">
 					<div class="quiz-arrow"></div>
-					<div class="quiz-type"><div class="quiz-type-image quiz-type-<?php echo $quiz->getQuizType(); ?>" title="<?php echo $quiz->getQuizTypeName(); ?>"></div></div>
+					<div class="quiz-type"><div class="quiz-type-image quiz-type-<?php echo $quiz->getQuizType(); ?>" title="<?php echo $quiz->getQuizTypeName(); ?>" currentType="<?php echo $quiz->getQuizType(); ?>" baseType="<?php echo $quiz->getQuizType(); ?>"></div></div>
 					<p class="quiz-title"><span class="quiz-title-title"><?php echo $quiz->getTitle(); ?></span> in aid of <span class="quiz-title-charity"><?php echo $quiz->getCharity(); ?></span></p>
 					<p class="dateSelector quiz-closing" validate=">" date="<?php echo $quiz->getClosingDate(); ?>" timestamp="<?php echo $quiz->getClosing(); ?>">Closes in <span class="time-period"><?php echo $quiz->getClosing(); ?></span> (<span class="time-formal"><?php echo $quiz->getClosing(); ?></span>)</p>
 					<div class="quiz-extra">

@@ -241,6 +241,25 @@ $(function()
 								holder: holder
 							});
 					}
+				},
+				{
+					type: click,
+					element: '.quiz-type-image',
+					func: function()
+					{
+						var quizType = $(this);
+						if (userIsAdmin() && quizType.parent().parent().parent().hasClass('editing'))
+						{
+							var currentType = parseInt(quizType.attr('currentType'));
+							quizType.removeClass('quiz-type-' + currentType);
+
+							currentType++;
+							if (currentType == quizTypeCount)
+								currentType = 0;
+
+							quizType.addClass('quiz-type-' + currentType).attr('currentType', currentType);
+						}
+					}
 				}
 			];
 
@@ -374,7 +393,8 @@ $(function()
 			{
 				title: form.find('#title').val().trim(),
 				charity: form.find('#charity').val().trim(),
-				closing: form.find('.dateSelector').getDateSelectorValue()
+				closing: form.find('.dateSelector').getDateSelectorValue(),
+				quizType: form.find('#quiz-type-field').val()
 			};
 
 			var isAnswer = typeof isAnswerPage !== "undefined";
@@ -447,7 +467,8 @@ $(function()
 				id: handler.getListingID(form.parent()),
 				title: form.find('.quiz-title-title input').val().trim(),
 				charity: form.find('.quiz-title-charity input').val().trim(),
-				closing: form.find('.quiz-closing').getDateSelectorValue()
+				closing: form.find('.quiz-closing').getDateSelectorValue(),
+				quizType: parseInt(form.find('.quiz-type-image').attr('currentType'))
 			};
 
 			if (listing.isAnswer())
@@ -651,6 +672,12 @@ $(function()
 
 			handler.applyQuizFlags(listing.removeClass('editing'));
 			listing.find('.quiz-vote').fadeIn();
+
+			var quizTypeField = listing.find('.quiz-type-image');
+			if (data != undefined)
+				quizTypeField.attr('baseType', data.quizType);
+
+			quizTypeField.removeClass('quiz-type-' + quizTypeField.attr('currentType')).addClass('quiz-type-' + quizTypeField.attr('baseType'));
 		},
 
 		getOffset: function(e)
