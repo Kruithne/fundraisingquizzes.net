@@ -258,6 +258,7 @@ $(function()
 								currentType = 0;
 
 							quizType.addClass('quiz-type-' + currentType).attr('currentType', currentType);
+							quizType.attr('title', quizTypes[currentType]);
 						}
 					}
 				}
@@ -678,6 +679,7 @@ $(function()
 				quizTypeField.attr('baseType', data.quizType);
 
 			quizTypeField.removeClass('quiz-type-' + quizTypeField.attr('currentType')).addClass('quiz-type-' + quizTypeField.attr('baseType'));
+			quizTypeField.attr('title', quizTypes[parseInt(quizTypeField.attr('baseType'))]);
 		},
 
 		getOffset: function(e)

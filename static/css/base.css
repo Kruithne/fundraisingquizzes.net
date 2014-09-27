@@ -257,3 +257,9 @@ body
 	z-index: 100;
 	cursor: pointer;
 }
+
+#birthday-prompt
+{
+	background: white url(http://static.fundraisingquizzes.net/images/present_48.png) no-repeat 15px;
+	padding: 25px 25px 25px 80px;
+}

@@ -14,6 +14,10 @@
 
 			if (Authenticator::isLoggedInAsAdmin())
 				$template->deleted_quizzes = Quiz::getAll(false, true);
+
+			$user = Authenticator::getLoggedInUser();
+			if (!$user->hasSeenBirthdayPrompt())
+				$user->addFlag(User::FLAG_BIRTHDAY_PROMPT);
 		}
 	}
 ?>

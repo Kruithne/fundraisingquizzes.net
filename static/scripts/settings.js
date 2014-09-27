@@ -43,12 +43,15 @@ $(function()
 			window.changePasswordError = handler.changePasswordError;
 			window.changeEmailSuccess = handler.changeEmailSuccess;
 			window.changePasswordSuccess = handler.changePasswordSuccess;
+			window.changeBirthdaySuccess = handler.changeBirthdaySuccess;
+			window.changeBIrthdayError = handler.changeBirthdayError;
 
 			PacketHandler.hook(Packet.ChangePassword, packetContext(handler, 'handleChangePassword'));
 			PacketHandler.hook(Packet.ChangeEmail, packetContext(handler, 'handleChangeEmail'));
 			PacketHandler.hook(Packet.ChangeAvatar, packetContext(handler, 'handleAvatarChange'));
 			PacketHandler.hook(Packet.AddNewFact, packetContext(handler, 'handleAddNewFact'));
 			PacketHandler.hook(Packet.DeleteFact, packetContext(handler, 'handleDeleteFact'));
+			PacketHandler.hook(Packet.ChangeBirthday, packetContext(handler, 'handleChangeBirthday'));
 
 			var setHandler = packetContext(handler, 'handleBroadcastSet');
 			PacketHandler.hook(Packet.SetBroadcast, setHandler);
@@ -159,6 +162,50 @@ $(function()
 					errorField.setError(data.error);
 				else
 					errorField.setError('Unable to change e-mail address, try again later!');
+			}
+			form.removeClass('submitting');
+		},
+
+		changeBirthdayError: function()
+		{
+			$('#birthdat-error').setError('You must enter a valid birthday!');
+		},
+
+		changeBirthdaySuccess: function(form)
+		{
+			if (!form.hasClass('submitting'))
+			{
+				form.addClass('submitting');
+				var day = form.find('#birthday-day').val().trim();
+				var month = form.find('#birthday-month').val().trim();
+
+				PacketHandler.send(Packet.ChangeBirthday, {
+
+						day: day,
+						month: month
+					},
+					{
+						form: form,
+						errorField: form.find('.error-field').setPending('Changing birthday...')
+					});
+			}
+		},
+
+		handleChangeBirthday: function(data, callback)
+		{
+			var form = callback.form,
+				errorField = callback.errorField;
+
+			if (data.success != undefined && data.success == true)
+			{
+				errorField.setSuccess('Birthday changed!');
+			}
+			else
+			{
+				if (data.error != undefined)
+					errorField.setError(data.error);
+				else
+					errorField.setError('Unable to change birthday, try again later!');
 			}
 			form.removeClass('submitting');
 		},

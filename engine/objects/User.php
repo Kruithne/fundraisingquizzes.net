@@ -3,9 +3,10 @@
 	{
 		const NONE = 0;
 
-		const FLAG_ADMIN = 0x1;
-		const FLAG_BANNED = 0x2;
-		const FLAG_CONTRIBUTOR = 0x4;
+		const FLAG_ADMIN = 0x1; // 2 ^ 0
+		const FLAG_BANNED = 0x2; // 2 ^ 1
+		const FLAG_CONTRIBUTOR = 0x4; // 2 ^ 2
+		const FLAG_BIRTHDAY_PROMPT = 0x8; // 2 ^ 3
 
 		public function __construct($id, $username, $flags, $avatar, $signature)
 		{
@@ -37,6 +38,11 @@
 		public function isContributor()
 		{
 			return $this->hasFlag(User::FLAG_CONTRIBUTOR);
+		}
+
+		public function hasSeenBirthdayPrompt()
+		{
+			return $this->hasFlag(User::FLAG_BIRTHDAY_PROMPT);
 		}
 
 		/**
@@ -186,6 +192,35 @@
 		}
 
 		/**
+		 * Return the birthday for this user, NULL if not set.
+		 * @return UserBirthday|null
+		 */
+		public function getBirthday()
+		{
+			if ($this->birthday !== NULL)
+				return $this->birthday;
+
+			$query = DB::get()->prepare('SELECT DAY(birthday) AS b_day, MONTH(birthday) AS b_month FROM users WHERE ID = :user');
+			$query->setValue(':user', $this->getId());
+
+			$result = $query->getFirstRow();
+			$this->birthday = $result->b_day === NULL ? NULL : new UserBirthday($result->b_day, $result->b_month);
+			return $this->birthday;
+		}
+
+		/**
+		 * @param UserBirthday $birthday
+		 */
+		public function setBirthday($birthday)
+		{
+			$this->birthday = $birthday;
+			$query = DB::get()->prepare('UPDATE users SET birthday = :birthday WHERE ID = :user');
+			$query->setValue(':birthday', $birthday->getSQL());
+			$query->setValue(':user', $this->getId());
+			$query->execute();
+		}
+
+		/**
 		 * Returns the login key for this user.
 		 * @return string[]
 		 */
@@ -287,5 +322,10 @@
 		 * @var string|null
 		 */
 		private $signature;
+
+		/**
+		 * @var UserBirthday|null Timestamp for the users birthday.
+		 */
+		private $birthday;
 	}
 ?>

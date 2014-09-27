@@ -55,6 +55,10 @@
 			</ul>
 		</div>
 		<?php
+			if (Authenticator::isLoggedIn() && !Authenticator::getLoggedInUser()->hasSeenBirthdayPrompt())
+				include_once('birthday_prompt.php');
+		?>
+		<?php
 			echo $this->content;
 		?>
 		<div class="module module-padded">

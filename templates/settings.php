@@ -34,6 +34,10 @@
 				<th>Registered:</th>
 				<td><span class="time-period"><?php echo $this->user->getJoined(); ?></span> (<span class="time-formal"><?php echo $this->user->getJoined(); ?></span>)</td>
 			</tr>
+			<tr>
+				<th>Birthday:</th>
+				<td><?php echo $this->user->getBirthday() == null ? 'Not set' : $this->user->getBirthday(); ?></td>
+			</tr>
 		</table>
 		<h2>Change E-mail Address</h2>
 		<form class="validatable preventDefault" error="changeEmailError" complete="changeEmailSuccess">
@@ -67,6 +71,16 @@
 				</tr>
 				<tr>
 					<td colspan="2" class="footer"><input type="submit" class="input-button" value="Change Password"/></td>
+				</tr>
+			</table>
+		</form>
+		<h2>Change Birthday</h2>
+		<form class="validatable preventDefault" error="changeBirthdayError" complete="changeBirthdaySuccess">
+			<p class="error-field" id="birthday-error"></p>
+			<table class="form-table">
+				<tr>
+					<th>Birthday:</th>
+					<td><select id="birthday-day" range="1-31" class="input-text"></select> <select id="birthday-month" range="months" class="input-text"></select> <input type="submit" class="input-button" value="Set Birthday"/></td>
 				</tr>
 			</table>
 		</form>

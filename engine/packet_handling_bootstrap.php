@@ -32,6 +32,7 @@
 		30 => 'SetBroadcast',
 		31 => 'ChangeForumSignature',
 		32 => 'AddNewFact',
-		33 => 'DeleteFact'
+		33 => 'DeleteFact',
+		34 => 'ChangeBirthday'
 	));
 ?>
