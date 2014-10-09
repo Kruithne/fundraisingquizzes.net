@@ -10,6 +10,7 @@
 					<li id="option-graveyard" panel="panel-graveyard">Quiz Graveyard</li>
 					<li id="option-broadcast" panel="panel-broadcast">Broadcast</li>
 					<li id="option-facts" panel="panel-facts">Random Facts</li>
+					<li id="option-members" panel="panel-members">Member List</li>
 					<?php
 				}
 			?>
@@ -132,6 +133,27 @@
 					?>
 				</div>
 				<input type="text" class="input-text" id="new-fact" placeholder="New fact..."/> <input type="button" class="input-button" id="new-fact-button" value="Add Fact"/>
+			</div>
+			<div class="module module-padded settings-panel" id="panel-members">
+				<h1 id="panel-header-members">Members</h1>
+				<table id="member-list">
+					<tr>
+						<?php
+							$index = 0;
+							foreach ($this->users as $user)
+							{
+								if ($index == 6)
+								{
+									echo "</tr><tr>";
+									$index = 0;
+								}
+
+								echo "<td>$user</td>";
+								$index++;
+							}
+						?>
+					</tr>
+				</table>
 			</div>
 			<?php
 		}

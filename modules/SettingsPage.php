@@ -20,6 +20,8 @@
 				$user->addFlag(User::FLAG_BIRTHDAY_PROMPT);
 
 			$user->persist();
+
+			$template->users = UserHandler::getUserList();
 		}
 	}
 ?>

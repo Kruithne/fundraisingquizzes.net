@@ -62,6 +62,11 @@
 	background-image: url(http://static.fundraisingquizzes.net/images/info_16.png);
 }
 
+#option-members
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/user2_16.png);
+}
+
 .settings-panel
 {
 	margin-left: 200px;
@@ -104,6 +109,11 @@
 #panel-header-facts
 {
 	background-image: url(http://static.fundraisingquizzes.net/images/info_32.png);
+}
+
+#panel-header-members
+{
+	background-image: url(http://static.fundraisingquizzes.net/images/user2_32.png);
 }
 
 .field-hidden
@@ -164,4 +174,9 @@
 {
 	margin-top: 20px;
 	width: 400px;
+}
+
+#member-list td
+{
+	padding: 3px;
 }

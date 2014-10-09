@@ -180,6 +180,15 @@
 			return $row == null ? 0 : $row->amount;
 		}
 
+		public static function getUserList()
+		{
+			$users = Array();
+			foreach (DB::get()->prepare('SELECT username FROM users ORDER BY username ASC')->getRows() as $user)
+				$users[] = $user->username;
+
+			return $users;
+		}
+
 		private static $cache = Array();
 	}
 ?>
