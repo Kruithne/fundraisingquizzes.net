@@ -18,6 +18,8 @@
 			$user = Authenticator::getLoggedInUser();
 			if (!$user->hasSeenBirthdayPrompt())
 				$user->addFlag(User::FLAG_BIRTHDAY_PROMPT);
+
+			$user->persist();
 		}
 	}
 ?>
