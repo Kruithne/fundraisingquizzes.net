@@ -17,4 +17,15 @@
 
 	// Delete any expired answer sets
 	$db->execute('DELETE FROM quiz_answers WHERE closed < DATE_SUB(NOW(), INTERVAL 1 MONTH)');
+
+	// Birthday stuffs.
+	$db->execute('UPDATE users SET avatar = prev_avatar, prev_avatar = NULL WHERE prev_avatar IS NOT NULL');
+	$db->execute('UPDATE users SET prev_avatar = avatar, avatar = 37 WHERE MONTH(birthday) = MONTH(NOW()) AND DAY(birthday) = DAY(NOW())');
+
+	foreach ($db->prepare('SELECT username FROM users WHERE prev_avatar IS NOT NULL')->getRows() as $row)
+	{
+		// Create new birthday thread
+		$username = $row->username;
+		$thread = ForumTopic::create("Happy Birthday $username!", "The team behind Fundraising Quizzes would like to wish $username a very happy birthday! Hopefully your birthday wish to win more quizzes comes true!", 1, ForumTopic::TYPE_NORMAL);
+	}
 ?>
