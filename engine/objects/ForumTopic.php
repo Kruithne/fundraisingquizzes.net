@@ -215,8 +215,11 @@
 			if ($id == ForumTopic::NONE)
 				return $id;
 
-			if ($user === null)
+			if ($user === null && Authenticator::isLoggedIn())
 				$user = Authenticator::getLoggedInUser()->getId();
+
+			if ($user === null)
+				$user = 0;
 
 			$query = DB::get()->prepare('SELECT title, creator, views, postType, UNIX_TIMESTAMP(posted) AS posted, sticky, (SELECT COUNT(*) = 0 FROM unread WHERE topicID = t.ID AND userID = :user) AS unread, (SELECT COUNT(*) FROM topic_replies AS r WHERE r.topic = t.ID) AS replyCount FROM topics AS t WHERE t.ID = :id');
 			$query->setValue(':id', $id);
@@ -276,7 +279,7 @@
 			$query->setValue(':type', $type);
 			$query->execute();
 
-			$topic = self::get(DB::get()->getLastInsertID('topics'), 0);
+			$topic = self::get(DB::get()->getLastInsertID('topics'));
 			$topic->addReply($message, $poster);
 
 			return $topic;
