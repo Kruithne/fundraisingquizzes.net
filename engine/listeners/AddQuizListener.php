@@ -19,7 +19,7 @@
 			{
 				$closing = strtotime($closing);
 				$user_id = Authenticator::getLoggedInUser()->getId();
-				$quiz = new Quiz($title, $charity, $description, $extra == null ? '' : $extra, $closing, $user_id, $quizType, Authenticator::isLoggedInAsAdmin(), 0);
+				$quiz = new Quiz($title, $charity, $description, $extra == null ? '' : $extra, $closing, $user_id, $quizType, 0, Authenticator::isLoggedInAsAdmin(), 0);
 				$quiz->persist();
 				$this->setReturn('success', true);
 			}

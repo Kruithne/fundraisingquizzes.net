@@ -75,6 +75,9 @@
 					<p class="quiz-title"><span class="quiz-title-title"><?php echo $quiz->getTitle(); ?></span> in aid of <span class="quiz-title-charity"><?php echo $quiz->getCharity(); ?></span></p>
 					<p class="dateSelector quiz-closing" validate=">" date="<?php echo $quiz->getClosingDate(); ?>" timestamp="<?php echo $quiz->getClosing(); ?>">Closes in <span class="time-period"><?php echo $quiz->getClosing(); ?></span> (<span class="time-formal"><?php echo $quiz->getClosing(); ?></span>)</p>
 					<div class="quiz-extra">
+						<?php if ($quiz->getAnswerPolicy() > 0) { ?>
+							<p class="quiz-answer-policy"><b>Answer Policy: </b><?php echo $quiz->getAnswerPolicyText(); ?></p>
+						<?php } ?>
 						<p class="linkable quiz-description"><?php echo $quiz->getDescription(); ?></p>
 						<p class="linkable quiz-description-extra"><?php echo $quiz->getExtra(); ?></p>
 					</div>
