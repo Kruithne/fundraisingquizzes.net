@@ -405,6 +405,7 @@ $(function()
 			}
 			else
 			{
+				data.answerPolicy = form.find('.quiz-answer-policy-field').val();
 				data.description = form.find('#description').val().trim();
 				data.extra = form.find('#extra').val().trim();
 			}
@@ -433,6 +434,7 @@ $(function()
 				var listing = callback.listing;
 				delete handler.old[listing.attr('id')];
 
+				listing.find('.quiz-answer-policy').attr('policyValue', listing.find('.quiz-answer-policy-field').val());
 				handler.cancelEditing(listing, callback);
 
 				if (!listing.hasClass('updated'))
@@ -478,6 +480,7 @@ $(function()
 			}
 			else
 			{
+				data.answerPolicy = form.find('.quiz-answer-policy-field').val();
 				data.description = form.find('.quiz-description input').val().trim();
 				data.extra = form.find('.quiz-description-extra input').val().trim();
 			}
@@ -602,6 +605,14 @@ $(function()
 				data.extra = handler.prepareEditField(listing, 'description-extra', false)
 			}
 
+			var answerPolicyField = listing.find('.quiz-answer-policy').empty();
+
+			var selector = $('<select class="quiz-answer-policy-field"/>').appendTo(answerPolicyField);
+			$('<option value="0"/>').text('No answer policy specified').appendTo(selector);
+			$('<option value="1"/>').text('No asking allowed').appendTo(selector);
+			$('<option value="2"/>').text('No asking before').appendTo(selector);
+			selector.val(answerPolicyField.attr('policyValue'));
+
 			handler.old[listing.attr('id')] = data;
 
 			var dateField = listing.find('.quiz-closing').empty(), s = '<select/>';
@@ -670,6 +681,19 @@ $(function()
 
 			listing.find('.quiz-option-cancel,.quiz-option-save').remove();
 			listing.find('.quiz-options ul').prepend('<li class="quiz-option-edit">Edit</li>');
+
+			listing.find('.quiz-answer-policy').attr('policyValue', data.answerPolicy).html('<b>Answer Policy: </b>' + data.answerPolicyText);
+
+			var answerPolicy = listing.find('.quiz-answer-policy');
+			var policyText = "No answer policy specified";
+
+			switch (answerPolicy.attr('policyValue'))
+			{
+				case "1": policyText = "No asking allowed"; break;
+				case "2": policyText = "No asking before"; break;
+			}
+
+			answerPolicy.html('<b>Answer Policy: </b>' + policyText);
 
 			handler.applyQuizFlags(listing.removeClass('editing'));
 			listing.find('.quiz-vote').fadeIn();

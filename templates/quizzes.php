@@ -35,6 +35,13 @@
 					?>
 				</select>
 			</p>
+			<p class="quiz-answer-policy-input">
+				<select id="quiz-answer-policy-field">
+					<option value="0" selected>No answer policy specified</option>
+					<option value="1">No asking allowed</option>
+					<option value="2">No asking before</option>
+				</select>
+			</p>
 			<p class="quiz-description"><input type="text" id="description" require="true" placeholder="Description..."/></p>
 			<p class="quiz-description-extra"><input type="text" id="extra" placeholder="(Optional) Extra Information... "/></p>
 		</div>
@@ -75,9 +82,7 @@
 					<p class="quiz-title"><span class="quiz-title-title"><?php echo $quiz->getTitle(); ?></span> in aid of <span class="quiz-title-charity"><?php echo $quiz->getCharity(); ?></span></p>
 					<p class="dateSelector quiz-closing" validate=">" date="<?php echo $quiz->getClosingDate(); ?>" timestamp="<?php echo $quiz->getClosing(); ?>">Closes in <span class="time-period"><?php echo $quiz->getClosing(); ?></span> (<span class="time-formal"><?php echo $quiz->getClosing(); ?></span>)</p>
 					<div class="quiz-extra">
-						<?php if ($quiz->getAnswerPolicy() > 0) { ?>
-							<p class="quiz-answer-policy"><b>Answer Policy: </b><?php echo $quiz->getAnswerPolicyText(); ?></p>
-						<?php } ?>
+						<p class="quiz-answer-policy" policyValue="<?php echo $quiz->getAnswerPolicy(); ?>"><b>Answer Policy: </b><?php echo $quiz->getAnswerPolicyText(); ?></p>
 						<p class="linkable quiz-description"><?php echo $quiz->getDescription(); ?></p>
 						<p class="linkable quiz-description-extra"><?php echo $quiz->getExtra(); ?></p>
 					</div>

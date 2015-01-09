@@ -251,10 +251,10 @@
 		{
 			switch ($this->getAnswerPolicy())
 			{
-				case 1: return "No asking"; break;
+				case 1: return "No asking allowed"; break;
 				case 2: return "No asking before"; break;
 			}
-			return "Not specified";
+			return "No answer policy specified";
 		}
 
 		/**
