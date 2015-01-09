@@ -32,7 +32,8 @@ var Packet = {
 	ChangeForumSignature: 31,
 	AddNewFact: 32,
 	DeleteFact: 33,
-	ChangeBirthday: 34
+	ChangeBirthday: 34,
+	LikePost: 35
 };
 
 var PacketHandler = {

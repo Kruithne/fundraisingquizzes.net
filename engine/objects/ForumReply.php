@@ -76,6 +76,39 @@
 		}
 
 		/**
+		 * Set this post as 'liked' by the current user.
+		 */
+		public function likePost()
+		{
+			$query = DB::get()->prepare('INSERT IGNORE INTO likes (userID, postID) VALUES(:user, :post)');
+			$query->setValue(':user', Authenticator::getLoggedInUser()->getId());
+			$query->setValue(':post', $this->getId());
+			$query->execute();
+		}
+
+		/**
+		 * Get all of the users which have 'liked' this post.
+		 * @return string[]
+		 */
+		public function getLikes()
+		{
+			$output = Array();
+
+			$query = DB::get()->prepare('SELECT userID FROM likes WHERE postID = :post');
+			$query->setValue(':post', $this->getId());
+
+			foreach ($query->getRows() as $row)
+			{
+				$user = UserHandler::getUser($row->userID);
+
+				if ($user instanceof User)
+					$output[] = $user->getUsername();
+			}
+
+			return $output;
+		}
+
+		/**
 		 * Persist any changes made to this forum reply.
 		 */
 		public function persist()
@@ -107,7 +140,8 @@
 				'posterIsContributor' => (int) $user->isContributor(),
 				'posterIsBanned' => (int) $user->isBanned(),
 				'posterSig' => $user->getSignature(),
-				'edited' => $this->getEdited()
+				'edited' => $this->getEdited(),
+				'likes' => $this->getLikes()
 			];
 		}
 

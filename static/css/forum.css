@@ -150,15 +150,24 @@
 	margin-bottom: 0;
 }
 
-.edit-button
+.edit-button, .like-button
 {
 	width: 16px;
 	height: 16px;
 	position: absolute;
 	top: 15px;
 	right: 15px;
-	background: url(http://static.fundraisingquizzes.net/images/pencil_16.png) no-repeat;
 	cursor: pointer;
+}
+
+.edit-button
+{
+	background: url(http://static.fundraisingquizzes.net/images/pencil_16.png) no-repeat;
+}
+
+.like-button
+{
+	background: url(http://static.fundraisingquizzes.net/images/tick_16.png) no-repeat;
 }
 
 #reset-button

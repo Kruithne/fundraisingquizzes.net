@@ -27,6 +27,7 @@ $(function()
 				.on(click, '.page-bar a', this.handlePageBarClick)
 				.on(click, '#reset-button', this.cancelEdit)
 				.on(click, '.edit-button', this.editPost)
+				.on(click, '.like-button', this.likePost)
 				.on(click, '#comment-button', this.handleCommentButtonClick)
 				.on('fqLogout', function() {window.location.href='index.php';});
 		},
@@ -64,6 +65,21 @@ $(function()
 			{
 				handler.selectPage(handler.pageCount, false);
 			}
+		},
+
+		likePost: function()
+		{
+			var t = $(this);
+			PacketHandler.send(Packet.LikePost, {
+				post: parseInt(t.parent().attr('id'))
+			});
+
+			t.fadeOut(function()
+			{
+				t.parent().children('.edit-button').css('right', '15px');
+				t.parent().children('.footer').append('. <span>You like this!</span>');
+				t.remove();
+			})
 		},
 
 		editPost: function()
@@ -132,8 +148,25 @@ $(function()
 
 					$('<div class="username"/>').html(reply.posterName).appendTo(user);
 
+					var haveLiked = $.inArray(getLoggedInUser(), reply.likes) > -1;
+					var showLikeButton = reply.posterName != getLoggedInUser() && !haveLiked;
+
+					reply.likes = jQuery.grep(reply.likes, function(value)
+					{
+						return value != getLoggedInUser();
+					});
+
+					if (reply.likes.length > 0)
+						footer.append('. <span class="likes">Liked by: ' + reply.likes.join(", ") + '</span>');
+
+					if (showLikeButton)
+						$('<div class="like-button"/>').appendTo(element);
+
+					if (haveLiked)
+						footer.append('. <span>You like this!</span>');
+
 					if (reply.posterName == getLoggedInUser())
-						$('<div class="edit-button"/>').appendTo(element);
+						$('<div class="edit-button"/>').appendTo(element).css('right', showLikeButton ? '40px' : '15px');
 
 					var title = 'User',
 						title_ele = $('<div class="title"/>');

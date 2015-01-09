@@ -33,6 +33,7 @@
 		31 => 'ChangeForumSignature',
 		32 => 'AddNewFact',
 		33 => 'DeleteFact',
-		34 => 'ChangeBirthday'
+		34 => 'ChangeBirthday',
+		35 => 'LikePostListener'
 	));
 ?>
