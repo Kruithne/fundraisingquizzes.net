@@ -29,6 +29,9 @@
 		 */
 		foreach ($this->answers as $answer)
 		{
+			if (!$answer->isAccepted() && !Authenticator::isLoggedInAsAdmin())
+				continue;
+
 			?>
 			<div class="quiz-listing answer module module-padded<?php echo $answer->isAccepted() ? '' : ' unapproved'; ?>" id="answer-<?php echo $answer->getId(); ?>">
 				<form class="validatable preventDefault" complete="quizEditSuccess" error="quizEditError" submit="quizEditSubmit">
