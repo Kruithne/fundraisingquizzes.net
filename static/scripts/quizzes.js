@@ -480,7 +480,7 @@ $(function()
 			}
 			else
 			{
-				data.answerPolicy = form.find('.quiz-answer-policy-field').val();
+				data.answerPolicy = form.find('#quiz-answer-policy-field').val();
 				data.description = form.find('.quiz-description input').val().trim();
 				data.extra = form.find('.quiz-description-extra input').val().trim();
 			}
