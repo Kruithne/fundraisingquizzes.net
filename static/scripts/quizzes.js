@@ -480,7 +480,7 @@ $(function()
 			}
 			else
 			{
-				data.answerPolicy = form.find('#quiz-answer-policy-field').val();
+				data.answerPolicy = parseInt(form.find('.quiz-answer-policy-field').val());
 				data.description = form.find('.quiz-description input').val().trim();
 				data.extra = form.find('.quiz-description-extra input').val().trim();
 			}
@@ -611,7 +611,7 @@ $(function()
 			$('<option value="0"/>').text('No answer policy specified').appendTo(selector);
 			$('<option value="1"/>').text('No asking allowed').appendTo(selector);
 			$('<option value="2"/>').text('No asking before').appendTo(selector);
-			selector.val(answerPolicyField.attr('policyValue'));
+			selector.val(parseInt(answerPolicyField.attr('policyValue')));
 
 			handler.old[listing.attr('id')] = data;
 
