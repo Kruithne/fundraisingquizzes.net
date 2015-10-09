@@ -405,7 +405,7 @@ $(function()
 			}
 			else
 			{
-				data.answerPolicy = form.find('.quiz-answer-policy-field').val();
+				data.answerPolicy = form.find('#quiz-answer-policy-field').val();
 				data.description = form.find('#description').val().trim();
 				data.extra = form.find('#extra').val().trim();
 			}
