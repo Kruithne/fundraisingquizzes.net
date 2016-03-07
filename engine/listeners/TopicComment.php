@@ -13,13 +13,20 @@
 				$message = REST::Get('message');
 				if ($message !== NULL)
 				{
-					$user = Authenticator::getLoggedInUser();
-					$thread->addReply($message, $user);
-					$thread->setAsUnread();
-					$thread->markAsRead();
-					$this->setReturn('success', true);
+					$current = $thread->getId() . '-' . $message;
+					$previous = Session::Get('previous-comment');
 
-					UserHandler::checkContributorStatus($user);
+					if ($previous == null || $previous != $current)
+					{
+						$user = Authenticator::getLoggedInUser();
+						$thread->addReply($message, $user);
+						$thread->setAsUnread();
+						$thread->markAsRead();
+						$this->setReturn('success', true);
+						Session::Set('previous-comment', $current);
+
+						UserHandler::checkContributorStatus($user);
+					}
 				}
 			}
 		}
