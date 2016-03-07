@@ -87,6 +87,22 @@
 		}
 
 		/**
+		 * Delete this post.
+		 */
+		public function delete()
+		{
+			// Delete the topic reply.
+			$query = DB::get()->prepare('DELETE FROM topic_replies WHERE ID = :id');
+			$query->id = $this->getId();
+			$query->execute();
+
+			// Delete any associated likes.
+			$query = DB::get()->prepare('DELETE FROM likes WHERE postID = :id');
+			$query->id = $this->getId();
+			$query->execute();
+		}
+
+		/**
 		 * Get all of the users which have 'liked' this post.
 		 * @return string[]
 		 */

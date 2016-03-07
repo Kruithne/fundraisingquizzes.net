@@ -34,6 +34,7 @@
 		32 => 'AddNewFact',
 		33 => 'DeleteFact',
 		34 => 'ChangeBirthday',
-		35 => 'LikePostListener'
+		35 => 'LikePostListener',
+		36 => 'DeletePostListener'
 	));
 ?>

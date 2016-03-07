@@ -28,6 +28,7 @@ $(function()
 				.on(click, '#reset-button', this.cancelEdit)
 				.on(click, '.edit-button', this.editPost)
 				.on(click, '.like-button', this.likePost)
+				.on(click, '.delete-button', this.deletePost)
 				.on(click, '#comment-button', this.handleCommentButtonClick)
 				.on('fqLogout', function() {window.location.href='index.php';});
 		},
@@ -80,6 +81,22 @@ $(function()
 				t.parent().children('.footer').append('. <span>You like this!</span>');
 				t.remove();
 			})
+		},
+
+		deletePost: function()
+		{
+			if (!userIsAdmin())
+				return;
+
+			var t = $(this).parent();
+			PacketHandler.send(Packet.DeletePost, {
+				post: parseInt(t.attr('id'))
+			});
+
+			t.fadeOut(function()
+			{
+				t.remove();
+			});
 		},
 
 		editPost: function()
@@ -161,6 +178,9 @@ $(function()
 
 					if (showLikeButton)
 						$('<div class="like-button"/>').appendTo(element);
+
+					if (userIsAdmin())
+						$('<div class="delete-button"/>').appendTo(element);
 
 					if (haveLiked)
 						footer.append('. <span>You like this!</span>');

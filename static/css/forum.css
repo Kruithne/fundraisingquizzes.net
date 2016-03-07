@@ -150,7 +150,7 @@
 	margin-bottom: 0;
 }
 
-.edit-button, .like-button
+.edit-button, .like-button, .delete-button
 {
 	width: 16px;
 	height: 16px;
@@ -158,6 +158,11 @@
 	top: 15px;
 	right: 15px;
 	cursor: pointer;
+}
+
+.delete-button
+{
+	right: 40px;
 }
 
 .edit-button
@@ -168,6 +173,11 @@
 .like-button
 {
 	background: url(http://static.fundraisingquizzes.net/images/tick_16.png) no-repeat;
+}
+
+.delete-button
+{
+	background: url(http://static.fundraisingquizzes.net/images/delete_16.png) no-repeat;
 }
 
 #reset-button
