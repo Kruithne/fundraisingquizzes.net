@@ -24,4 +24,7 @@
 		// Delete the quiz.
 		DB::get()->prepare('DELETE FROM quizzes WHERE ID = :id')->setValue(':id', $id)->execute();
 	}
+
+	// Degrade contributor status
+	DB::get()->prepare('UPDATE post_counts SET postCount = postCount - 7');
 ?>

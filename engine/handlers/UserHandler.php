@@ -158,12 +158,17 @@
 		 */
 		public static function checkContributorStatus($user)
 		{
-			$query = DB::get()->prepare('SELECT COUNT(*) AS amount FROM topic_replies WHERE poster = :user');
+			$query = DB::get()->prepare('SELECT postCount FROM post_counts WHERE userID = :user');
 			$query->setValue(':user', $user->getId());
 
-			if ($query->getFirstRow()->amount >= 100)
+			if ($query->getFirstRow()->postCount >= 100)
 			{
 				$user->addFlag(User::FLAG_CONTRIBUTOR);
+				$user->persist();
+			}
+			else if ($user->hasFlag(User::FLAG_CONTRIBUTOR))
+			{
+				$user->removeFlag(User::FLAG_CONTRIBUTOR);
 				$user->persist();
 			}
 		}
