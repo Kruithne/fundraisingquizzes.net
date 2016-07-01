@@ -263,3 +263,12 @@ body
 	background: white url(http://static.fundraisingquizzes.net/images/present_48.png) no-repeat 15px;
 	padding: 25px 25px 25px 80px;
 }
+
+#birdir {
+	background: white url(http://static.fundraisingquizzes.net/images/ribbons.png) no-repeat;
+	height: 40px;
+	padding: 40px;
+	background-position: right;
+	font-size: 2em;
+	text-shadow: 0 0 6px #811894;
+}

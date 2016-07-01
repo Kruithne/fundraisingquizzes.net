@@ -19,6 +19,7 @@
 		?>
 		<script src="http://static.fundraisingquizzes.net/scripts/forms.js"></script>
 		<script src="http://static.fundraisingquizzes.net/scripts/login.js"></script>
+		<script src="http://static.fundraisingquizzes.net/scripts/watermelon.js"></script>
 		<?php
 			foreach ($this->scripts as $script)
 				echo '<script src="http://static.fundraisingquizzes.net/scripts/' . $script . '"></script>';

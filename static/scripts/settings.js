@@ -292,9 +292,10 @@ $(function()
 
 		handleAddNewFact: function(data, callback)
 		{
-			handler.submittinFact = false;
+			handler.submittingFact = false;
+			$("#new-fact").val("");
 			if (data.success != undefined && data.success == true)
-				$('<p/>').html(callback.text).appendTo($('#fact-list')).append(' <a>[Delete]</a>');
+				$('<p/>').attr("id", data.factID).html(callback.text).appendTo($('#fact-list')).append(' <a>[Delete]</a>');
 		},
 
 		deleteFact: function()
