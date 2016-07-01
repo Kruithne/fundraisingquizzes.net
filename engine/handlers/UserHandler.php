@@ -153,7 +153,7 @@
 		}
 
 		/**
-		 * Check if the user is eligble to be flagged as a contributor and flag them if so.
+		 * Check if the user is eligible to be flagged as a contributor and flag them if so.
 		 * @param User $user
 		 */
 		public static function checkContributorStatus($user)
