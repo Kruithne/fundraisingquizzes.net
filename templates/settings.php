@@ -140,7 +140,7 @@
 					<tr>
 						<?php
 							$index = 0;
-							foreach ($this->users as $user)
+							foreach ($this->users as $userID => $username)
 							{
 								if ($index == 6)
 								{
@@ -148,7 +148,7 @@
 									$index = 0;
 								}
 
-								echo "<td>$user</td>";
+								echo sprintf('<td data-user-id="%s">%s</td>', $userID, $username);
 								$index++;
 							}
 						?>

@@ -34,7 +34,8 @@ var Packet = {
 	DeleteFact: 33,
 	ChangeBirthday: 34,
 	LikePost: 35,
-	DeletePost: 36
+	DeletePost: 36,
+	AdminChangePassword: 37
 };
 
 var PacketHandler = {

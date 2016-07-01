@@ -188,8 +188,8 @@
 		public static function getUserList()
 		{
 			$users = Array();
-			foreach (DB::get()->prepare('SELECT username FROM users ORDER BY username ASC')->getRows() as $user)
-				$users[] = $user->username;
+			foreach (DB::get()->prepare('SELECT ID, username FROM users ORDER BY username ASC')->getRows() as $user)
+				$users[$user->ID] = $user->username;
 
 			return $users;
 		}

@@ -34,7 +34,8 @@ $(function()
 				.on(click, '#broadcast-button', this.broadcastMessage)
 				.on(click, '#signature-button', this.changeSignature)
 				.on(click, '#new-fact-button', this.addNewFact)
-				.on(click, '#fact-list a', this.deleteFact);
+				.on(click, '#fact-list a', this.deleteFact)
+				.on(click, '#member-list td', this.changeUserPassword);
 
 			handler.switchToPanel('panel-details');
 			PacketHandler.hook(Packet.RestoreQuiz, packetContext(handler, 'handleRestoreQuiz'));
@@ -52,10 +53,34 @@ $(function()
 			PacketHandler.hook(Packet.AddNewFact, packetContext(handler, 'handleAddNewFact'));
 			PacketHandler.hook(Packet.DeleteFact, packetContext(handler, 'handleDeleteFact'));
 			PacketHandler.hook(Packet.ChangeBirthday, packetContext(handler, 'handleChangeBirthday'));
+			PacketHandler.hook(Packet.AdminChangePassword, packetContext(handler, 'handleChangeUserPassword'));
 
 			var setHandler = packetContext(handler, 'handleBroadcastSet');
 			PacketHandler.hook(Packet.SetBroadcast, setHandler);
 			PacketHandler.hook(Packet.ChangeForumSignature, setHandler);
+		},
+		
+		changeUserPassword: function()
+		{
+			var cell = $(this),
+				userName = cell.text();
+
+			var newPassword = prompt("Enter a new password for " + userName + ".");
+			if (newPassword !== null && newPassword.length > 0) {
+				PacketHandler.send(Packet.AdminChangePassword, {
+					user: parseInt(cell.attr("data-user-id")),
+					password: newPassword
+				}, {
+					user: userName
+				});
+			}
+		},
+
+		handleChangeUserPassword: function(data, callback) {
+			if (data.success == true)
+				alert("Password for " + callback.user + " changed successfully!");
+			else
+				alert("Error occured changing password. Try again.");
 		},
 
 		changeSignature: function()
