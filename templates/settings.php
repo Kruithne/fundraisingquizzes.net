@@ -138,7 +138,7 @@
 			<div class="module module-padded settings-panel" id="panel-today">
 				<h1 id="panel-header-today">Today Is...</h1>
 				<textarea id="today-field" placeholder="dd mm Hairy Crumpets Day"><?php echo file_get_contents("../data/today.txt"); ?></textarea>
-				<input type="button" class="input-button" id="update-today-button" value="Save Changes"/><span id="update-today-status">Temp</span>
+				<input type="button" class="input-button" id="update-today-button" value="Save Changes"/><span id="update-today-status"></span>
 			</div>
 			<div class="module module-padded settings-panel" id="panel-members">
 				<h1 id="panel-header-members">Members</h1>
