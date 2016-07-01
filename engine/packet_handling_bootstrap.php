@@ -36,6 +36,7 @@
 		34 => 'ChangeBirthday',
 		35 => 'LikePostListener',
 		36 => 'DeletePostListener',
-		37 => 'AdminChangePasswordListener'
+		37 => 'AdminChangePasswordListener',
+		38 => 'UpdateTodayTextListener'
 	));
 ?>

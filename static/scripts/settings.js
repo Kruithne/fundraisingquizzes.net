@@ -35,7 +35,8 @@ $(function()
 				.on(click, '#signature-button', this.changeSignature)
 				.on(click, '#new-fact-button', this.addNewFact)
 				.on(click, '#fact-list a', this.deleteFact)
-				.on(click, '#member-list td', this.changeUserPassword);
+				.on(click, '#member-list td', this.changeUserPassword)
+				.on(click, '#update-today-button', this.uploadTodayData);
 
 			handler.switchToPanel('panel-details');
 			PacketHandler.hook(Packet.RestoreQuiz, packetContext(handler, 'handleRestoreQuiz'));
@@ -54,10 +55,27 @@ $(function()
 			PacketHandler.hook(Packet.DeleteFact, packetContext(handler, 'handleDeleteFact'));
 			PacketHandler.hook(Packet.ChangeBirthday, packetContext(handler, 'handleChangeBirthday'));
 			PacketHandler.hook(Packet.AdminChangePassword, packetContext(handler, 'handleChangeUserPassword'));
+			PacketHandler.hook(Packet.UpdateTodayText, packetContext(handler, 'handleTodayDataChanged'));
 
 			var setHandler = packetContext(handler, 'handleBroadcastSet');
 			PacketHandler.hook(Packet.SetBroadcast, setHandler);
 			PacketHandler.hook(Packet.ChangeForumSignature, setHandler);
+		},
+
+		uploadTodayData: function()
+		{
+			var status = $("#update-today-status");
+			status.text("Saving...");
+			
+			PacketHandler.post(Packet.UpdateTodayText, { data: $("#today-field").val() }, { status: status });
+		},
+
+		handleTodayDataChanged: function(data, callback)
+		{
+			if (data.success === true)
+				callback.status.text("Saved!");
+			else
+				callback.status.text("Error!");
 		},
 		
 		changeUserPassword: function()
