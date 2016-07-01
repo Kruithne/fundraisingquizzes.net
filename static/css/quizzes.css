@@ -314,3 +314,13 @@
 {
 	background-position: -180px -60px;
 }
+
+#quiz-intro
+{
+	margin-bottom: 10px;
+}
+
+#quiz-intro p
+{
+	padding: 10px;
+}
