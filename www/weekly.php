@@ -26,5 +26,5 @@
 	}
 
 	// Degrade contributor status
-	DB::get()->prepare('UPDATE post_counts SET postCount = postCount - 7');
+	DB::get()->prepare('UPDATE post_counts SET postCount = postCount - 4');
 ?>
