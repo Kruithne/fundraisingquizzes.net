@@ -1,5 +1,3 @@
 ## Fundraising Quizzes
 
-### Libraries Required
-
-* KrameWork (https://github.com/Kruithne/KrameWork)
+This repository contains the source code for fundraisingquizzes.net
