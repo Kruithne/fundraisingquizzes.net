@@ -37,6 +37,12 @@ server.bootstrap({
 	}
 });
 
+server.json('/api/test', (req, url, json) => {
+	return {
+		foo: 'bar'
+	};
+});
+
 // Automatic update webhook
 if (typeof process.env.GH_WEBHOOK_SECRET === 'string') {
 	server.webhook(process.env.GH_WEBHOOK_SECRET, '/internal/hook_source_change', () => {
