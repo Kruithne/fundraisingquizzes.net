@@ -24,6 +24,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"spooder": "^5.0.0"
+		"spooder": "^5.0.2"
 	}
 }

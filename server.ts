@@ -16,8 +16,11 @@ server.bootstrap({
 		use_canary_reporting: true,
 		error_page: Bun.file('./html/error.html')
 	},
-	
-	cache_bust: true,
+
+	hash_subs: {
+		prefix: 'asset=',
+		format: '$file?v=$hash'
+	},
 
 	static: {
 		directory: './static',
