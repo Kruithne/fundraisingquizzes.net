@@ -9,7 +9,18 @@
 	<body>
 		<div id="container">
 			<div class="module" id="header">
-				<img id="logo" src="{{asset=static/images/logo.png}}" alt="Fundraising Quizzes"/>
+				<a href="/">
+					<img id="logo" src="{{asset=static/images/logo.png}}" alt="Fundraising Quizzes"/>
+				</a>
+				<div id="account-status"></div>
+				<ul id="navigation">
+					<li id="navigation-home"><a href="/">Home</a></li>
+					<li id="navigation-quizzes"><a href="/quizzes">Quizzes</a></li>
+					<li id="navigation-answers"><a href="/answers">Answers</a></li>
+					<li id="navigation-forum"><a href="/forum">Forum</a></li>
+					<li id="navigation-links"><a href="/links">Links</a></li>
+					<li id="navigation-settings"><a href="/settings">Settings</a></li>
+				</ul>
 			</div>
 			
 			<div class="module module-padded center">
