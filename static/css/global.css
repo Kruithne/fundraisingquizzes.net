@@ -1,3 +1,12 @@
+@font-face 
+{
+	font-family: 'Noto Sans';
+	src: url('/static/fonts/noto-sans-regular.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
 :root 
 {
 	--primary-blue: #7089C4;
