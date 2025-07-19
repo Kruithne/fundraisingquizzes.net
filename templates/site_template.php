@@ -2,27 +2,27 @@
 <html>
 	<head>
 		<title><?php echo $this->title; ?> - Fundraising Quizzes</title>
-		<link rel="shortcut icon" href="http://static.fundraisingquizzes.net/images/icon.ico"/>
-		<link rel="stylesheet" type="text/css" href="http://static.fundraisingquizzes.net/css/base.css"/>
-		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Noto+Sans"/>
+		<link rel="shortcut icon" href="https://static.fundraisingquizzes.net/images/icon.ico"/>
+		<link rel="stylesheet" type="text/css" href="https://static.fundraisingquizzes.net/css/base.css"/>
+		<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Noto+Sans"/>
 		<?php
 			foreach ($this->styles as $style)
-				echo '<link rel="stylesheet" type="text/css" href="http://static.fundraisingquizzes.net/css/' . $style . '"/>';
+				echo '<link rel="stylesheet" type="text/css" href="https://static.fundraisingquizzes.net/css/' . $style . '"/>';
 		?>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-		<script src="http://static.fundraisingquizzes.net/scripts/packet_handler.js"></script>
-		<script src="http://static.fundraisingquizzes.net/scripts/krorms.min.js"></script>
+		<script src="https://static.fundraisingquizzes.net/scripts/packet_handler.js"></script>
+		<script src="https://static.fundraisingquizzes.net/scripts/krorms.min.js"></script>
 		<?php
 			$user = Authenticator::getLoggedInUser();
 			if ($user instanceof User)
 				echo '<script>var loggedIn = "' . $user->getUsername() . '", isAdmin = ' . ($user->isAdmin() ? 'true' : 'false') . ';</script>';
 		?>
-		<script src="http://static.fundraisingquizzes.net/scripts/forms.js"></script>
-		<script src="http://static.fundraisingquizzes.net/scripts/login.js"></script>
-		<script src="http://static.fundraisingquizzes.net/scripts/watermelon.js"></script>
+		<script src="https://static.fundraisingquizzes.net/scripts/forms.js"></script>
+		<script src="https://static.fundraisingquizzes.net/scripts/login.js"></script>
+		<script src="https://static.fundraisingquizzes.net/scripts/watermelon.js"></script>
 		<?php
 			foreach ($this->scripts as $script)
-				echo '<script src="http://static.fundraisingquizzes.net/scripts/' . $script . '"></script>';
+				echo '<script src="https://static.fundraisingquizzes.net/scripts/' . $script . '"></script>';
 		?>
 	</head>
 	<body>
@@ -43,7 +43,7 @@
 		?>
 		<div class="module" id="header">
 			<a href="http://www.fundraisingquizzes.net/">
-				<img id="logo" src="http://static.fundraisingquizzes.net/images/logo.png" alt="Fundraising Quizzes"/>
+				<img id="logo" src="https://static.fundraisingquizzes.net/images/logo.png" alt="Fundraising Quizzes"/>
 			</a>
 			<div id="account-status"></div>
 			<ul id="navigation">
@@ -64,7 +64,7 @@
 		?>
 		<div class="module module-padded">
 			<div id="copyright">Copyright &copy; Fundraising Quizzes</div>
-			<div id="author">Website by <a href="http://www.kruithne.net/">Hannah Batch</a> | Avatars by <a href="http://turbomilk.com/">Turbomilk</a> & <a href="http://www.iconka.com">Iconka</a> | Icons by <a href="http://www.iconarchive.com/artist/pixelmixer.html">PixelMixer</a></div><div class="float-block"></div>
+			<div id="author">Website by <a href="https://www.kruithne.net/">Hannah Batch</a> | Avatars by <a href="http://turbomilk.com/">Turbomilk</a> & <a href="http://www.iconka.com">Iconka</a> | Icons by <a href="http://www.iconarchive.com/artist/pixelmixer.html">PixelMixer</a></div><div class="float-block"></div>
 		</div>
 		</div>
 	</body>

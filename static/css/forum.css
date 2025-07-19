@@ -1,7 +1,7 @@
 .topic
 {
 	cursor: pointer;
-	background: white url(http://static.fundraisingquizzes.net/images/bubble2_fade_16.png) no-repeat 15px;
+	background: white url(https://static.fundraisingquizzes.net/images/bubble2_fade_16.png) no-repeat 15px;
 	padding-left: 45px;
 }
 
@@ -87,7 +87,7 @@
 	bottom: 10px;
 	width: 150px;
 	border-right: 1px dashed #999;
-	background: url(http://static.fundraisingquizzes.net/images/user2_48.png) no-repeat center 0;
+	background: url(https://static.fundraisingquizzes.net/images/user2_48.png) no-repeat center 0;
 	padding-top: 60px;
 	text-align: center;
 }
@@ -167,17 +167,17 @@
 
 .edit-button
 {
-	background: url(http://static.fundraisingquizzes.net/images/pencil_16.png) no-repeat;
+	background: url(https://static.fundraisingquizzes.net/images/pencil_16.png) no-repeat;
 }
 
 .like-button
 {
-	background: url(http://static.fundraisingquizzes.net/images/tick_16.png) no-repeat;
+	background: url(https://static.fundraisingquizzes.net/images/tick_16.png) no-repeat;
 }
 
 .delete-button
 {
-	background: url(http://static.fundraisingquizzes.net/images/delete_16.png) no-repeat;
+	background: url(https://static.fundraisingquizzes.net/images/delete_16.png) no-repeat;
 }
 
 #reset-button

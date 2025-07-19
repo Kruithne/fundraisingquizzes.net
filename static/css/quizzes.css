@@ -71,7 +71,7 @@
 	position: absolute;
 	top: 20px;
 	right: 20px;
-	background: url(http://static.fundraisingquizzes.net/images/quiz_arrow.png) no-repeat;
+	background: url(https://static.fundraisingquizzes.net/images/quiz_arrow.png) no-repeat;
 	height: 39px;
 	width: 44px;
 }
@@ -89,7 +89,7 @@
 	width: 48px;
 	display: none;
 	right: 75px;
-	background: url(http://static.fundraisingquizzes.net/images/star_48.png) no-repeat;
+	background: url(https://static.fundraisingquizzes.net/images/star_48.png) no-repeat;
 }
 
 .quiz-options
@@ -118,37 +118,37 @@
 
 .quiz-option-bookmark
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/bookmark_16.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/bookmark_16.png);
 }
 
 .quiz-option-vote
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/star_16.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/star_16.png);
 }
 
 .quiz-option-edit
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/pencil_16.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/pencil_16.png);
 }
 
 .quiz-option-save, .quiz-option-approve, .quiz-option-confirm
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/tick_16.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/tick_16.png);
 }
 
 .quiz-option-cancel, .quiz-option-nodelete
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/delete_16.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/delete_16.png);
 }
 
 .quiz-option-delete
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/trash_16.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/trash_16.png);
 }
 
 .quiz-option-queries
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/bubble_16.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/bubble_16.png);
 }
 
 .quiz-options .admin-option, .quiz-queries, #quiz-submit
@@ -168,22 +168,22 @@
 
 .flag_new
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/new_16.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/new_16.png);
 }
 
 .flag_updated
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/updated_16.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/updated_16.png);
 }
 
 .flag_query
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/query_flag_16.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/query_flag_16.png);
 }
 
 #submit-button
 {
-	background: white url(http://static.fundraisingquizzes.net/images/plus_32.png) no-repeat 20px;
+	background: white url(https://static.fundraisingquizzes.net/images/plus_32.png) no-repeat 20px;
 	font-size: 20px;
 	padding-left: 65px;
 	cursor: pointer;
@@ -193,7 +193,7 @@
 #submit-button.quiz-submitted
 {
 	background-color: #D0F3C2;
-	background-image: url(http://static.fundraisingquizzes.net/images/tick_32.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/tick_32.png);
 }
 
 .visible
@@ -229,7 +229,7 @@
 
 .quiz-query-question .delete div
 {
-	background: url(http://static.fundraisingquizzes.net/images/delete_16.png) no-repeat center;
+	background: url(https://static.fundraisingquizzes.net/images/delete_16.png) no-repeat center;
 	width: 16px;
 	height: 16px;
 	position: absolute;
@@ -257,7 +257,7 @@
 
 .quiz-type-image
 {
-	background: url(http://static.fundraisingquizzes.net/images/quiz_type_icons.png) no-repeat;
+	background: url(https://static.fundraisingquizzes.net/images/quiz_type_icons.png) no-repeat;
 	width: 60px;
 	height: 60px;
 	position: absolute;

@@ -49,7 +49,7 @@ $(function()
 			window.loginFormComplete = function()
 			{
 				$(e).setPending('Authenticating...').fadeIn();
-				PacketHandler.send(Packet.Login, {
+				PacketHandler.post(Packet.Login, {
 					user: $('#username-field').val().trim(),
 					pass: $('#password-field').val().trim()
 				});
@@ -78,7 +78,7 @@ $(function()
 
 		logoutButtonClick: function()
 		{
-			PacketHandler.send(Packet.Login);
+			PacketHandler.post(Packet.Login);
 		},
 
 		resetLoginForm: function()

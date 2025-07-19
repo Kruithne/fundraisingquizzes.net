@@ -205,7 +205,7 @@ $(function()
 
 					title_ele.html(title).appendTo(user);
 
-					user.css('background-image', 'url(http://static.fundraisingquizzes.net/images/avatars/' + reply.posterAvatar + ')');
+					user.css('background-image', 'url(https://static.fundraisingquizzes.net/images/avatars/' + reply.posterAvatar + ')');
 					element.append(anc, user, msg, footer);
 					if (reply.posterSig != null)
 						$('<div class="signature"/>').html(reply.posterSig).appendTo(element);

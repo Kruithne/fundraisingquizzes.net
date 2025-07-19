@@ -44,27 +44,27 @@
 
 .recovery-icon-default
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/help_64.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/help_64.png);
 }
 
 .recovery-icon-password
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/key2_64.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/key2_64.png);
 }
 
 .recovery-icon-username
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/user_info_64_center.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/user_info_64_center.png);
 }
 
 .recovery-icon-both
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/lock_64.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/lock_64.png);
 }
 
 .recovery-icon-email
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/letter_64.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/letter_64.png);
 }
 
 #recovery-footer

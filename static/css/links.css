@@ -45,28 +45,28 @@
 
 .option-edit
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/pencil_16.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/pencil_16.png);
 }
 
 .option-delete
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/trash_16.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/trash_16.png);
 }
 
 
 .option-save
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/tick_16.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/tick_16.png);
 }
 
 .option-cancel
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/delete_16.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/delete_16.png);
 }
 
 #new-link-button
 {
-	background: white url(http://static.fundraisingquizzes.net/images/plus_32.png) no-repeat 20px;
+	background: white url(https://static.fundraisingquizzes.net/images/plus_32.png) no-repeat 20px;
 	font-size: 20px;
 	padding-left: 65px;
 	cursor: pointer;

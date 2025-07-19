@@ -24,7 +24,7 @@
 </div>
 <div id="forum-listing"></div>
 <div class="module module-padded" id="loading">
-	<p><img src="http://static.fundraisingquizzes.net/images/loading.gif"/></p>
+	<p><img src="https://static.fundraisingquizzes.net/images/loading.gif"/></p>
 	<p>Loading...</p>
 </div>
 <div class="page-bar module module-padded">

@@ -103,7 +103,7 @@
 				foreach ($this->avatars as $avatar_id => $avatar_image)
 				{
 					$class = $avatar_id == $this->user->getAvatar() ? ' class="selected"' : '';
-					echo "<img id=\"$avatar_id\" src=\"http://static.fundraisingquizzes.net/images/avatars/$avatar_image\"$class/>";
+					echo "<img id=\"$avatar_id\" src=\"https://static.fundraisingquizzes.net/images/avatars/$avatar_image\"$class/>";
 				}
 			?>
 		</div>

@@ -3,8 +3,8 @@
 	{
 		public function run()
 		{
-			$username = REST::Get('user');
-			$password = REST::Get('pass');
+			$username = REST::Post('user');
+			$password = REST::Post('pass');
 
 			if ($username != null && $password != null)
 			{

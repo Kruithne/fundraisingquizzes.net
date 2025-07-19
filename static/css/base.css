@@ -38,7 +38,7 @@ a:hover
 
 body
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/background.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/background.png);
 	font: 10pt 'Noto Sans', sans-serif;
 	text-align: center;
 }
@@ -60,7 +60,7 @@ body
 	top: 10px;
 	right: 15px;
 	padding-left: 22px;
-	background: url(http://static.fundraisingquizzes.net/images/user_16.png) no-repeat 0 6px;
+	background: url(https://static.fundraisingquizzes.net/images/user_16.png) no-repeat 0 6px;
 }
 
 #account-status input
@@ -117,37 +117,37 @@ body
 
 #navigation-home
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/home_16.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/home_16.png);
 }
 
 #navigation-quizzes
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/document_16.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/document_16.png);
 }
 
 #navigation-answers
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/document_pencil_16.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/document_pencil_16.png);
 }
 
 #navigation-forum
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/bubble_16.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/bubble_16.png);
 }
 
 #navigation-links
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/globe_16.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/globe_16.png);
 }
 
 #navigation-settings
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/gear_16.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/gear_16.png);
 }
 
 #navigation-admin
 {
-	background-image: url(http://static.fundraisingquizzes.net/images/key_16.png);
+	background-image: url(https://static.fundraisingquizzes.net/images/key_16.png);
 }
 
 #navigation a, #navigation a:hover
@@ -242,7 +242,7 @@ body
 #broadcast
 {
 	padding: 7px 0 7px 50px;
-	background: url(http://static.fundraisingquizzes.net/images/info_32.png) no-repeat center left;
+	background: url(https://static.fundraisingquizzes.net/images/info_32.png) no-repeat center left;
 }
 
 #btt_button
@@ -250,7 +250,7 @@ body
 	display: none;
 	width: 48px;
 	height: 48px;
-	background: url(http://static.fundraisingquizzes.net/images/arrow_up_48.png) no-repeat center;
+	background: url(https://static.fundraisingquizzes.net/images/arrow_up_48.png) no-repeat center;
 	position: fixed;
 	top: 10px;
 	right: 10px;
@@ -260,12 +260,12 @@ body
 
 #birthday-prompt
 {
-	background: white url(http://static.fundraisingquizzes.net/images/present_48.png) no-repeat 15px;
+	background: white url(https://static.fundraisingquizzes.net/images/present_48.png) no-repeat 15px;
 	padding: 25px 25px 25px 80px;
 }
 
 #birdir {
-	background: white url(http://static.fundraisingquizzes.net/images/ribbons.png) no-repeat;
+	background: white url(https://static.fundraisingquizzes.net/images/ribbons.png) no-repeat;
 	height: 40px;
 	padding: 40px;
 	background-position: right;

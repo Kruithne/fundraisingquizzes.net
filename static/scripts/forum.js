@@ -94,7 +94,7 @@ $(function()
 						title.prepend('<b>[Sticky] </b>');
 
 					if (topic.unread)
-						element.addClass('unread').css('background-image', 'url(http://static.fundraisingquizzes.net/images/bubble2_16.png)');
+						element.addClass('unread').css('background-image', 'url(https://static.fundraisingquizzes.net/images/bubble2_16.png)');
 
 					$('<div class="author"/>').html(topic.creatorName).appendTo(element);
 					$('<div class="posted time-period"/>').html(topic.posted).appendTo(element);
