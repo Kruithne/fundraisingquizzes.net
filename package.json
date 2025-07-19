@@ -1,0 +1,29 @@
+{
+	"name": "kruithne.net",
+	"module": "server.ts",
+	"devDependencies": {
+		"@types/bun": "^1.2.15"
+	},
+	"spooder": {
+		"auto_restart": 0,
+		"run": "bun run server.ts",
+		"update": [
+			"git fetch --depth=1 origin main",
+			"git reset --hard origin/main",
+			"git clean -fd",
+			"git submodule update --init --recursive",
+			"bun install"
+		],
+		"canary": {
+			"account": "kruithne",
+			"repository": "kruithne/fundraisingquizzes.net",
+			"crash_console_history": 64,
+			"labels": ["⚠️ canary-report"],
+			"throttle": 86400
+		}
+	},
+	"type": "module",
+	"dependencies": {
+		"spooder": "^5.0.0"
+	}
+}

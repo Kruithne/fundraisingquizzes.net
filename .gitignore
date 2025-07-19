@@ -1,1 +1,8 @@
+# original source files
 /legacy
+
+# third party dependencies
+node_modules
+
+# .env.local file
+.env.local

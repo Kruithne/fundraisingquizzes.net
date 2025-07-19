@@ -1,0 +1,137 @@
+*
+{
+	margin: 0;
+	padding: 0;
+}
+
+*:focus
+{
+	outline: 0;
+}
+
+a img
+{
+	border: 0;
+}
+
+a
+{
+	text-decoration: none;
+	color: #7089C4;
+	cursor: pointer;
+}
+
+a:hover
+{
+	color: #A1B5E6;
+}
+
+.center
+{
+	text-align: center;
+}
+
+.strong
+{
+	font-weight: bold;
+}
+
+body
+{
+	background-image: url(/static/images/background.png);
+	font: 10pt 'Noto Sans', sans-serif;
+	text-align: center;
+}
+
+#container
+{
+	margin: 20px auto;
+	width: 1240px;
+}
+
+#header
+{
+	position: relative;
+}
+
+.module
+{
+	text-align: left;
+	border: 1px solid #999999;
+	border-radius: 10px;
+	background: white;
+	margin: 10px 0;
+}
+
+.module-padded
+{
+	padding: 15px 20px;
+}
+
+#logo
+{
+	margin: 20px;
+}
+
+.float-block
+{
+	clear: both;
+}
+
+#copyright
+{
+	float: left;
+}
+
+#author
+{
+	float: right;
+}
+
+.input-text
+{
+	padding: 4px;
+	border: 1px solid #999;
+	background: white;
+}
+
+.input-button
+{
+	padding: 5px 16px;
+	cursor: pointer;
+	border: 1px solid #999;
+	background: linear-gradient(to bottom, #87e0fd 0%, #53cbf1 40%, #05abe0 100%);
+}
+
+.input-button:hover, .input-text:focus
+{
+	border: 1px solid #000;
+}
+
+.form-error
+{
+	color: #C40000;
+}
+
+.form-success
+{
+	color: #17C400;
+}
+
+.coming-soon
+{
+	text-align: center;
+	font-size: 2em;
+	font-weight: bold;
+	color: #333;
+	margin: 40px 0;
+}
+
+.coming-soon-message
+{
+	text-align: center;
+	font-size: 1.2em;
+	color: #666;
+	margin: 20px 0;
+	line-height: 1.5;
+}
