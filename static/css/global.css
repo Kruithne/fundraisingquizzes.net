@@ -1,7 +1,7 @@
 @font-face 
 {
 	font-family: 'Noto Sans';
-	src: url('/static/fonts/noto-sans-regular.woff2') format('woff2');
+	src: url('/static/fonts/noto-sans-regular.woff2?v={{hash=static/fonts/noto-sans-regular.woff2}}') format('woff2');
 	font-weight: 400;
 	font-style: normal;
 	font-display: swap;
@@ -63,7 +63,7 @@ a:hover
 
 body
 {
-	background-image: url(/static/images/background.png);
+	background-image: url('/static/images/background.png?v={{hash=static/images/background.png}}');
 	font: 10pt 'Noto Sans', sans-serif;
 	text-align: center;
 	min-height: 100vh;

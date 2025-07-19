@@ -1,25 +1,41 @@
-import { http_serve, HTTP_STATUS_CODE, HTTP_STATUS_TEXT, caution } from 'spooder';
+import { http_serve, HTTP_STATUS_CODE, caution } from 'spooder';
 
 const server = http_serve(Number(process.env.SERVER_PORT), process.env.SERVER_LISTEN_HOST);
 
-server.dir('/static', './static', {
-	ignore_hidden: true,
-	support_ranges: false,
-	index_directories: false
+server.bootstrap({
+	base: Bun.file('./html/base_template.html'),
+
+	cache: {
+		ttl: 5 * 60 * 60 * 1000, // 5 minutes
+		max_size: 5 * 1024 * 1024, // 5 MB
+		use_canary_reporting: true,
+		use_etags: true
+	},
+
+	error: {
+		use_canary_reporting: true,
+		error_page: Bun.file('./html/error.html')
+	},
+	
+	cache_bust: true,
+
+	static: {
+		directory: './static',
+		route: '/static',
+		sub_ext: ['.css']
+	},
+
+	global_subs: {
+		
+	},
+
+	routes: {
+		'/': {
+			content: Bun.file('./html/index.html'),
+			subs: { 'title': 'Homepage' }
+		}
+	}
 });
-
-async function default_handler(status_code: number): Promise<Response> {
-	return new Response(HTTP_STATUS_TEXT[status_code], { status: status_code });
-}
-
-// Unhandled exceptions and rejections from handlers.
-server.error((err: Error) => {
-	caution(err?.message ?? err);
-	return default_handler(HTTP_STATUS_CODE.InternalServerError_500);
-});
-
-// Unhandled response codes.
-server.default((_req, status_code) => default_handler(status_code));
 
 // Automatic update webhook
 if (typeof process.env.GH_WEBHOOK_SECRET === 'string') {
@@ -34,8 +50,3 @@ if (typeof process.env.GH_WEBHOOK_SECRET === 'string') {
 } else {
 	caution('GH_WEBHOOK_SECRET environment variable not configured');
 }
-
-server.route('/*', () => {
-	const file = Bun.file('./html/placeholder.html');
-	return new Response(file, { status: 200 });
-});
