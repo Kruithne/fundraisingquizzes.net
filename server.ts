@@ -5,7 +5,7 @@ const server = http_serve(Number(process.env.SERVER_PORT), process.env.SERVER_LI
 server.bootstrap({
 	base: Bun.file('./html/base_template.html'),
 
-	cache: {
+	cache: process.env.SPOODER_ENV === 'dev' ? undefined : {
 		ttl: 5 * 60 * 60 * 1000, // 5 minutes
 		max_size: 5 * 1024 * 1024, // 5 MB
 		use_canary_reporting: true,
