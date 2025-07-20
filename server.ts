@@ -1,4 +1,4 @@
-import { http_serve, HTTP_STATUS_CODE, caution } from 'spooder';
+import { http_serve, caution, HTTP_STATUS_CODE } from 'spooder';
 
 const server = http_serve(Number(process.env.SERVER_PORT), process.env.SERVER_LISTEN_HOST);
 
@@ -17,16 +17,13 @@ server.bootstrap({
 		error_page: Bun.file('./html/error.html')
 	},
 
-	hash_subs: {
-		prefix: 'asset=',
-		format: '$file?v=$hash'
-	},
-
 	static: {
 		directory: './static',
 		route: '/static',
 		sub_ext: ['.css']
 	},
+
+	cache_bust: true,
 
 	global_subs: {
 		
