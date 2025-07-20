@@ -278,6 +278,61 @@ body
 	}
 }
 
+/* #region landing */
+#weekly-quiz, #weekly-trivia
+{
+	height: 42px;
+	padding-top: 6px;
+}
+
+#weekly-quiz
+{
+	float: left;
+	padding-left: 60px;
+	background: url('/{{asset=static/images/star_48.png}}') no-repeat center left;
+}
+
+#weekly-trivia
+{
+	float: right;
+	text-align: right;
+	padding-right: 60px;
+	background: url('/{{asset=static/images/calender_48.png}}') no-repeat center right;
+}
+
+#weekly-trivia p
+{
+	font-size: 1.5em;
+	padding-top: 4px;
+}
+
+#checklist-container
+{
+	width: 100%;
+}
+
+#checklist
+{
+	font-size: 1.5em;
+	font-weight: bold;
+	list-style: none;
+	margin: 20px auto;
+	width: 600px;
+}
+
+#checklist li
+{
+	background: url('/{{asset=static/images/tick_32.png}}') no-repeat;
+	padding: 3px 0 0 40px;
+	margin: 10px 0;
+	height: 29px;
+}
+
+.float-block
+{
+	clear: both;
+}
+
 @media (max-width: 768px) 
 {
 	body 
@@ -321,4 +376,19 @@ body
 	{
 		text-align: center;
 	}
+	
+	#weekly-quiz, #weekly-trivia
+	{
+		float: none;
+		text-align: center;
+		padding: 10px 60px;
+		height: auto;
+	}
+	
+	#checklist
+	{
+		width: 100%;
+		font-size: 1.2em;
+	}
 }
+/* #endregion */
