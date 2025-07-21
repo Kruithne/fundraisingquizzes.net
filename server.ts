@@ -1,9 +1,20 @@
-import { http_serve, caution, HTTP_STATUS_CODE } from 'spooder';
+import { http_serve, caution, db_mysql, cache_bust, HTTP_STATUS_CODE } from 'spooder';
+import zod from 'zod';
 
+// MARK: server bootstrap
 const server = http_serve(Number(process.env.SERVER_PORT), process.env.SERVER_LISTEN_HOST);
+const db = await db_mysql({
+	host: process.env.DB_HOST,
+	user: process.env.DB_USER,
+	password: process.env.DB_PASSWORD,
+	database: process.env.DB_DATABASE
+}, false, true);
+
+await db.update_schema('./schema');
 
 server.bootstrap({
 	base: Bun.file('./html/base_template.html'),
+	drop_missing_subs: false,
 
 	cache: process.env.SPOODER_ENV === 'dev' ? undefined : {
 		ttl: 5 * 60 * 60 * 1000, // 5 minutes
@@ -20,30 +31,49 @@ server.bootstrap({
 	static: {
 		directory: './static',
 		route: '/static',
-		sub_ext: ['.css']
+		sub_ext: ['.css', '.s.js']
 	},
 
 	cache_bust: true,
 
 	global_subs: {
-		
+		test: 'foobar'
 	},
 
 	routes: {
 		'/': {
 			content: Bun.file('./html/index.html'),
-			subs: { 'title': 'Homepage' }
+			subs: {
+				'title': 'Homepage',
+				'scripts': cache_bust(['static/js/page_index.s.js'])
+			}
 		}
 	}
 });
 
-server.json('/api/test', (req, url, json) => {
+// MARK: api
+const today_in_history_schema = zod.object({
+	month: zod.number().min(0).max(11),
+	day: zod.number().min(1).max(31)
+});
+
+server.json('/api/today_in_history', async (req, url, json) => {
+	const parse = today_in_history_schema.safeParse(json);
+	if (!parse.success)
+		return zod.flattenError(parse.error);
+
+	const result = await db.get_single(
+		'SELECT `text` FROM `today_in_history` WHERE `month` = ? AND `day` = ?',
+		parse.data.month, parse.data.day
+	);
+
 	return {
-		foo: 'bar'
+		success: true,
+		fact: result?.text ?? null
 	};
 });
 
-// Automatic update webhook
+// MARK: webhook
 if (typeof process.env.GH_WEBHOOK_SECRET === 'string') {
 	server.webhook(process.env.GH_WEBHOOK_SECRET, '/internal/hook_source_change', () => {
 		setImmediate(async () => {

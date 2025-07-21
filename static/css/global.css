@@ -1,7 +1,7 @@
 @font-face 
 {
 	font-family: 'Noto Sans';
-	src: url('/{{asset=static/fonts/noto-sans-regular.woff2}}') format('woff2');
+	src: url('/{{cache_bust=static/fonts/noto-sans-regular.woff2}}') format('woff2');
 	font-weight: 400;
 	font-style: normal;
 	font-display: swap;
@@ -34,6 +34,10 @@
 	outline: 0;
 }
 
+[v-cloak] {
+	display: none;
+}
+
 a img
 {
 	border: 0;
@@ -63,7 +67,7 @@ a:hover
 
 body
 {
-	background-image: url('/{{asset=static/images/background.png}}');
+	background-image: url('/{{cache_bust=static/images/background.png}}');
 	font: 10pt 'Noto Sans', sans-serif;
 	text-align: center;
 	min-height: 100vh;
@@ -94,7 +98,7 @@ body
 	top: 10px;
 	right: 15px;
 	padding-left: 22px;
-	background: url('/{{asset=static/images/user_16.png}}') no-repeat 0 6px;
+	background: url('/{{cache_bust=static/images/user_16.png}}') no-repeat 0 6px;
 }
 
 #account-status input
@@ -122,32 +126,32 @@ body
 
 #navigation-home
 {
-	background-image: url('/{{asset=static/images/home_16.png}}');
+	background-image: url('/{{cache_bust=static/images/home_16.png}}');
 }
 
 #navigation-quizzes
 {
-	background-image: url('/{{asset=static/images/document_16.png}}');
+	background-image: url('/{{cache_bust=static/images/document_16.png}}');
 }
 
 #navigation-answers
 {
-	background-image: url('/{{asset=static/images/document_pencil_16.png}}');
+	background-image: url('/{{cache_bust=static/images/document_pencil_16.png}}');
 }
 
 #navigation-forum
 {
-	background-image: url('/{{asset=static/images/bubble_16.png}}');
+	background-image: url('/{{cache_bust=static/images/bubble_16.png}}');
 }
 
 #navigation-links
 {
-	background-image: url('/{{asset=static/images/globe_16.png}}');
+	background-image: url('/{{cache_bust=static/images/globe_16.png}}');
 }
 
 #navigation-settings
 {
-	background-image: url('/{{asset=static/images/gear_16.png}}');
+	background-image: url('/{{cache_bust=static/images/gear_16.png}}');
 }
 
 #navigation a, #navigation a:hover
@@ -289,7 +293,7 @@ body
 {
 	float: left;
 	padding-left: 60px;
-	background: url('/{{asset=static/images/star_48.png}}') no-repeat center left;
+	background: url('/{{cache_bust=static/images/star_48.png}}') no-repeat center left;
 }
 
 #weekly-trivia
@@ -297,7 +301,7 @@ body
 	float: right;
 	text-align: right;
 	padding-right: 60px;
-	background: url('/{{asset=static/images/calender_48.png}}') no-repeat center right;
+	background: url('/{{cache_bust=static/images/calender_48.png}}') no-repeat center right;
 }
 
 #weekly-trivia p
@@ -322,7 +326,7 @@ body
 
 #checklist li
 {
-	background: url('/{{asset=static/images/tick_32.png}}') no-repeat;
+	background: url('/{{cache_bust=static/images/tick_32.png}}') no-repeat;
 	padding: 3px 0 0 40px;
 	margin: 10px 0;
 	height: 29px;
