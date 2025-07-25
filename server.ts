@@ -37,7 +37,8 @@ server.bootstrap({
 	cache_bust: true,
 
 	global_subs: {
-		test: 'foobar'
+		test: 'foobar',
+		scripts: cache_bust(['static/js/client_bootstrap.s.js'])
 	},
 
 	routes: {
@@ -45,7 +46,8 @@ server.bootstrap({
 			content: Bun.file('./html/index.html'),
 			subs: {
 				title: 'Homepage',
-				scripts: cache_bust(['static/js/page_index.s.js'])
+				scripts: cache_bust(['static/js/page_index.s.js']),
+				stylesheets: cache_bust(['static/css/landing.css'])
 			}
 		},
 
@@ -54,7 +56,17 @@ server.bootstrap({
 			subs: {
 				title: 'Links',
 				scripts: [],
+				stylesheets: cache_bust(['static/css/links.css']),
 				links: async () => db.get_all('SELECT * FROM `links`')
+			}
+		},
+
+		'/register': {
+			content: Bun.file('./html/register.html'),
+			subs: {
+				title: 'Register Account',
+				scripts: cache_bust(['static/js/page_register.s.js']),
+				stylesheets: cache_bust(['static/css/register.css'])
 			}
 		}
 	}

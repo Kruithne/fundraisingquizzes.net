@@ -1,0 +1,16 @@
+.site-link
+{
+	cursor: pointer;
+	position: relative;
+}
+
+.site-link h1, .site-link h1 input
+{
+	font-size: 19px;
+	font-weight: bold;
+}
+
+.site-link p
+{
+	font-size: 1.3em;
+}
