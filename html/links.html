@@ -1,0 +1,8 @@
+<div class="module-container">
+	<t-for items="links" as="link">
+		<a class="module module-padded site-link" href="{{ link.url }}" target="_blank">
+			<h1>{{ link.title }}</h1>
+			<p>{{ link.desc }}</p>
+		</a>
+	</t-for>
+</div>

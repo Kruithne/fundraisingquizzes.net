@@ -44,8 +44,17 @@ server.bootstrap({
 		'/': {
 			content: Bun.file('./html/index.html'),
 			subs: {
-				'title': 'Homepage',
-				'scripts': cache_bust(['static/js/page_index.s.js'])
+				title: 'Homepage',
+				scripts: cache_bust(['static/js/page_index.s.js'])
+			}
+		},
+
+		'/links': {
+			content: Bun.file('./html/links.html'),
+			subs: {
+				title: 'Links',
+				scripts: [],
+				links: async () => db.get_all('SELECT * FROM `links`')
 			}
 		}
 	}
