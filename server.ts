@@ -62,8 +62,6 @@ server.bootstrap({
 
 // MARK: api
 const today_in_history_schema = form_create_schema({
-	id: '',
-	endpoint: '',
 	fields: {
 		month: { type: 'number', min: 0, max: 11 },
 		day: { type: 'number', min: 1, max: 31 }
