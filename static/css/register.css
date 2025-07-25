@@ -36,9 +36,13 @@
 #feature-list
 {
 	list-style: none;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 100%;
 }
 
-#feature-list li
+#feature-list div
 {
 	height: 64px;
 	background-repeat: no-repeat;
