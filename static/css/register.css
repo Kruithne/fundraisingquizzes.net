@@ -1,13 +1,17 @@
+.register-container
+{
+	display: flex;
+	gap: 10px;
+}
+
 #register-left
 {
-	float: left;
-	width: 42%;
+	flex: 1;
 }
 
 #register-right
 {
-	float: right;
-	width: 50%;
+	flex: 1;
 }
 
 #register-left, #register-right
