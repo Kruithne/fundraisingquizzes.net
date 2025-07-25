@@ -62,3 +62,11 @@
 {
 	background-image: url('/{{cache_bust=static/images/stop_64.png}}');
 }
+
+@media (max-width: 950px)
+{
+	.register-container
+	{
+		flex-direction: column;
+	}
+}
