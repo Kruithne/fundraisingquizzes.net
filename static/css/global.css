@@ -271,8 +271,8 @@ body
 	#account-status
 	{
 		position: static;
-		padding-left: 0;
-		background: none;
+		padding-left: 22px;
+		background: url('/{{cache_bust=static/images/user_16.png}}') no-repeat 0 6px;
 		order: -1;
 	}
 	
