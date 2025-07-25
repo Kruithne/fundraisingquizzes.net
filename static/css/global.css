@@ -213,6 +213,36 @@ body
 	background: var(--white);
 }
 
+input[type="button"]
+{
+	padding: 8px 20px;
+	font-size: 10pt;
+	font-weight: 600;
+	border: 3px solid transparent;
+	border-radius: 6px;
+	cursor: pointer;
+	background: #5db6ec;
+	color: var(--white);
+	transition: border-color 0.2s ease;
+}
+
+input[type="button"]:hover
+{
+	border-color: #0e2a42;
+}
+
+input[type="button"]:active
+{
+	background: #4da5db;
+}
+
+input[type="button"]:disabled
+{
+	opacity: 0.6;
+	cursor: not-allowed;
+	border-color: transparent;
+}
+
 .input-button
 {
 	padding: 5px 16px;
@@ -335,4 +365,100 @@ body
 	{
 		text-align: center;
 	}
+}
+
+/* Flux Form Styling */
+.fx-form
+{
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	max-width: 500px;
+	margin-top: 20px;
+}
+
+.fx-field
+{
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	position: relative;
+}
+
+.fx-label
+{
+	font-weight: 600;
+	color: var(--text-dark);
+	font-size: 10pt;
+}
+
+.fx-input
+{
+	padding: 8px 12px;
+	border: 2px solid var(--border-gray);
+	border-radius: 6px;
+	font-size: 10pt;
+	font-family: 'Noto Sans', sans-serif;
+	background: var(--white);
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.fx-input:focus
+{
+	border-color: var(--primary-blue);
+	box-shadow: 0 0 0 3px rgba(112, 137, 196, 0.1);
+}
+
+.fx-field.fx-error .fx-input
+{
+	border-color: var(--error-red);
+}
+
+.fx-field.fx-error .fx-input:focus
+{
+	border-color: var(--error-red);
+	box-shadow: 0 0 0 3px rgba(196, 0, 0, 0.1);
+}
+
+.fx-error-text
+{
+	color: var(--error-red);
+	font-size: 10pt;
+	margin-top: 4px;
+	display: block;
+}
+
+.fx-field:not(.fx-error) .fx-error-text
+{
+	display: none;
+}
+
+.fx-form input[type="button"]
+{
+	margin-top: 8px;
+	align-self: flex-start;
+}
+
+/* Form states */
+.fx-form.fx-state-pending .fx-input
+{
+	opacity: 0.7;
+}
+
+.fx-form.fx-state-success
+{
+	border: 2px solid var(--success-green);
+	border-radius: 8px;
+	padding: 20px;
+	background: rgba(23, 196, 0, 0.05);
+}
+
+.fx-form.fx-state-error
+{
+	border: 2px solid var(--error-red);
+	border-radius: 8px;
+	padding: 20px;
+	background: rgba(196, 0, 0, 0.05);
 }

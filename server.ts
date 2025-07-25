@@ -1,5 +1,5 @@
 import { http_serve, caution, db_mysql, cache_bust, HTTP_STATUS_CODE } from 'spooder';
-import { form_validate_req, form_create_schema } from './server/flux';
+import { form_validate_req, form_create_schema, form_render_html } from './server/flux';
 
 // MARK: server bootstrap
 const server = http_serve(Number(process.env.SERVER_PORT), process.env.SERVER_LISTEN_HOST);
@@ -12,6 +12,55 @@ const db = await db_mysql({
 
 await db.update_schema('./schema');
 
+// MARK: api
+const today_in_history_schema = form_create_schema({
+	fields: {
+		month: { type: 'number', min: 0, max: 11 },
+		day: { type: 'number', min: 1, max: 31 }
+	}
+});
+
+server.json('/api/today_in_history', async (req, url, json) => {
+	const validate = form_validate_req(today_in_history_schema, json);
+	if (validate.error)
+		return validate;
+
+	const result = await db.get_single(
+		'SELECT `text` FROM `today_in_history` WHERE `month` = ? AND `day` = ?',
+		validate.fields.month, validate.fields.day
+	);
+
+	return {
+		success: true,
+		fact: result?.text ?? null
+	};
+});
+
+const register_schema = form_create_schema({
+	id: 'register_form',
+	endpoint: '/api/register',
+	fields: {
+		username: {
+			type: 'text',
+			label: 'Choose a username:',
+			max_length: 20
+		},
+		email: {
+			type: 'text',
+			label: 'Enter your e-mail address:'
+		},
+		password: {
+			type: 'password',
+			label: 'Choose a strong password:'
+		},
+		password_confirm: {
+			type: 'password',
+			label: 'Re-type your password again:'
+		}
+	}
+});
+
+// MARK: routes
 server.bootstrap({
 	base: Bun.file('./html/base_template.html'),
 	drop_missing_subs: false,
@@ -66,34 +115,11 @@ server.bootstrap({
 			subs: {
 				title: 'Register Account',
 				scripts: cache_bust(['static/js/page_register.s.js']),
-				stylesheets: cache_bust(['static/css/register.css'])
+				stylesheets: cache_bust(['static/css/register.css']),
+				register_form: () => form_render_html(register_schema)
 			}
 		}
 	}
-});
-
-// MARK: api
-const today_in_history_schema = form_create_schema({
-	fields: {
-		month: { type: 'number', min: 0, max: 11 },
-		day: { type: 'number', min: 1, max: 31 }
-	}
-});
-
-server.json('/api/today_in_history', async (req, url, json) => {
-	const validate = form_validate_req(today_in_history_schema, json);
-	if (validate.error)
-		return validate;
-
-	const result = await db.get_single(
-		'SELECT `text` FROM `today_in_history` WHERE `month` = ? AND `day` = ?',
-		validate.fields.month, validate.fields.day
-	);
-
-	return {
-		success: true,
-		fact: result?.text ?? null
-	};
 });
 
 // MARK: webhook
