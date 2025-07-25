@@ -11,11 +11,34 @@ import { createApp } from '/{{cache_bust=static/js/lib/vue.esm.prod.js}}';
 	}).mount('#container');
 
 	const today = new Date();
-	const res = await query_api('today_in_history', {
-		day: today.getDate(),
-		month: today.getMonth()
-	});
+	const cache_key = 'fq_today_in_history';
+	const date_key = `${today.getDate()}-${today.getMonth()}`;
+	
+	const cached = localStorage.getItem(cache_key);
+	let cached_data = null;
+	
+	if (cached) {
+		try {
+			cached_data = JSON.parse(cached);
+		} catch (e) {
+			localStorage.removeItem(cache_key);
+		}
+	}
+	
+	if (cached_data && cached_data.date === date_key) {
+		state.today_in_history = cached_data.fact;
+	} else {
+		const res = await query_api('today_in_history', {
+			day: today.getDate(),
+			month: today.getMonth()
+		});
 
-	if (res.success && res.fact !== null)
-		state.today_in_history = res.fact;
+		if (res.success && res.fact !== null) {
+			state.today_in_history = res.fact;
+			localStorage.setItem(cache_key, JSON.stringify({
+				date: date_key,
+				fact: res.fact
+			}));
+		}
+	}
 })();
