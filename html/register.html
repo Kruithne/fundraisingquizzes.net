@@ -1,19 +1,17 @@
-<div class="register-container">
+<div id="register-container" class="register-container">
 	<div class="module module-padded" id="register-left">
-		<h1>Account Creation</h1>
-		<p id="register-status">Welcome to Fundraising Quizzes, please complete the form below to create a new account.</p>
+		<h1>Already have an account?</h1>
 		<div id="container">
-			{{ register_form }}
+			{{ login_form }}
 		</div>
 		<div style="margin-top: 15px;">
 			<a href="/recovery">Forgotten your account details? Click here.</a>
 		</div>
 	</div>
 	<div class="module module-padded" id="register-right">
-		<div id="feature-list">
-			<div class="feature-quizzes">A feature-rich quiz listing with bookmarking, voting, query viewing/posting and more!</div>
-			<div class="feature-forum">Participate in one of the best quizzing communities on the internet dedicated to raising funds for charity!</div>
-			<div class="feature-answers">Our site revolves around our popular no-answer policy to ensure a fairer chance for everyone.</div>
+		<h1>New User? Create An Account</h1>
+		<div id="container">
+			{{ register_form }}
 		</div>
 	</div>
 </div>

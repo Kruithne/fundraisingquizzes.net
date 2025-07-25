@@ -71,6 +71,30 @@ const register_schema = form_create_schema({
 	}
 });
 
+const login_schema = form_create_schema({
+	id: 'login_form',
+	endpoint: '/api/login',
+	fields: {
+		username: {
+			type: 'text',
+			label: 'Username or Email:',
+			max_length: 100
+		},
+
+		password: {
+			type: 'password',
+			label: 'Password:'
+		}
+	},
+
+	buttons: {
+		submit: {
+			text: 'Login',
+			pending_text: 'Logging in...'
+		}
+	}
+});
+
 // MARK: routes
 server.bootstrap({
 	base: Bun.file('./html/base_template.html'),
@@ -127,7 +151,8 @@ server.bootstrap({
 				title: 'Register Account',
 				scripts: cache_bust(['static/js/page_register.s.js']),
 				stylesheets: cache_bust(['static/css/register.css']),
-				register_form: () => form_render_html(register_schema)
+				register_form: () => form_render_html(register_schema),
+				login_form: () => form_render_html(login_schema)
 			}
 		}
 	}

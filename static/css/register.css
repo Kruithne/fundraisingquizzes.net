@@ -20,7 +20,7 @@
 	min-height: 280px;
 }
 
-#register-left h1
+#register-left h1, #register-right h1
 {
 	width: 100%;
 	text-align: center;
@@ -31,40 +31,6 @@
 {
 	width: 100%;
 	margin: 20px 0 10px 0;
-}
-
-#feature-list
-{
-	list-style: none;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	height: 100%;
-}
-
-#feature-list div
-{
-	height: 64px;
-	background-repeat: no-repeat;
-	background-position: left;
-	padding: 25px 0 0 80px;
-	font-size: 1.2em;
-	font-weight: bold;
-}
-
-.feature-quizzes
-{
-	background-image: url('/{{cache_bust=static/images/document_pencil_64.png}}');
-}
-
-.feature-forum
-{
-	background-image: url('/{{cache_bust=static/images/user2_64.png}}');
-}
-
-.feature-answers
-{
-	background-image: url('/{{cache_bust=static/images/stop_64.png}}');
 }
 
 @media (max-width: 950px)
