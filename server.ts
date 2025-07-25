@@ -1,5 +1,5 @@
 import { http_serve, caution, db_mysql, cache_bust, HTTP_STATUS_CODE } from 'spooder';
-import zod from 'zod';
+import { form_validate_req, form_create_schema } from './server/flux';
 
 // MARK: server bootstrap
 const server = http_serve(Number(process.env.SERVER_PORT), process.env.SERVER_LISTEN_HOST);
@@ -61,19 +61,23 @@ server.bootstrap({
 });
 
 // MARK: api
-const today_in_history_schema = zod.object({
-	month: zod.number().min(0).max(11),
-	day: zod.number().min(1).max(31)
+const today_in_history_schema = form_create_schema({
+	id: '',
+	endpoint: '',
+	fields: {
+		month: { type: 'number', min: 0, max: 11 },
+		day: { type: 'number', min: 1, max: 31 }
+	}
 });
 
 server.json('/api/today_in_history', async (req, url, json) => {
-	const parse = today_in_history_schema.safeParse(json);
-	if (!parse.success)
-		return zod.flattenError(parse.error);
+	const validate = form_validate_req(today_in_history_schema, json);
+	if (validate.error)
+		return validate;
 
 	const result = await db.get_single(
 		'SELECT `text` FROM `today_in_history` WHERE `month` = ? AND `day` = ?',
-		parse.data.month, parse.data.day
+		validate.fields.month, validate.fields.day
 	);
 
 	return {
