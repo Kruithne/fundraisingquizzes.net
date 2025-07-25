@@ -455,10 +455,26 @@ input[type="button"]:disabled
 	background: rgba(23, 196, 0, 0.05);
 }
 
-.fx-form.fx-state-error
+.fx-form.fx-state-pending input[type="button"]
 {
-	border: 2px solid var(--error-red);
-	border-radius: 8px;
-	padding: 20px;
-	background: rgba(196, 0, 0, 0.05);
+	background-color: #ccc;
+	color: #666;
+	cursor: not-allowed;
+	pointer-events: none;
+	position: relative;
+}
+
+.fx-form.fx-state-pending input[type="button"]::before
+{
+	content: 'Registering...';
+	position: absolute;
+	background: inherit;
+	color: inherit;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }

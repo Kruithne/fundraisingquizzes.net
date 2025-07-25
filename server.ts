@@ -45,17 +45,28 @@ const register_schema = form_create_schema({
 			label: 'Choose a username:',
 			max_length: 20
 		},
+
 		email: {
-			type: 'text',
+			type: 'email',
 			label: 'Enter your e-mail address:'
 		},
+
 		password: {
 			type: 'password',
 			label: 'Choose a strong password:'
 		},
+
 		password_confirm: {
 			type: 'password',
+			match_field: 'password',
 			label: 'Re-type your password again:'
+		}
+	},
+
+	buttons: {
+		submit: {
+			text: 'Register',
+			pending_text: 'Registering...'
 		}
 	}
 });

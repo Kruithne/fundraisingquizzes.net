@@ -37,6 +37,8 @@ export function create_event_bus() {
 	};
 }
 
+const email_regex = /^(?!\.)(?!.*\.\.)([a-z0-9_'+\-\.]*)[a-z0-9_+-]@([a-z0-9][a-z0-9\-]*\.)+[a-z]{2,}$/i;
+
 const default_error_messages = {
 	generic_validation: 'There was an issue with one or more fields',
 	generic_malformed: 'Malformed request',
@@ -47,7 +49,10 @@ const default_error_messages = {
 	number_range: 'Must be between {min} and {max}',
 	text_too_small: 'Must be at least {min} characters',
 	text_too_large: 'Must not exceed {max} characters',
-	text_range: 'Must be between {min} and {max} characters'
+	text_range: 'Must be between {min} and {max} characters',
+	regex_validation: 'Invalid format',
+	invalid_email: 'Please enter a valid email address',
+	field_match_error: 'The fields do not match'
 };
 
 export function form_component(app, container_id) {
@@ -75,9 +80,10 @@ export function form_component(app, container_id) {
 					error: ''
 				};
 			}
-			
+
 			return {
-				state
+				state,
+				pending: false
 			};
 		},
 		
@@ -86,6 +92,8 @@ export function form_component(app, container_id) {
 				const classes = this.$refs.form.classList;
 				classes.remove('fx-state-success', 'fx-state-error', 'fx-state-pending');
 				classes.add('fx-state-' + state);
+				
+				this.pending = state === 'pending';
 			},
 
 			emit_error(error_obj) {
@@ -296,6 +304,64 @@ export function form_component(app, container_id) {
 
 					if (max_error)
 						return this.validation_error('text_too_large', field_id, { max });
+
+					if (input_type === 'email' && !email_regex.test(value))
+						return this.validation_error('invalid_email', field_id);
+
+					const regex = $field.getAttribute('fx-v-regex');
+					if (regex !== null) {
+						const regex_pattern = new RegExp(regex);
+						if (!regex_pattern.test(value))
+							return this.validation_error('regex_validation', field_id);
+					}
+				}
+
+				// match_field validation
+				const match_field = $field.getAttribute('fx-v-match-field');
+				if (match_field !== null) {
+					const $match_field = this.$refs.form.querySelector(`[data-fx-field-id='${match_field}']`);
+					if ($match_field) {
+						const $match_input = $match_field.querySelector('.fx-input');
+						if ($match_input && $match_input.value?.trim() !== value) {
+							this.validation_error('field_match_error', field_id);
+							return this.validation_error('field_match_error', match_field);
+						} else if ($match_input && $match_input.value?.trim() === value) {
+							// clear error on matched field if it was previously in error state
+							const match_state = this.state[match_field];
+							if (match_state && match_state.has_error && match_state.error === this.resolve_error_message({ err: 'field_match_error' }, match_field)) {
+								match_state.has_error = false;
+								match_state.error = '';
+							}
+						}
+					}
+				}
+
+				// check if this field is the target of another field's match_field
+				for (const other_field_id in this.state) {
+					if (other_field_id === field_id)
+						continue;
+
+					const $other_field = this.$refs.form.querySelector(`[data-fx-field-id='${other_field_id}']`);
+					if ($other_field) {
+						const other_match_field = $other_field.getAttribute('fx-v-match-field');
+						if (other_match_field === field_id) {
+							const $other_input = $other_field.querySelector('.fx-input');
+							if ($other_input) {
+								const other_value = $other_input.value?.trim();
+								if (other_value && other_value !== value) {
+									this.validation_error('field_match_error', field_id);
+									return this.validation_error('field_match_error', other_field_id);
+								} else if (other_value === value) {
+									// clear error on the other field if it was previously in error state
+									const other_state = this.state[other_field_id];
+									if (other_state && other_state.has_error && other_state.error === this.resolve_error_message({ err: 'field_match_error' }, other_field_id)) {
+										other_state.has_error = false;
+										other_state.error = '';
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 		}

@@ -1,5 +1,7 @@
 import { element } from './weave';
 
+const email_regex = /^(?!\.)(?!.*\.\.)([a-z0-9_'+\-\.]*)[a-z0-9_+-]@([a-z0-9][a-z0-9\-]*\.)+[a-z]{2,}$/i;
+
 const default_error_messages = [
 	'generic_validation',
 	'generic_malformed',
@@ -10,7 +12,10 @@ const default_error_messages = [
 	'number_range',
 	'text_too_small',
 	'text_too_large',
-	'text_range'
+	'text_range',
+	'regex_validation',
+	'invalid_email',
+	'field_match_error'
 ] as const;
 
 type ErrorCode = typeof default_error_messages[number];
@@ -21,6 +26,12 @@ type FormFieldBase = {
 	placeholder?: string;
 	errors?: ErrorMap;
 	required?: boolean;
+	match_field?: string;
+};
+
+type FormButton = {
+	text?: string;
+	pending_text?: string;
 };
 
 type FormField = FormFieldBase & ({
@@ -28,9 +39,10 @@ type FormField = FormFieldBase & ({
 	min?: number;
 	max?: number;
 } | {
-	type: 'text' | 'password';
+	type: 'text' | 'password' | 'email';
 	min_length?: number;
 	max_length?: number;
+	regex?: string;
 });
 
 type InferFieldType<T extends FormField> = T extends { type: 'number' } ? number : string;
@@ -50,6 +62,9 @@ export type FormSchema<TId extends string = string, TFields extends Record<strin
 	fields: TFields;
 	context?: TContext;
 	errors?: ErrorMap;
+	buttons?: {
+		submit?: FormButton;
+	};
 };
 
 type ValidationResult<T extends FormSchema> = 
@@ -156,7 +171,40 @@ export function form_validate_req<T extends FormSchema>(
 				}
 			}
 
+			if (field.type === 'email') {
+				if (!email_regex.test(str_value)) {
+					field_errors[uid] = 'invalid_email';
+					continue;
+				}
+			}
+
+			if (field.regex !== undefined) {
+				const regex = new RegExp(field.regex);
+				if (!regex.test(str_value)) {
+					field_errors[uid] = 'regex_validation';
+					continue;
+				}
+			}
+
 			validated_fields[field_id] = str_value;
+		}
+	}
+
+	// match_field validation
+	for (const [field_id, field] of Object.entries(schema.fields)) {
+		if (!field.match_field)
+			continue;
+
+		const uid = schema.id ? `${schema.id}-${field_id}` : field_id;
+		const target_uid = schema.id ? `${schema.id}-${field.match_field}` : field.match_field;
+
+		// skip if either field already has errors or is missing
+		if (field_errors[uid] || field_errors[target_uid] || !(field_id in validated_fields) || !(field.match_field in validated_fields))
+			continue;
+
+		if (validated_fields[field_id] !== validated_fields[field.match_field]) {
+			field_errors[uid] = 'field_match_error';
+			field_errors[target_uid] = 'field_match_error';
 		}
 	}
 
@@ -240,10 +288,18 @@ export function form_render_html(schema: FormSchema): string {
 
 			if (field.max_length !== undefined)
 				$label.attr('fx-v-max-length', field.max_length.toString());
+
+			if (field.regex !== undefined)
+				$label.attr('fx-v-regex', field.regex);
 		}
 
 		if (field.required !== undefined)
 			$label.attr('fx-v-required', field.required.toString());
+
+		if (field.match_field !== undefined) {
+			const match_field_uid = `${schema.id}-${field.match_field}`;
+			$label.attr('fx-v-match-field', match_field_uid);
+		}
 
 		if (field.label) {
 			$label.child('span')
@@ -273,11 +329,17 @@ export function form_render_html(schema: FormSchema): string {
 			$input.attr('placeholder', field.placeholder);
 	}
 
-	// placeholder
+	const submit_text = schema.buttons?.submit?.text ?? 'Submit';
+	const submit_pending_text = schema.buttons?.submit?.pending_text;
+
 	const $submit = $form.child('input')
 		.attr('type', 'button')
-		.attr('value', 'Submit')
 		.attr('@click', 'submit');
+
+	if (submit_pending_text !== undefined)
+		$submit.attr(':value', `pending ? '${submit_pending_text}' : '${submit_text}'`);
+	else
+		$submit.attr('value', submit_text);
 
 	return $container.toString();
 }
