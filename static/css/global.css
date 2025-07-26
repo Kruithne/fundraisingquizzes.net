@@ -299,6 +299,11 @@ input[type="number"]:focus
 	line-height: 1.5;
 }
 
+#user-presence-mobile
+{
+	display: none;
+}
+
 @media (max-width: 880px)
 {
 	#header
@@ -307,7 +312,6 @@ input[type="number"]:focus
 		flex-direction: column;
 		align-items: center;
 		padding: 20px;
-		gap: 15px;
 	}
 	
 	#logo
@@ -317,10 +321,21 @@ input[type="number"]:focus
 	
 	#account-status
 	{
-		position: static;
+		display: none;
+	}
+	
+	#user-presence-mobile
+	{
+		display: block;
+		padding: 15px 20px;
+		text-align: center;
+	}
+	
+	#account-status-mobile
+	{
 		padding-left: 22px;
 		background: url('/{{cache_bust=static/images/user_16.png}}') no-repeat 0 6px;
-		order: -1;
+		display: inline-block;
 	}
 	
 	.navigation-module
@@ -388,7 +403,7 @@ input[type="number"]:focus
 	#logo 
 	{
 		max-width: 100%;
-		height: auto;
+		height: 60px;
 	}
 	
 	.coming-soon 

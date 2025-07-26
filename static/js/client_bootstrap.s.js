@@ -14,7 +14,26 @@ const user_presence = createApp({
 			login_pending: false
 		}
 	},
+	mounted() {
+		this.handle_resize();
+		window.addEventListener('resize', this.handle_resize);
+	},
+	beforeUnmount() {
+		window.removeEventListener('resize', this.handle_resize);
+	},
 	methods: {
+		handle_resize() {
+			const is_mobile = window.innerWidth < 880;
+			const current_parent = this.$el.parentNode;
+			const desktop_container = document.getElementById('account-status');
+			const mobile_container = document.getElementById('account-status-mobile');
+			
+			if (is_mobile && current_parent !== mobile_container) {
+				mobile_container.appendChild(this.$el);
+			} else if (!is_mobile && current_parent !== desktop_container) {
+				desktop_container.appendChild(this.$el);
+			}
+		},
 		show_login() {
 			this.show_login_form = true;
 			this.login_error = null;
