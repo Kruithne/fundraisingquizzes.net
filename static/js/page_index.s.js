@@ -8,7 +8,7 @@ import { createApp } from '/{{cache_bust=static/js/lib/vue.esm.prod.js}}';
 				today_in_history: new Date().toLocaleDateString('en-US', { weekday: 'long' })
 			}
 		}
-	}).mount('#container');
+	}).mount('#content-container');
 
 	const today = new Date();
 	const cache_key = 'fq_today_in_history';
