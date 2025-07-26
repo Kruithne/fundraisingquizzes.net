@@ -259,8 +259,8 @@ export function form_render_html(schema: FormSchema): string {
 		const encoded = btoa(JSON.stringify(schema.context));
 		$form.child('input')
 			.attr('type', 'hidden')
-			.attr('id', 'fx-context')
-			.attr('value', encoded);
+			.attr('value', encoded)
+			.cls('fx-context');
 	}
 
 	let tab_index = 1;
@@ -313,7 +313,7 @@ export function form_render_html(schema: FormSchema): string {
 			.text(`{{ state['${unique_field_id}'].error }}`);
 
 		const $input = $label.child('input')
-			.attr('type', field.type)
+			.attr('type', field.type === 'email' ? 'text' : field.type)
 			.attr('id', unique_field_id)
 			.attr('tabindex', tab_index.toString())
 			.attr('@blur', `handle_field_blur('${unique_field_id}')`)
