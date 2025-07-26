@@ -114,22 +114,37 @@ body
 	gap: 5px;
 }
 
+.navigation-module
+{
+	padding: 15px 20px;
+	text-align: center;
+}
+
 #navigation
 {
 	list-style: none;
-	position: absolute;
-	bottom: 10px;
-	right: 15px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 0;
 	height: 16px;
+	margin: 0;
 }
 
 #navigation li
 {
-	display: inline;
-	margin: 0 10px;
+	display: flex;
+	align-items: center;
 	padding-left: 20px;
 	background-repeat: no-repeat;
 	background-position: 0 1px;
+}
+
+#navigation li:not(:last-child)::after
+{
+	content: '|';
+	margin: 0 15px;
+	color: var(--border-gray);
 }
 
 #navigation-home
@@ -308,19 +323,48 @@ input[type="number"]:focus
 		order: -1;
 	}
 	
+	.navigation-module
+	{
+		padding: 10px 15px;
+	}
+	
 	#navigation
 	{
-		position: static;
-		display: flex;
-		justify-content: center;
-		flex-wrap: wrap;
-		gap: 20px;
+		flex-direction: column;
+		gap: 0;
 		height: auto;
 	}
 	
 	#navigation li
 	{
-		margin: 0;
+		padding: 15px 20px;
+		border-bottom: 1px solid var(--border-gray);
+		justify-content: flex-start;
+		width: 100%;
+		box-sizing: border-box;
+	}
+	
+	#navigation li a
+	{
+		display: flex;
+		align-items: center;
+		width: 100%;
+		padding-left: 45px;
+	}
+	
+	#navigation li
+	{
+		background-position: 20px center;
+	}
+	
+	#navigation li:last-child
+	{
+		border-bottom: none;
+	}
+	
+	#navigation li:not(:last-child)::after
+	{
+		display: none;
 	}
 }
 
