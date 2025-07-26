@@ -1,7 +1,7 @@
 import { createApp } from '/{{cache_bust=static/js/lib/vue.esm.prod.js}}';
 import { document_load, query_api } from '/{{cache_bust=static/js/client_global.s.js}}';
 
-const user_presence_app = createApp({
+const user_presence = createApp({
 	data() {
 		return {
 			logged_in: false,
@@ -19,12 +19,14 @@ const user_presence_app = createApp({
 			this.show_login_form = true;
 			this.login_error = null;
 		},
+
 		hide_login() {
 			this.show_login_form = false;
 			this.login_username = '';
 			this.login_password = '';
 			this.login_error = null;
 		},
+
 		async submit_login() {
 			if (!this.login_username.trim() || !this.login_password.trim()) {
 				this.login_error = 'Please enter both username and password';
@@ -67,46 +69,41 @@ const user_presence_app = createApp({
 		<div v-else-if="logged_in">
 			You are logged in as {{ username }}. <a @click="logout" style="cursor: pointer;">Logout</a>.
 		</div>
-		<form v-else @submit.prevent="submit_login">
-			<input 
-				type="text" 
-				placeholder="Username..." 
-				v-model="login_username"
-				class="input-text" 
-				required
-			/>
-			<input 
-				type="password" 
-				placeholder="Password..." 
-				v-model="login_password"
-				class="input-text" 
-				required
-			/>
-			<input 
-				type="submit" 
-				value="Login" 
-				class="input-button"
-				:disabled="login_pending"
-			/>
-			<input 
-				type="button" 
-				value="Cancel" 
-				class="input-button"
-				@click="hide_login"
-			/>
-			<div v-if="login_error" class="form-error" style="margin-left: 10px;">
-				{{ login_error }}
-			</div>
+		<template v-else>
+			<form @submit.prevent="submit_login">
+				<input 
+					type="text" 
+					placeholder="Username..." 
+					v-model="login_username"
+					required
+				/>
+				<input 
+					type="password" 
+					placeholder="Password..." 
+					v-model="login_password"
+					required
+				/>
+				<input 
+					type="button" 
+					value="Login" 
+					:disabled="login_pending"
+				/>
+				<input 
+					type="button" 
+					value="Cancel" 
+					@click="hide_login"
+				/>
+				<div v-if="login_error" class="form-error" style="margin-left: 10px;">
+					{{ login_error }}
+				</div>
+			</form>
 			<div style="margin-left: 10px;">
 				<a href="/recovery">Forgotten your account details? Click here.</a>
 			</div>
-		</form>
+		</template>
 	`
 });
 
 document_load().then(() => {
-	const account_status = document.getElementById('account-status');
-	if (account_status) {
-		user_presence_app.mount(account_status);
-	}
+	user_presence.mount('#account-status');
 });
