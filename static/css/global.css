@@ -400,12 +400,6 @@ input[type="number"]:focus
 		padding: 10px 15px;
 	}
 	
-	#logo 
-	{
-		max-width: 100%;
-		height: 60px;
-	}
-	
 	.coming-soon 
 	{
 		font-size: 1.5em;
