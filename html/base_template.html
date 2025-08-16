@@ -4,19 +4,19 @@
 		<meta charset="utf-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<title>{{title}} - Fundraising Quizzes</title>
-		<link rel="stylesheet" href="{{cache_bust=static/css/global.css}}"/>
+		<link rel="stylesheet" href="/{{cache_bust=static/css/global.css}}"/>
 		<t-for items="stylesheets" as="stylesheet">
-			<link rel="stylesheet" href="{{stylesheet}}"/>
+			<link rel="stylesheet" href="/{{stylesheet}}"/>
 		</t-for>
 		<t-for items="scripts" as="script">
-			<script src="{{script}}" type="module"></script>
+			<script src="/{{script}}" type="module"></script>
 		</t-for>
 	</head>
 	<body>
 		<div id="container">
 			<div class="module" id="header">
 				<a href="/">
-					<img id="logo" src="{{cache_bust=static/images/logo.svg}}" alt="Fundraising Quizzes"/>
+					<img id="logo" src="/{{cache_bust=static/images/logo.svg}}" alt="Fundraising Quizzes"/>
 				</a>
 				<div id="account-status"></div>
 			</div>
