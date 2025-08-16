@@ -141,7 +141,7 @@ async function user_send_verification_code(verify_token: string, force = false):
 
 	await db.execute('UPDATE `user_verify_codes` SET `last_sent` = ? WHERE `token` = ? LIMIT 1', timestamp, verify_token);
 
-	const user_row = await db.get_single('SELECT `first_name`, `last_name`, `email` FROM `users` WHERE `id` = ? LIMIT 1', token.user_id);
+	const user_row = await db.get_single('SELECT `email` FROM `users` WHERE `id` = ? LIMIT 1', token.user_id);
 	if (user_row === null)
 		return SendVerificationCodeResponse.Error;
 
