@@ -120,15 +120,15 @@ async function user_create(username: string, email: string, password: string): P
 }
 
 async function user_is_verification_token_used(token: string): Promise<boolean> {
-	return await db.exists('SELECT 1 FROM `user_verify_codes` WHERE `token` = ?', [token]);
+	return await db.exists('SELECT 1 FROM `user_verify_codes` WHERE `token` = ?', token);
 }
 
 async function user_get_verification_token(token: string) {
-	return await db.get_single('SELECT * FROM `user_verify_codes` WHERE `token` = ? LIMIT 1', [token]) ;
+	return await db.get_single('SELECT * FROM `user_verify_codes` WHERE `token` = ? LIMIT 1', token) ;
 }
 
 async function user_send_verification_code(verify_token: string, force = false): Promise<SendVerificationCodeResponse> {
-	const token = await user_get_verification_token(verify_token) ;
+	const token = await user_get_verification_token(verify_token);
 	if (!token) {
 		caution('send_verification_code cannot find token', { verify_token });
 		return SendVerificationCodeResponse.Error;
