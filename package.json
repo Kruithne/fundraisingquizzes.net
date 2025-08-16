@@ -2,10 +2,14 @@
 	"name": "kruithne.net",
 	"module": "server.ts",
 	"devDependencies": {
-		"@types/bun": "^1.2.15"
+		"@types/bun": "^1.2.15",
+		"@types/nodemailer": "^6.4.17"
 	},
 	"spooder": {
-		"auto_restart": 0,
+		"auto_restart": true,
+		"auto_restart_max": 30000,
+		"auto_restart_attempts": 10,
+		"auto_restart_grace": 30000,
 		"run": "bun run server.ts",
 		"update": [
 			"git fetch --depth=1 origin master",
@@ -24,6 +28,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"spooder": "^5.1.6"
+		"nodemailer": "^7.0.5",
+		"spooder": "^5.1.7"
 	}
 }

@@ -42,6 +42,9 @@ const email_regex = /^(?!\.)(?!.*\.\.)([a-z0-9_'+\-\.]*)[a-z0-9_+-]@([a-z0-9][a-
 const default_error_messages = {
 	generic_validation: 'There was an issue with one or more fields',
 	generic_malformed: 'Malformed request',
+	generic_form_error: 'An error occurred while processing the form',
+	http_error: 'HTTP Error {status_code}: {status_text}',
+	generic_error: 'Internal Error: {error}',
 	required: 'This field is required',
 	invalid_number: 'Must be a valid number',
 	number_too_small: 'Must be at least {min}',
@@ -84,7 +87,9 @@ export function form_component(app, container_id) {
 
 			return {
 				state,
-				pending: false
+				pending: false,
+				disabled: false,
+				form_error_message: ''
 			};
 		},
 		
@@ -92,9 +97,13 @@ export function form_component(app, container_id) {
 			set_flow_state(state) {
 				const classes = this.$refs.form.classList;
 				classes.remove('fx-state-success', 'fx-state-error', 'fx-state-pending');
+				
 				classes.add('fx-state-' + state);
 				
 				this.pending = state === 'pending';
+				
+				if (state === 'pending')
+					this.form_error_message = '';
 			},
 
 			emit_error(error_obj) {
@@ -103,6 +112,9 @@ export function form_component(app, container_id) {
 			},
 
 			async submit() {
+				if (this.pending || this.disabled)
+					return;
+					
 				this.set_flow_state('pending');
 				events.emit('submit_pending');
 				
@@ -157,6 +169,11 @@ export function form_component(app, container_id) {
 					});
 					
 					if (response.status !== 200) {
+						this.form_error_message = this.resolve_error_message({
+							err: 'http_error',
+							params: { status_code: response.status, status_text: response.statusText }
+						});
+						
 						return this.emit_error({
 							code: 'http_error',
 							status_text: response.statusText,
@@ -177,17 +194,30 @@ export function form_component(app, container_id) {
 								}
 							}
 						}
+
+						this.form_error_message = data.form_error_message ?? this.resolve_error_message(data.error);
 						
 						return this.emit_error({
 							code: 'form_error',
-							error: this.resolve_error_message(data.error),
+							error: this.form_error_message,
 							field_errors: data.field_errors
 						});
 					} else {
 						this.set_flow_state('success');
+						
+						if (data.flux_disable === true) {
+							this.disabled = true;
+							this.$refs.form.classList.add('fx-state-disabled');
+						}
+						
 						events.emit('submit_success', data);
 					}
 				} catch (error) {
+					this.form_error_message = this.resolve_error_message({
+						err: 'generic_error',
+						params: { error: error.toString() }
+					});
+					
 					this.emit_error({
 						code: 'generic_error',
 						error: error.toString()
@@ -223,7 +253,7 @@ export function form_component(app, container_id) {
 				if ($global_cst)
 					return $global_cst.value;
 				
-				return default_error_messages[error_code];
+				return default_error_messages[error_code] || error_code;
 			},
 			
 			resolve_error_message(message, field_id) {
@@ -357,7 +387,8 @@ export function form_component(app, container_id) {
 					if (other_state?.error_code == 'field_match_error')
 						this.clear_state_error(other_state);
 				}
-			}
+			},
+
 		}
 	});
 	

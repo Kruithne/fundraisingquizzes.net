@@ -7,5 +7,9 @@ document_load().then(() => {
 	const register_form = form_component(app, 'register_form');
 	const login_form = form_component(app, 'login_form');
 
+	register_form.on('submit_success', data => {
+		location.href = '/verify-account/' + data.verify_token;
+	});
+
 	app.mount('#register-container');
 });

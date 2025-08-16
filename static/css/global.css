@@ -477,21 +477,19 @@ input[type="number"]:focus
 	align-self: flex-start;
 }
 
+.fx-form > p.fx-form-error {
+	color: var(--error-red);
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
 /* Form states */
-.fx-form.fx-state-pending .fx-input
+.fx-form.fx-state-pending .fx-input, .fx-form.fx-state-disabled .fx-input
 {
 	opacity: 0.7;
 }
 
-.fx-form.fx-state-success
-{
-	border: 2px solid var(--success-green);
-	border-radius: 8px;
-	padding: 20px;
-	background: rgba(23, 196, 0, 0.05);
-}
-
-.fx-form.fx-state-pending input[type="button"]
+.fx-form.fx-state-pending input[type="button"], .fx-form.fx-state-disabled input[type="button"]
 {
 	background-color: #ccc;
 	color: #666;
