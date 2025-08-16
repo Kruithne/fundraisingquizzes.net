@@ -6,12 +6,7 @@ const user_presence = createApp({
 		return {
 			logged_in: false,
 			username: null,
-			is_admin: false,
-			show_login_form: false,
-			login_username: '',
-			login_password: '',
-			login_error: null,
-			login_pending: false
+			is_admin: false
 		}
 	},
 	mounted() {
@@ -34,43 +29,6 @@ const user_presence = createApp({
 				desktop_container.appendChild(this.$el);
 			}
 		},
-		show_login() {
-			this.show_login_form = true;
-			this.login_error = null;
-		},
-
-		hide_login() {
-			this.show_login_form = false;
-			this.login_username = '';
-			this.login_password = '';
-			this.login_error = null;
-		},
-
-		async submit_login() {
-			if (!this.login_username.trim() || !this.login_password.trim()) {
-				this.login_error = 'Please enter both username and password';
-				return;
-			}
-
-			this.login_pending = true;
-			this.login_error = null;
-
-			const result = await query_api('login', {
-				username: this.login_username,
-				password: this.login_password
-			});
-
-			this.login_pending = false;
-
-			if (result.success) {
-				this.logged_in = true;
-				this.username = result.username;
-				this.is_admin = result.is_admin || false;
-				this.hide_login();
-			} else {
-				this.login_error = result.error || 'Login failed';
-			}
-		},
 		async logout() {
 			const result = await query_api('logout');
 			
@@ -82,44 +40,12 @@ const user_presence = createApp({
 		}
 	},
 	template: `
-		<div v-if="!logged_in && !show_login_form">
-			You are currently not logged in: <a @click="show_login" style="cursor: pointer;">login</a> or <a href="/register">register</a>.
+		<div v-if="!logged_in">
+			You are currently not logged in: <a href="/login">login or register</a>.
 		</div>
-		<div v-else-if="logged_in">
+		<div v-else>
 			You are logged in as {{ username }}. <a @click="logout" style="cursor: pointer;">Logout</a>.
 		</div>
-		<template v-else>
-			<form @submit.prevent="submit_login">
-				<input 
-					type="text" 
-					placeholder="Username..." 
-					v-model="login_username"
-					required
-				/>
-				<input 
-					type="password" 
-					placeholder="Password..." 
-					v-model="login_password"
-					required
-				/>
-				<input 
-					type="button" 
-					value="Login" 
-					:disabled="login_pending"
-				/>
-				<input 
-					type="button" 
-					value="Cancel" 
-					@click="hide_login"
-				/>
-				<div v-if="login_error" class="form-error" style="margin-left: 10px;">
-					{{ login_error }}
-				</div>
-			</form>
-			<div style="margin-left: 10px;">
-				<a href="/recovery">Forgotten your account details? Click here.</a>
-			</div>
-		</template>
 	`
 });
 

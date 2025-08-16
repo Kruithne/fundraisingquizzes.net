@@ -1,33 +1,33 @@
-.register-container
+.login-container
 {
 	display: flex;
 	gap: 10px;
 }
 
-#register-left
+#login-left
 {
 	flex: 1;
 }
 
-#register-right
+#login-right
 {
 	flex: 1;
 }
 
-#register-left, #register-right
+#login-left, #login-right
 {
 	margin: 0;
 	min-height: 280px;
 }
 
-#register-left h1, #register-right h1
+#login-left h1, #login-right h1
 {
 	width: 100%;
 	text-align: center;
 	margin-bottom: 10px;
 }
 
-#register-table
+#login-table
 {
 	width: 100%;
 	margin: 20px 0 10px 0;
@@ -35,7 +35,7 @@
 
 @media (max-width: 950px)
 {
-	.register-container
+	.login-container
 	{
 		flex-direction: column;
 	}

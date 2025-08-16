@@ -108,11 +108,6 @@ body
 	background: url('/{{cache_bust=static/images/user_16.png}}') no-repeat 0 6px;
 }
 
-#account-status form {
-	display: flex;
-	height: 40px;
-	gap: 5px;
-}
 
 .navigation-module
 {

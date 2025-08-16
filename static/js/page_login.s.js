@@ -11,5 +11,5 @@ document_load().then(() => {
 		location.href = '/verify-account/' + data.verify_token;
 	});
 
-	app.mount('#register-container');
+	app.mount('#login-container');
 });

@@ -273,12 +273,12 @@ server.bootstrap({
 			}
 		},
 
-		'/register': {
-			content: Bun.file('./html/register.html'),
+		'/login': {
+			content: Bun.file('./html/login.html'),
 			subs: {
-				title: 'Register Account',
-				scripts: cache_bust(['static/js/page_register.s.js']),
-				stylesheets: cache_bust(['static/css/register.css']),
+				title: 'Login',
+				scripts: cache_bust(['static/js/page_login.s.js']),
+				stylesheets: cache_bust(['static/css/login.css']),
 				register_form: () => form_render_html(schema_register),
 				login_form: () => form_render_html(schema_login)
 			}
