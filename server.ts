@@ -75,6 +75,25 @@ const schema_login = form_create_schema({
 		}
 	}
 });
+
+const schema_account_verify = form_create_schema({
+	id: 'account_verify_form',
+	fields: {
+		code: {
+			type: 'text',
+			label: 'Verification Code:',
+			max_length: 5,
+			min_length: 5,
+			regex: '^[0-9]{5}$'
+		},
+		token: {
+			type: 'text',
+			max_length: 16,
+			min_length: 16,
+			regex: '^[a-f0-9]{16}$'
+		}
+	}
+});
 // endregion
 
 // region mail
@@ -221,6 +240,32 @@ server.json('/api/register', async (req, url, json) => {
 
 	return { verify_token, flux_disable: true };
 });
+
+server.json('/api/account_verify', async (req, url, json) => {
+	const form = form_validate_req(schema_account_verify, json);
+	if (form.error)
+		return form;
+
+	const verify_record = await user_get_verification_token(form.fields.token);
+	if (!verify_record)
+		return form.raise_form_error('Invalid or expired verification token');
+
+	if (verify_record.code !== form.fields.code)
+		return form.raise_field_error('code', 'Invalid verification code');
+
+	await db.execute('DELETE FROM `user_verify_codes` WHERE `token` = ? LIMIT 1', form.fields.token);
+
+	const current_user = await db.get_single('SELECT `flags` FROM `users` WHERE `id` = ? LIMIT 1', verify_record.user_id);
+	if (!current_user)
+		return form.raise_form_error('User account not found');
+
+	const new_flags = current_user.flags | UserAccountFlags.AccountVerified;
+	await db.execute('UPDATE `users` SET `flags` = ? WHERE `id` = ? LIMIT 1', new_flags, verify_record.user_id);
+
+	log('verified user account with user id {%s}', verify_record.user_id);
+
+	return { success: true };
+});
 // endregion
 
 // region routes
@@ -281,6 +326,15 @@ server.bootstrap({
 				stylesheets: cache_bust(['static/css/login.css']),
 				register_form: () => form_render_html(schema_register),
 				login_form: () => form_render_html(schema_login)
+			}
+		},
+
+		'/verify-account': {
+			content: Bun.file('./html/verify-account.html'),
+			subs: {
+				title: 'Account Verification',
+				scripts: cache_bust(['static/js/page_account_verify.s.js']),
+				stylesheets: cache_bust(['static/css/login.css'])
 			}
 		}
 	}

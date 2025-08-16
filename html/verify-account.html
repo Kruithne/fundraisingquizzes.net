@@ -1,0 +1,39 @@
+<div id="verify-container">
+	<div class="module module-padded">
+		<div class="verify-inner-container">
+			<h1>Account Verification</h1>
+			<p>Enter the 5-digit verification code sent to your email address:</p>
+			
+			<div id="verification-form">
+				<div id="code-input-container">
+					<input 
+						v-for="(digit, index) in digits"
+						:key="index"
+						type="text" 
+						class="code-digit"
+						:class="{ error: hasFieldError }"
+						maxlength="1" 
+						pattern="[0-9]" 
+						autocomplete="off"
+						v-model="digits[index]"
+						:disabled="is_submitting"
+						@input="handleDigitInput(index, $event)"
+						@keydown="handleKeydown(index, $event)"
+						@paste="handlePaste($event)"
+						@focus="handleFocus(index)"
+						:ref="`digit-${index}`"
+					/>
+				</div>
+				
+				<div id="form-messages">
+					<div v-if="message" :class="message_type">{{ message }}</div>
+				</div>
+				<input type="button" :disabled="!isVerifyEnabled" @click="submitVerification" :value="is_submitting ? 'Verifying...' : 'Verify Account'" />
+			</div>
+			
+			<div style="margin-top: 15px; text-align: center;">
+				<a href="/login">Back to Login</a>
+			</div>
+		</div>
+	</div>
+</div>

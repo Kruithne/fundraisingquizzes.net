@@ -3,7 +3,7 @@
 	"content": [
 		"Thank you for signing up for an account with us. To verify your e-mail address, you will need the five digit verification code included below.",
 		"<b style=\"font-size:24px;\">%verify_code%</b>",
-		"Accidentally closed the page? <a href=\"https://www.fundraisingquizzes.net/verify-account/%verify_token%\">Click here to return to the verification page.</a>.",
+		"Accidentally closed the page? <a href=\"https://www.fundraisingquizzes.net/verify-account?token=%verify_token%\">Click here to return to the verification page.</a>.",
 		"Didn't sign up for account? You can safely delete this e-mail. Be sure not to provide the verification code above to anyone else.",
 		"This e-mail was sent automatically. Do not reply to this e-mail."
 	]

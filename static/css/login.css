@@ -40,3 +40,53 @@
 		flex-direction: column;
 	}
 }
+
+#code-input-container {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	margin: 20px 0;
+}
+
+.verify-inner-container {
+	margin: 0 auto;
+	max-width: 500px;
+}
+
+.code-digit {
+	width: 55px !important;
+	height: 60px;
+	text-align: center;
+	font-size: 32px !important;
+	font-weight: bold;
+	border: 2px solid var(--border-gray);
+	border-radius: 4px;
+	background: var(--white);
+}
+
+.code-digit:focus {
+	border-color: var(--primary-blue);
+	box-shadow: 0 0 5px rgba(112, 137, 196, 0.3);
+}
+
+.code-digit.error {
+	border-color: var(--error-red);
+}
+
+#verify-container input[type="button"] {
+	width: 100%;
+	margin-top: 15px;
+}
+
+#form-messages {
+	margin: 10px 0;
+	text-align: center;
+}
+
+#form-messages .error {
+	color: var(--error-red);
+}
+
+#form-messages .success {
+	color: var(--success-green);
+}
