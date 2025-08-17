@@ -45,7 +45,7 @@ const app = createApp({
 			You are currently not logged in: <a href="/login">login or register</a>.
 		</div>
 		<div v-else>
-			You are logged in as {{ username }}. <a @click="logout" style="cursor: pointer;">Logout</a>.
+			You are logged in as {{ username }}  <a @click="logout" style="cursor: pointer;">[Logout]</a>
 		</div>
 	`
 });
