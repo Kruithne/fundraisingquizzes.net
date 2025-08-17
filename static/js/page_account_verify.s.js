@@ -123,10 +123,8 @@ document_load().then(() => {
 					const result = await response.json();
 
 					if (result.success) {
-						this.showMessage('Account verified successfully! Redirecting to login...', 'success');
-						setTimeout(() => {
-							window.location.href = '/login';
-						}, 2000);
+						this.showMessage('Account verified! Logging you in...', 'success');
+						window.location.href = '/';
 					} else {
 						if (result.field_errors && result.field_errors.code) {
 							this.showMessage(result.field_errors.code, 'error');

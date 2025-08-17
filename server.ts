@@ -450,8 +450,13 @@ server.json('/api/account_verify', async (req, url, json) => {
 	await db.execute('UPDATE `users` SET `flags` = ? WHERE `id` = ? LIMIT 1', new_flags, verify_record.user_id);
 	
 	log('verified user account with user id {%s}', verify_record.user_id);
+
+	const response = Response.json({ success: true });
+	const session = await user_start_session(verify_record.user_id);
 	
-	return { success: true };
+	set_response_cookie(response, 'session_id', session.session_id);
+	
+	return response;
 });
 
 server.json('/api/login', async (req, url, json) => {
