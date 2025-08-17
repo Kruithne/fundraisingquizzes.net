@@ -26,7 +26,7 @@
 				</div>
 				
 				<div id="form-messages">
-					<div v-if="message" :class="message_type">{{ message }}</div>
+					<div v-if="message" :class="'form-' + message_type">{{ message }}</div>
 				</div>
 				<input type="button" :disabled="!isVerifyEnabled" @click="submitVerification" :value="is_submitting ? 'Verifying...' : 'Verify Account'" />
 			</div>

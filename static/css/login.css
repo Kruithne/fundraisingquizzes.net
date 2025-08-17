@@ -82,11 +82,3 @@
 	margin: 10px 0;
 	text-align: center;
 }
-
-#form-messages .error {
-	color: var(--error-red);
-}
-
-#form-messages .success {
-	color: var(--success-green);
-}
