@@ -97,6 +97,16 @@ const schema_account_verify = form_create_schema({
 		}
 	}
 });
+
+const schema_account_resend_verification_code = form_create_schema({
+	id: 'account_resend_verification_code',
+	fields: {
+		token: {
+			type: 'text',
+			regex: '^[a-f0-9]{16}$'
+		}
+	}
+});
 // endregion
 
 // region mail
@@ -435,6 +445,21 @@ register_throttled_endpoint('/api/register', async (req, url, json) => {
 	user_send_verification_code(verify_token, true);
 	
 	return { verify_token, flux_disable: true };
+});
+
+register_throttled_endpoint('/api/account_resend_verification', async (req, url, json) => {
+	const form = form_validate_req(schema_account_resend_verification_code, json);
+	if (form.error)
+		return form;
+
+	const result = await user_send_verification_code(form.fields.token, false);
+	if (result === SendVerificationCodeResponse.Throttled)
+		return { error: 'A code was recently sent, please wait before sending another' };
+
+	if (result === SendVerificationCodeResponse.Success)
+		return { success: true };
+
+	return { error: 'Unable to re-send verification code' };
 });
 
 register_throttled_endpoint('/api/account_verify', async (req, url, json) => {

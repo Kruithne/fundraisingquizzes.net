@@ -16,7 +16,7 @@ document_load().then(() => {
 
 		computed: {
 			is_verify_enabled() {
-				return this.digits.every(digit => digit !== '') && !this.is_submitting;
+				return this.token && this.digits.every(digit => digit !== '') && !this.is_submitting;
 			},
 
 			code() {
@@ -29,7 +29,8 @@ document_load().then(() => {
 		},
 
 		mounted() {
-			this.token = this.get_token_from_url();
+			const params = new URLSearchParams(window.location.search);
+			this.token = params.get('token');
 
 			if (!this.token) {
 				this.show_message('Invalid verification link. Please check your email for the correct link.', 'error');
@@ -38,11 +39,6 @@ document_load().then(() => {
 		},
 
 		methods: {
-			get_token_from_url() {
-				const params = new URLSearchParams(window.location.search);
-				return params.get('token');
-			},
-
 			handle_digit_input(index, event) {
 				const value = event.target.value;
 				
@@ -99,6 +95,24 @@ document_load().then(() => {
 				});
 			},
 
+			async resend_code() {
+				if (this.is_submitting || !this.token)
+					return;
+
+				this.is_submitting = true;
+
+				const response = await query_api('account_resend_verification', {
+					'account_resend_verification_code-token': this.token
+				});
+
+				if (response.success) {
+					this.show_message('Your verification code has been re-sent, check your inbox!', 'success');
+				} else {
+					this.show_message(response.error ?? 'Unable to re-send verification code', 'error');
+				}
+
+				this.is_submitting = false;
+			},
 
 			async submit() {
 				if (!this.is_verify_enabled)
