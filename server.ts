@@ -509,7 +509,13 @@ server.json('/api/login', async (req, url, json) => {
 // endregion
 
 // region routes
-const routes = {
+type RouteOptions = {
+	content: BunFile;
+	subs: Record<string, any>;
+	require_auth?: boolean;
+};
+
+const routes: Record<string, RouteOptions> = {
 	'/': {
 		content: Bun.file('./html/index.html'),
 		subs: {
@@ -613,12 +619,26 @@ async function resolve_bootstrap_content(content: string | BunFile): Promise<str
 			
 			return content;
 		};
-		
-		const handler = cache 
-			? async (req: Request) => cache.request(req, route, content_generator)
-			: async () => content_generator();
-		
-		server.route(route, handler);
+
+		server.route(route, async (req, url) => {
+			const user_session_id = get_cookies(req).session_id ?? null;
+			const user_session = await user_get_session(user_session_id);
+
+			if (!route_opts.require_auth || user_session !== null) {
+				if (cache)
+					return cache.request(req, route, content_generator);
+
+				return content_generator();
+			}
+
+			const res = Response.redirect('/login?referrer=' + encodeURIComponent(url.pathname), 302);
+
+			// user has provided a session which is no longer valid, so expire it
+			if (user_session_id !== null)
+				delete_response_cookie(res, 'session_id');
+			
+			return res;
+		});
 	}
 
 	const error_base_content = await resolve_bootstrap_content(Bun.file('./html/error.html'));
