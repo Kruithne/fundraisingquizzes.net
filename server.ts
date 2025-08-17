@@ -767,7 +767,7 @@ async function resolve_bootstrap_content(content: string | BunFile): Promise<str
 			return 401; // Unauthorized
 
 		if (static_sub_ext?.some(ext => file_path.endsWith(ext))) {
-			const content = await parse_template(await file.text(), global_sub_table, true);
+			const content = await parse_template(await file.text(), global_sub_table, false);
 			return new Response(content, {
 				headers: {
 					'Content-Type': file.type
