@@ -82,3 +82,11 @@
 	margin: 10px 0;
 	text-align: center;
 }
+
+#verification-links {
+	margin-top: 15px;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	align-items: center;
+}

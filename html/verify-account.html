@@ -11,16 +11,16 @@
 						:key="index"
 						type="text" 
 						class="code-digit"
-						:class="{ error: hasFieldError }"
+						:class="{ error: has_field_error }"
 						maxlength="1" 
 						pattern="[0-9]" 
 						autocomplete="off"
 						v-model="digits[index]"
 						:disabled="is_submitting"
-						@input="handleDigitInput(index, $event)"
-						@keydown="handleKeydown(index, $event)"
-						@paste="handlePaste($event)"
-						@focus="handleFocus(index)"
+						@input="handle_digit_input(index, $event)"
+						@keydown="handle_keydown(index, $event)"
+						@paste="handle_paste($event)"
+						@focus="handle_focus(index)"
 						:ref="`digit-${index}`"
 					/>
 				</div>
@@ -28,10 +28,11 @@
 				<div id="form-messages">
 					<div v-if="message" :class="'form-' + message_type">{{ message }}</div>
 				</div>
-				<input type="button" :disabled="!isVerifyEnabled" @click="submitVerification" :value="is_submitting ? 'Verifying...' : 'Verify Account'" />
+				<input type="button" :disabled="!is_verify_enabled" @click="submit" :value="is_submitting ? 'Verifying...' : 'Verify Account'" />
 			</div>
-			
-			<div style="margin-top: 15px; text-align: center;">
+
+			<div id="verification-links">
+				<a href="/login">Back to Login</a>
 				<a href="/login">Back to Login</a>
 			</div>
 		</div>
