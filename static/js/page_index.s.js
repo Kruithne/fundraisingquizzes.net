@@ -29,8 +29,10 @@ import { createApp } from '/{{cache_bust=static/js/lib/vue.esm.prod.js}}';
 		state.today_in_history = cached_data.fact;
 	} else {
 		const res = await query_api('today_in_history', {
-			day: today.getDate(),
-			month: today.getMonth()
+			fields: {
+				day: today.getDate(),
+				month: today.getMonth()
+			}
 		});
 
 		if (res.success && res.fact !== null) {

@@ -1,7 +1,7 @@
 import { createApp } from '/{{cache_bust=static/js/lib/vue.esm.prod.js}}';
 import { document_load, query_api } from '/{{cache_bust=static/js/client_global.s.js}}';
 
-const user_presence = createApp({
+const app = createApp({
 	data() {
 		return {
 			logged_in: false,
@@ -9,13 +9,16 @@ const user_presence = createApp({
 			is_admin: false
 		}
 	},
+
 	mounted() {
 		this.handle_resize();
 		window.addEventListener('resize', this.handle_resize);
 	},
+
 	beforeUnmount() {
 		window.removeEventListener('resize', this.handle_resize);
 	},
+
 	methods: {
 		handle_resize() {
 			const is_mobile = window.innerWidth < 880;
@@ -29,8 +32,9 @@ const user_presence = createApp({
 				desktop_container.appendChild(this.$el);
 			}
 		},
+
 		async logout() {
-			const result = await query_api('logout');
+			const result = await query_api('logout'); // todo
 			
 			if (result.success) {
 				this.logged_in = false;
@@ -50,5 +54,6 @@ const user_presence = createApp({
 });
 
 document_load().then(() => {
-	user_presence.mount('#account-status');
+	const state = app.mount('#account-status');
+	
 });

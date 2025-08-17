@@ -102,7 +102,9 @@ document_load().then(() => {
 				this.is_submitting = true;
 
 				const response = await query_api('account_resend_verification', {
-					'account_resend_verification_code-token': this.token
+					fields: {
+						'token': this.token
+					}
 				});
 
 				if (response.success) {
@@ -123,8 +125,10 @@ document_load().then(() => {
 
 				try {
 					const response = await query_api('account_verify', {
-						'account_verify_form-code': this.code,
-						'account_verify_form-token': this.token
+						fields: {
+							'code': this.code,
+							'token': this.token
+						}
 					});
 
 					if (response.success) {

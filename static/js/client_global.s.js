@@ -5,9 +5,7 @@ export async function query_api(endpoint, payload = {}, params = {}) {
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({
-				fields: payload
-			})
+			body: JSON.stringify(payload)
 		}, params));
 
 		if (res.status !== 200)

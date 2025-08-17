@@ -80,7 +80,6 @@ const schema_login = form_create_schema({
 });
 
 const schema_account_verify = form_create_schema({
-	id: 'account_verify_form',
 	fields: {
 		code: {
 			type: 'text',
@@ -99,7 +98,6 @@ const schema_account_verify = form_create_schema({
 });
 
 const schema_account_resend_verification_code = form_create_schema({
-	id: 'account_resend_verification_code',
 	fields: {
 		token: {
 			type: 'text',
