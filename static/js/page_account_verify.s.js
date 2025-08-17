@@ -109,10 +109,8 @@ document_load().then(() => {
 
 				try {
 					const response = await query_api('account_verify', {
-						fields: {
-							'account_verify_form-code': this.code,
-							'account_verify_form-token': this.token
-						}
+						'account_verify_form-code': this.code,
+						'account_verify_form-token': this.token
 					});
 
 					if (response.success) {
