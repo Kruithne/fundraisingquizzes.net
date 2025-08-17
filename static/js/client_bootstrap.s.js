@@ -34,13 +34,10 @@ const app = createApp({
 		},
 
 		async logout() {
-			const result = await query_api('logout'); // todo
-			
-			if (result.success) {
-				this.logged_in = false;
-				this.username = null;
-				this.is_admin = false;
-			}
+			const result = await query_api('logout');
+
+			if (result.success)
+				location.href = '/';
 		}
 	},
 	template: `

@@ -231,13 +231,19 @@ async function user_generate_session_id(): Promise<string> {
 	return new_session_id;
 }
 
+async function user_end_session(session_id: string): Promise<void> {
+	user_session_cache.delete(session_id);
+	await db.execute('DELETE FROM `user_sessions` WHERE `session_id` = ?', session_id);
+}
+
 export async function user_start_session(user_id: number): Promise<user_session> {
 	const session_id = await user_generate_session_id();
 	const current_timestamp = Date.now();
 	
 	await db.insert_object('user_sessions', {
 		session_id,
-		user_id
+		user_id,
+		user_updated_timestamp: current_timestamp
 	});
 	
 	const user_row = await db.get_single('SELECT `flags` FROM `users` WHERE `id` = ? LIMIT 1', user_id);
@@ -510,6 +516,20 @@ register_throttled_endpoint('/api/account_verify', async (req, url, json) => {
 	
 	return response;
 });
+
+register_session_endpoint('/api/logout', async (req, url, json, session) => {
+	const response = Response.json({ success: true });
+
+	if (session) {
+		await user_end_session(session.session_id);
+		delete_response_cookie(response, 'session_id');
+		set_response_cookie(response, 'session_updated', 'EXPIRED', false);
+
+		log(`logged out user {${session.user_id}} session {${session.session_id}}`);
+	}
+
+	return response;
+}, false);
 
 register_throttled_endpoint('/api/login', async (req, url, json) => {
 	const form = form_validate_req(schema_login, json);
