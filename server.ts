@@ -1,7 +1,10 @@
-import { http_serve, caution, cache_bust, log, HTTP_STATUS_CODE } from 'spooder';
+import { http_serve, caution, cache_bust, log, HTTP_STATUS_CODE, cache_http, parse_template, HTTP_STATUS_TEXT, http_apply_range } from 'spooder';
 import { form_validate_req, form_create_schema, form_render_html } from './server/flux';
 import { post_worker_message } from './server/worker_base';
+import path from 'node:path';
 import { db } from './server/db';
+
+type BunFile = ReturnType<typeof Bun.file>;
 
 // region bootstrap
 const server = http_serve(Number(process.env.SERVER_PORT), process.env.SERVER_LISTEN_HOST);
@@ -506,76 +509,176 @@ server.json('/api/login', async (req, url, json) => {
 // endregion
 
 // region routes
-server.bootstrap({
-	base: Bun.file('./html/base_template.html'),
-	drop_missing_subs: false,
+const routes = {
+	'/': {
+		content: Bun.file('./html/index.html'),
+		subs: {
+			title: 'Homepage',
+			scripts: cache_bust(['static/js/page_index.s.js']),
+			stylesheets: cache_bust(['static/css/landing.css'])
+		}
+	},
 	
-	cache: process.env.SPOODER_ENV === 'dev' ? undefined : {
+	'/links': {
+		content: Bun.file('./html/links.html'),
+		subs: {
+			title: 'Links',
+			scripts: [],
+			stylesheets: cache_bust(['static/css/links.css']),
+			links: async () => db.get_all('SELECT * FROM `links`')
+		}
+	},
+	
+	'/login': {
+		content: Bun.file('./html/login.html'),
+		subs: {
+			title: 'Login',
+			scripts: cache_bust(['static/js/page_login.s.js']),
+			stylesheets: cache_bust(['static/css/login.css']),
+			register_form: () => form_render_html(schema_register),
+			login_form: () => form_render_html(schema_login)
+		}
+	},
+	
+	'/verify-account': {
+		content: Bun.file('./html/verify-account.html'),
+		subs: {
+			title: 'Account Verification',
+			scripts: cache_bust(['static/js/page_account_verify.s.js']),
+			stylesheets: cache_bust(['static/css/login.css'])
+		}
+	}
+}
+
+function sub_table_merge(target: Record<string, any>, ...sources: (Record<string, any> | undefined | null)[]): Record<string, any> {
+	const result = { ...target };
+	
+	for (const source of sources) {
+		if (source == null)
+			continue;
+		
+		for (const key in source) {
+			if (source.hasOwnProperty(key)) {
+				const sourceValue = source[key];
+				const targetValue = result[key];
+				
+				if (Array.isArray(targetValue) && Array.isArray(sourceValue))
+					result[key] = [...targetValue, ...sourceValue];
+				else
+					result[key] = sourceValue;
+			}
+		}
+	}
+	
+	return result;
+}
+
+function is_bun_file(obj: any): obj is BunFile {
+	return obj.constructor === Blob;
+}
+
+async function resolve_bootstrap_content(content: string | BunFile): Promise<string> {
+	if (is_bun_file(content))
+		return await content.text();
+
+	return content;
+}
+
+(async () => {
+	let cache_bust_subs: Record<string, any> = {
+		cache_bust
+	};
+	
+	const global_sub_table = sub_table_merge(cache_bust_subs, {
+		scripts: cache_bust(['static/js/client_bootstrap.s.js'])
+	});
+
+	let cache = process.env.SPOODER_ENV === 'dev' ? undefined : cache_http({
 		ttl: 5 * 60 * 60 * 1000, // 5 minutes
 		max_size: 5 * 1024 * 1024, // 5 MB
 		use_canary_reporting: true,
 		use_etags: true
-	},
+	});
+
+	const base_content = await resolve_bootstrap_content(Bun.file('./html/base_template.html'));
 	
-	error: {
-		use_canary_reporting: true,
-		error_page: Bun.file('./html/error.html')
-	},
-	
-	static: {
-		directory: './static',
-		route: '/static',
-		sub_ext: ['.css', '.s.js']
-	},
-	
-	cache_bust: true,
-	
-	global_subs: {
-		test: 'foobar',
-		scripts: cache_bust(['static/js/client_bootstrap.s.js'])
-	},
-	
-	routes: {
-		'/': {
-			content: Bun.file('./html/index.html'),
-			subs: {
-				title: 'Homepage',
-				scripts: cache_bust(['static/js/page_index.s.js']),
-				stylesheets: cache_bust(['static/css/landing.css'])
-			}
-		},
+	const drop_missing = false;
+	for (const [route, route_opts] of Object.entries(routes)) {
+		const content_generator = async () => {
+			let content = await resolve_bootstrap_content(route_opts.content);
+			content = await parse_template(await resolve_bootstrap_content(base_content), { content }, false);
+			
+			const sub_table = sub_table_merge({}, global_sub_table, route_opts.subs);
+			content = await parse_template(content, sub_table, drop_missing);
+			
+			return content;
+		};
 		
-		'/links': {
-			content: Bun.file('./html/links.html'),
-			subs: {
-				title: 'Links',
-				scripts: [],
-				stylesheets: cache_bust(['static/css/links.css']),
-				links: async () => db.get_all('SELECT * FROM `links`')
-			}
-		},
+		const handler = cache 
+			? async (req: Request) => cache.request(req, route, content_generator)
+			: async () => content_generator();
 		
-		'/login': {
-			content: Bun.file('./html/login.html'),
-			subs: {
-				title: 'Login',
-				scripts: cache_bust(['static/js/page_login.s.js']),
-				stylesheets: cache_bust(['static/css/login.css']),
-				register_form: () => form_render_html(schema_register),
-				login_form: () => form_render_html(schema_login)
-			}
-		},
-		
-		'/verify-account': {
-			content: Bun.file('./html/verify-account.html'),
-			subs: {
-				title: 'Account Verification',
-				scripts: cache_bust(['static/js/page_account_verify.s.js']),
-				stylesheets: cache_bust(['static/css/login.css'])
-			}
-		}
+		server.route(route, handler);
 	}
-});
+
+	const error_base_content = await resolve_bootstrap_content(Bun.file('./html/error.html'));
+
+	const create_error_content_generator = (status_code: number) => async () => {
+		const error_text = HTTP_STATUS_TEXT[status_code] as string;
+		let content = await resolve_bootstrap_content(error_base_content);
+		content = await parse_template(await resolve_bootstrap_content(base_content), { content }, false);
+
+		const sub_table = sub_table_merge({
+			error_code: status_code.toString(),
+			error_text: error_text
+		}, global_sub_table);
+
+		content = await parse_template(content, sub_table, true);
+		return content;
+	};
+
+	const default_handler = async (req: Request, status_code: number): Promise<Response> => {
+		if (cache) {
+			return cache.request(req, `error_${status_code}`, create_error_content_generator(status_code), status_code);
+		} else {
+			const content = await create_error_content_generator(status_code)();
+			return new Response(content, {
+				status: status_code,
+				headers: {
+					'content-type': 'text/html'
+				}
+			});
+		}
+	};
+
+	server.error((err, req) => {
+		caution(err?.message ?? err);
+		return default_handler(req, 500);
+	});
+	
+	server.default((req, status_code) => default_handler(req, status_code));
+	
+	const static_sub_ext = ['.css', '.s.js'];
+	server.dir('/static', './static', async (file_path, file, stat, request) => {
+		// ignore hidden files by default, return 404 to prevent file sniffing
+		if (path.basename(file_path).startsWith('.'))
+			return 404; // Not Found
+		
+		if (stat.isDirectory())
+			return 401; // Unauthorized
+
+		if (static_sub_ext?.some(ext => file_path.endsWith(ext))) {
+			const content = await parse_template(await file.text(), global_sub_table, true);
+			return new Response(content, {
+				headers: {
+					'Content-Type': file.type
+				}
+			});
+		}
+		
+		return http_apply_range(file, request);
+	});
+})();
 // endregion
 
 // region webhook
