@@ -59,7 +59,7 @@ const schema_login = form_create_schema({
 		username: {
 			type: 'text',
 			label: 'Username or E-mail:',
-			max_length: 100
+			max_length: 254
 		},
 
 		password: {
@@ -265,6 +265,55 @@ server.json('/api/account_verify', async (req, url, json) => {
 	log('verified user account with user id {%s}', verify_record.user_id);
 
 	return { success: true };
+});
+
+server.json('/api/login', async (req, url, json) => {
+	const form = form_validate_req(schema_login, json);
+	if (form.error)
+		return form;
+
+	const identifier = form.fields.username;
+	const is_email_login = identifier.includes('@');
+	
+	let user_data;
+	if (is_email_login) {
+		user_data = await db.get_single(
+			'SELECT `id`, `flags`, `password` FROM `users` WHERE `email` = ? LIMIT 1',
+			identifier.toLowerCase()
+		);
+	} else {
+		user_data = await db.get_single(
+			'SELECT `id`, `flags`, `password` FROM `users` WHERE LOWER(`username`) = ? LIMIT 1',
+			identifier.toLowerCase()
+		);
+	}
+
+	if (!user_data)
+		return form.raise_field_error('username', 'Invalid username or password');
+
+	const password_valid = await Bun.password.verify(form.fields.password, user_data.password);
+	if (!password_valid)
+		return form.raise_field_error('password', 'Invalid username or password');
+
+	if (user_data.flags & UserAccountFlags.AccountDisabled)
+		return form.raise_form_error('Account is disabled');
+
+	if (!(user_data.flags & UserAccountFlags.AccountVerified)) {
+		const verify_token = await db.get_single(
+			'SELECT `token` FROM `user_verify_codes` WHERE `user_id` = ? LIMIT 1',
+			user_data.id
+		);
+		
+		if (verify_token) {
+			return { 
+				success: true, 
+				flux_disable: true,
+				needs_verify: verify_token.token 
+			};
+		}
+	}
+
+	return { success: true, flux_disable: true };
 });
 // endregion
 
