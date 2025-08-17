@@ -25,3 +25,41 @@ export async function document_load() {
 	if (document.readyState === 'loading')
 		await new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve, { once: true }));
 }
+
+export function get_cookies() {
+	const cookie_map = new Map();
+
+	for (const cookie of document.cookie.split('; ')) {
+		const [key, value] = cookie.split('=');
+		cookie_map.set(key, value);
+	}
+	
+	return cookie_map;
+}
+
+// region user presence
+let user_presence = null;
+let user_presence_callbacks = [];
+
+export function on_user_presence(callback) {
+	if (user_presence !== null) {
+		callback(user_presence);
+		return;
+	}
+
+	user_presence_callbacks.push(callback);
+}
+
+export function set_user_presence(presence) {
+	user_presence = presence;
+
+	for (const callback of user_presence_callbacks)
+		callback(presence);
+
+	user_presence_callbacks = [];
+}
+
+export function get_user_presence() {
+	return user_presence;
+}
+// endregion

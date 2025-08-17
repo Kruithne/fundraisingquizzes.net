@@ -5,3 +5,6 @@ CREATE TABLE `user_sessions` (
 	INDEX `idx_user` (`user_id`),
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 );
+
+-- [2] add `user_updated_timestamp`
+ALTER TABLE `user_sessions` ADD COLUMN `user_updated_timestamp` BIGINT UNSIGNED NOT NULL;

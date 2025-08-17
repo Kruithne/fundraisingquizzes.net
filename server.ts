@@ -210,6 +210,7 @@ export type user_session = {
 	last_access: number;
 	user_id: number;
 	flags: number;
+	user_updated_timestamp: number;
 };
 
 export const user_session_cache = new Map<string, user_session>();
@@ -232,6 +233,7 @@ async function user_generate_session_id(): Promise<string> {
 
 export async function user_start_session(user_id: number): Promise<user_session> {
 	const session_id = await user_generate_session_id();
+	const current_timestamp = Date.now();
 	
 	await db.insert_object('user_sessions', {
 		session_id,
@@ -244,7 +246,8 @@ export async function user_start_session(user_id: number): Promise<user_session>
 		session_id,
 		user_id,
 		flags: user_row?.flags ?? 0,
-		last_access: Date.now()
+		last_access: current_timestamp,
+		user_updated_timestamp: current_timestamp
 	};
 	
 	user_session_cache.set(session_id, session);
@@ -264,7 +267,7 @@ async function user_get_session(session_id: string): Promise<user_session|null> 
 		return session;
 	}
 	
-	const session_row = await db.get_single('SELECT `user_id` FROM `user_sessions` WHERE `session_id` = ? LIMIT 1', session_id);
+	const session_row = await db.get_single('SELECT `user_id`, `user_updated_timestamp` FROM `user_sessions` WHERE `session_id` = ? LIMIT 1', session_id);
 	if (session_row) {
 		const user_row = await db.get_single('SELECT `flags` FROM `users` WHERE `id` = ? LIMIT 1', session_row.user_id);
 		
@@ -273,6 +276,7 @@ async function user_get_session(session_id: string): Promise<user_session|null> 
 			session_id,
 			user_id: session_row.user_id,
 			flags: user_row?.flags ?? 0,
+			user_updated_timestamp: session_row.user_updated_timestamp,
 			last_access: Date.now()
 		};
 		
@@ -402,6 +406,21 @@ server.json('/api/today_in_history', async (req, url, json) => {
 	};
 });
 
+register_session_endpoint('/api/query_user_presence', async (req, url, json, session) => {
+	const user_info = await db.get_single('SELECT `username` FROM `users` WHERE `id` = ? LIMIT 1', session.user_id);
+	if (user_info === null)
+		caution('query_user_presence called on unknown user', { json, session });
+
+	return {
+		user_presence: {
+			username: user_info?.username,
+			user_id: session.user_id,
+			flags: session.flags
+		},
+		session_updated: session.user_updated_timestamp
+	};
+}, true);
+
 register_throttled_endpoint('/api/register', async (req, url, json) => {
 	const form = form_validate_req(schema_register, json);
 	if (form.error)
@@ -487,6 +506,7 @@ register_throttled_endpoint('/api/account_verify', async (req, url, json) => {
 	const session = await user_start_session(verify_record.user_id);
 	
 	set_response_cookie(response, 'session_id', session.session_id);
+	set_response_cookie(response, 'session_updated', session.user_updated_timestamp, false);
 	
 	return response;
 });
@@ -540,6 +560,7 @@ register_throttled_endpoint('/api/login', async (req, url, json) => {
 	const session = await user_start_session(user_data.id);
 	
 	set_response_cookie(response, 'session_id', session.session_id);
+	set_response_cookie(response, 'session_updated', session.user_updated_timestamp, false);
 	
 	return response;
 });
@@ -657,23 +678,44 @@ async function resolve_bootstrap_content(content: string | BunFile): Promise<str
 			return content;
 		};
 
+		const get_response = async (req: Request): Promise<Response> => {
+			if (cache)
+				return cache.request(req, route, content_generator);
+
+			return new Response(await content_generator(), {
+				headers: {
+					'content-type': 'text/html'	
+				}
+			});
+		};
+
 		server.route(route, async (req, url) => {
 			const user_session_id = get_cookies(req).session_id ?? null;
 			const user_session = await user_get_session(user_session_id);
 
-			if (!route_opts.require_auth || user_session !== null) {
-				if (cache)
-					return cache.request(req, route, content_generator);
+			if (route_opts.require_auth) {
+				if (user_session !== null) {
+					const res = await get_response(req);
 
-				return content_generator();
+					// keep session_updated in sync
+					set_response_cookie(res, 'session_updated', user_session.user_updated_timestamp, false);
+				}
+
+				const res = Response.redirect('/login?referrer=' + encodeURIComponent(url.pathname), 302);
+	
+				// user has provided a session which is no longer valid, so expire it
+				if (user_session_id !== null) {
+					delete_response_cookie(res, 'session_id');
+					set_response_cookie(res, 'session_updated', 'EXPIRED', false);
+				}
+
+				return res;
 			}
 
-			const res = Response.redirect('/login?referrer=' + encodeURIComponent(url.pathname), 302);
+			const res = await get_response(req);
+			if (user_session !== null)
+				set_response_cookie(res, 'session_updated', user_session.user_updated_timestamp, false);
 
-			// user has provided a session which is no longer valid, so expire it
-			if (user_session_id !== null)
-				delete_response_cookie(res, 'session_id');
-			
 			return res;
 		});
 	}
