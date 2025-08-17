@@ -366,6 +366,15 @@ function register_session_endpoint(id: string, handler: SessionRequestHandler<bo
 		return handler(req, url, json, user_session as any);
 	});
 }
+
+function register_throttled_endpoint(id: string, handler: JSONRequestHandler) {
+	server.json(id, async (req, url, json) => {
+		await new Promise(resolve => Bun.sleep(1000));
+		server.allow_slow_request(req);
+
+		return await handler(req, url, json);
+	});
+}
 // endregion
 
 // region api
@@ -385,7 +394,7 @@ server.json('/api/today_in_history', async (req, url, json) => {
 	};
 });
 
-server.json('/api/register', async (req, url, json) => {
+register_throttled_endpoint('/api/register', async (req, url, json) => {
 	const form = form_validate_req(schema_register, json);
 	if (form.error)
 		return form;
@@ -428,7 +437,7 @@ server.json('/api/register', async (req, url, json) => {
 	return { verify_token, flux_disable: true };
 });
 
-server.json('/api/account_verify', async (req, url, json) => {
+register_throttled_endpoint('/api/account_verify', async (req, url, json) => {
 	const form = form_validate_req(schema_account_verify, json);
 	if (form.error)
 		return form;
@@ -459,7 +468,7 @@ server.json('/api/account_verify', async (req, url, json) => {
 	return response;
 });
 
-server.json('/api/login', async (req, url, json) => {
+register_throttled_endpoint('/api/login', async (req, url, json) => {
 	const form = form_validate_req(schema_login, json);
 	if (form.error)
 		return form;
