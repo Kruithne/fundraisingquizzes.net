@@ -674,6 +674,7 @@ async function resolve_bootstrap_content(content: string | BunFile): Promise<str
 	};
 	
 	const global_sub_table = sub_table_merge(cache_bust_subs, {
+		year: new Date().getFullYear(),
 		scripts: cache_bust(['static/js/client_bootstrap.s.js'])
 	});
 
