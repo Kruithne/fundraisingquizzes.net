@@ -26,24 +26,24 @@ const schema_register = form_create_schema({
 			min_length: 3,
 			regex: '^[a-zA-Z0-9]+$'
 		},
-
+		
 		email: {
 			type: 'email',
 			label: 'Enter your e-mail address:'
 		},
-
+		
 		password: {
 			type: 'password',
 			label: 'Choose a strong password:'
 		},
-
+		
 		password_confirm: {
 			type: 'password',
 			match_field: 'password',
 			label: 'Re-type your password again:'
 		}
 	},
-
+	
 	buttons: {
 		submit: {
 			text: 'Register',
@@ -61,13 +61,13 @@ const schema_login = form_create_schema({
 			label: 'Username or E-mail:',
 			max_length: 254
 		},
-
+		
 		password: {
 			type: 'password',
 			label: 'Password:'
 		}
 	},
-
+	
 	buttons: {
 		submit: {
 			text: 'Login',
@@ -106,6 +106,80 @@ export function mail_queue_template(template_id: string, recipients: string[], r
 }
 // endregion
 
+// region cookies
+type CookieOptions = {
+	same_site?: 'Strict' | 'Lax' | 'None',
+	secure?: boolean,
+	http_only?: boolean,
+	path?: string,
+	expires?: number,
+	encode?: boolean,
+	max_age?: number
+};
+
+function set_cookie(res: Response, name: string, value: string, options?: CookieOptions): void {
+	let cookie = name + '=';
+	if (options !== undefined) {
+		cookie += options.encode ? encodeURIComponent(value) : value;
+		
+		if (options.same_site !== undefined)
+			cookie += '; SameSite=' + options.same_site;
+		
+		if (options.secure)
+			cookie += '; Secure';
+		
+		if (options.http_only)
+			cookie += '; HttpOnly';
+		
+		if (options.path !== undefined)
+			cookie += '; Path=' + options.path;
+		
+		if (options.expires !== undefined) {
+			const date = new Date(Date.now() + options.expires);
+			cookie += '; Expires=' + date.toUTCString();
+		}
+		
+		if (options.max_age !== undefined)
+			cookie += '; Max-Age=' + options.max_age;
+	} else {
+		cookie += value;
+	}
+	
+	res.headers.append('Set-Cookie', cookie);
+}
+
+function get_cookies(source: Request | Response, decode: boolean = false): Record<string, string> {
+	const parsed_cookies: Record<string, string> = {};
+	const cookie_header = source.headers.get('cookie');
+
+	if (cookie_header !== null) {
+		const cookies = cookie_header.split('; ');
+		for (const cookie of cookies) {
+			const [name, value] = cookie.split('=');
+			parsed_cookies[name] = decode ? decodeURIComponent(value) : value;
+		}
+	}
+
+	return parsed_cookies;
+}
+
+function set_response_cookie(response: Response, name: string, value: any, http_only = true, max_age = 315360000000) {
+	set_cookie(response, name, value, {
+		path: '/',
+		http_only,
+		max_age,
+		secure: true
+	});
+	
+	return response;
+}
+
+function delete_response_cookie(response: Response, name: string, http_only = true) {
+	set_response_cookie(response, name, '', http_only, 0);
+	return response;
+}
+// endregion
+
 // region users
 enum UserAccountFlags { // 32-bit
 	None = 0,
@@ -119,6 +193,84 @@ enum SendVerificationCodeResponse {
 	Error,
 	Throttled
 };
+
+export type user_session = {
+	session_id: string;
+	last_access: number;
+	user_id: number;
+	flags: number;
+};
+
+export const user_session_cache = new Map<string, user_session>();
+
+async function user_session_id_exists(session_id: string): Promise<boolean> {
+	if (user_session_cache.has(session_id))
+		return true;
+	
+	return db.exists('SELECT 1 FROM `user_sessions` WHERE `session_id` = ?', session_id);
+}
+
+async function user_generate_session_id(): Promise<string> {
+	const new_session_id = crypto.randomUUID();
+	
+	if (await user_session_id_exists(new_session_id))
+		return crypto.randomUUID();
+	
+	return new_session_id;
+}
+
+export async function user_start_session(user_id: number): Promise<user_session> {
+	const session_id = await user_generate_session_id();
+	
+	await db.insert_object('user_sessions', {
+		session_id,
+		user_id
+	});
+	
+	const user_row = await db.get_single('SELECT `flags` FROM `users` WHERE `id` = ? LIMIT 1', user_id);
+	
+	const session = {
+		session_id,
+		user_id,
+		flags: user_row?.flags ?? 0,
+		last_access: Date.now()
+	};
+	
+	user_session_cache.set(session_id, session);
+	
+	log('started session {%s} for user {%s}', session_id, user_id);
+	
+	return session;
+}
+
+async function user_get_session(session_id: string): Promise<user_session|null> {
+	if (session_id === null)
+		return null;
+	
+	const session = user_session_cache.get(session_id);
+	if (session !== undefined) {
+		session.last_access = Date.now();
+		return session;
+	}
+	
+	const session_row = await db.get_single('SELECT `user_id` FROM `user_sessions` WHERE `session_id` = ? LIMIT 1', session_id);
+	if (session_row) {
+		const user_row = await db.get_single('SELECT `flags` FROM `users` WHERE `id` = ? LIMIT 1', session_row.user_id);
+		
+		log('restored session {%s} for user {%s}', session_id, session_row.user_id);
+		const db_session: user_session = {
+			session_id,
+			user_id: session_row.user_id,
+			flags: user_row?.flags ?? 0,
+			last_access: Date.now()
+		};
+		
+		user_session_cache.set(session_id, db_session);
+		return db_session;
+	}
+	
+	return null;
+}
 
 async function user_is_username_registered(username: string): Promise<boolean> {
 	return await db.exists('SELECT 1 FROM `users` WHERE LOWER(`username`) = ? LIMIT 1', username.toLowerCase());
@@ -134,7 +286,7 @@ async function user_create(username: string, email: string, password: string): P
 		email,
 		password: await Bun.password.hash(password)
 	});
-
+	
 	return user_id;
 }
 
@@ -152,23 +304,23 @@ async function user_send_verification_code(verify_token: string, force = false):
 		caution('send_verification_code cannot find token', { verify_token });
 		return SendVerificationCodeResponse.Error;
 	}
-
+	
 	// verification codes can only be sent every 5 minutes.
 	const timestamp = Date.now();
 	if (!force && timestamp - token.last_sent < 300000)
 		return SendVerificationCodeResponse.Throttled;
-
+	
 	await db.execute('UPDATE `user_verify_codes` SET `last_sent` = ? WHERE `token` = ? LIMIT 1', timestamp, verify_token);
-
+	
 	const user_row = await db.get_single('SELECT `email` FROM `users` WHERE `id` = ? LIMIT 1', token.user_id);
 	if (user_row === null)
 		return SendVerificationCodeResponse.Error;
-
+	
 	mail_queue_template('account_verify_code', [user_row.email], {
 		verify_code: token.code,
 		verify_token: token.token
 	});
-
+	
 	return SendVerificationCodeResponse.Success;
 }
 
@@ -181,17 +333,49 @@ function generate_verification_code(): string {
 }
 // endregion
 
+// region api factory
+type JSONRequestHandler = Parameters<typeof server.json>[1];
+
+type SessionRequestHandler<RequireSession extends boolean> = RequireSession extends true
+? (...args: [...Parameters<JSONRequestHandler>, session: user_session]) => ReturnType<JSONRequestHandler>
+: (...args: [...Parameters<JSONRequestHandler>, session: user_session | null]) => ReturnType<JSONRequestHandler>;
+
+function register_session_endpoint(
+	id: string, 
+	handler: SessionRequestHandler<true>, 
+	require_session: true
+): void;
+
+function register_session_endpoint(
+	id: string, 
+	handler: SessionRequestHandler<false>, 
+	require_session?: false
+): void;
+
+function register_session_endpoint(id: string, handler: SessionRequestHandler<boolean>, require_session = false): void{
+	server.json(id, async (req, url, json) => {
+		const user_session_id = get_cookies(req).session_id ?? null;
+		const user_session = await user_get_session(user_session_id);
+
+		if (require_session && user_session === null)
+			return HTTP_STATUS_CODE.Unauthorized_401;
+
+		return handler(req, url, json, user_session as any);
+	});
+}
+// endregion
+
 // region api
 server.json('/api/today_in_history', async (req, url, json) => {
 	const validate = form_validate_req(schema_today_in_history, json);
 	if (validate.error)
 		return validate;
-
+	
 	const result = await db.get_single(
 		'SELECT `text` FROM `today_in_history` WHERE `month` = ? AND `day` = ?',
 		validate.fields.month, validate.fields.day
 	);
-
+	
 	return {
 		success: true,
 		fact: result?.text ?? null
@@ -202,42 +386,42 @@ server.json('/api/register', async (req, url, json) => {
 	const form = form_validate_req(schema_register, json);
 	if (form.error)
 		return form;
-
+	
 	if (await user_is_username_registered(form.fields.username))
 		return form.raise_field_error('username', 'That username is already taken');
 	
 	const user_email = form.fields.email.toLowerCase();
 	if (await user_is_email_registered(user_email))
 		return form.raise_field_error('email', 'That e-mail address is already registered');
-
+	
 	const user_id = await user_create(form.fields.username, user_email, form.fields.password);
 	if (user_id === -1) // caution will be raised internally
-		return form.raise_form_error('Internal server error - try again later!');
-
+	return form.raise_form_error('Internal server error - try again later!');
+	
 	let verify_token = null;
 	const verify_code = generate_verification_code();
-
+	
 	while (verify_token === null) {
 		const generated_token = generate_verification_token();
-
+		
 		if (!(await user_is_verification_token_used(generated_token)))
 			verify_token = generated_token;
 	}
-
+	
 	const res = await db.insert_object('user_verify_codes', {
 		token: verify_token,
 		code: verify_code,
 		user_id: user_id,
 		last_sent: Date.now()
 	});
-
+	
 	if (res === -1) // caution will be raised internally
-		return form.raise_form_error('Internal server error - try again later!');
-
+	return form.raise_form_error('Internal server error - try again later!');
+	
 	log('registered new user account {%s} with user id {%s}', user_email, user_id);
-
+	
 	user_send_verification_code(verify_token, true);
-
+	
 	return { verify_token, flux_disable: true };
 });
 
@@ -245,25 +429,25 @@ server.json('/api/account_verify', async (req, url, json) => {
 	const form = form_validate_req(schema_account_verify, json);
 	if (form.error)
 		return form;
-
+	
 	const verify_record = await user_get_verification_token(form.fields.token);
 	if (!verify_record)
 		return form.raise_form_error('Invalid or expired verification token');
-
+	
 	if (verify_record.code !== form.fields.code)
 		return form.raise_field_error('code', 'Invalid verification code');
-
+	
 	await db.execute('DELETE FROM `user_verify_codes` WHERE `token` = ? LIMIT 1', form.fields.token);
-
+	
 	const current_user = await db.get_single('SELECT `flags` FROM `users` WHERE `id` = ? LIMIT 1', verify_record.user_id);
 	if (!current_user)
 		return form.raise_form_error('User account not found');
-
+	
 	const new_flags = current_user.flags | UserAccountFlags.AccountVerified;
 	await db.execute('UPDATE `users` SET `flags` = ? WHERE `id` = ? LIMIT 1', new_flags, verify_record.user_id);
-
+	
 	log('verified user account with user id {%s}', verify_record.user_id);
-
+	
 	return { success: true };
 });
 
@@ -271,7 +455,7 @@ server.json('/api/login', async (req, url, json) => {
 	const form = form_validate_req(schema_login, json);
 	if (form.error)
 		return form;
-
+	
 	const identifier = form.fields.username;
 	const is_email_login = identifier.includes('@');
 	
@@ -287,17 +471,19 @@ server.json('/api/login', async (req, url, json) => {
 			identifier.toLowerCase()
 		);
 	}
-
+	
 	if (!user_data)
 		return form.raise_field_error('username', 'Invalid username or password');
-
+	
 	const password_valid = await Bun.password.verify(form.fields.password, user_data.password);
 	if (!password_valid)
 		return form.raise_field_error('password', 'Invalid username or password');
-
+	
 	if (user_data.flags & UserAccountFlags.AccountDisabled)
 		return form.raise_form_error('Account is disabled');
-
+	
+	const result: Record<string, any> = { success: true, flux_disable: true };
+	
 	if (!(user_data.flags & UserAccountFlags.AccountVerified)) {
 		const verify_token = await db.get_single(
 			'SELECT `token` FROM `user_verify_codes` WHERE `user_id` = ? LIMIT 1',
@@ -305,15 +491,17 @@ server.json('/api/login', async (req, url, json) => {
 		);
 		
 		if (verify_token) {
-			return { 
-				success: true, 
-				flux_disable: true,
-				needs_verify: verify_token.token 
-			};
+			result.needs_verify = verify_token.token;
+			return result;
 		}
 	}
-
-	return { success: true, flux_disable: true };
+	
+	const response = Response.json(result);
+	const session = await user_start_session(user_data.id);
+	
+	set_response_cookie(response, 'session_id', session.session_id);
+	
+	return response;
 });
 // endregion
 
@@ -321,32 +509,32 @@ server.json('/api/login', async (req, url, json) => {
 server.bootstrap({
 	base: Bun.file('./html/base_template.html'),
 	drop_missing_subs: false,
-
+	
 	cache: process.env.SPOODER_ENV === 'dev' ? undefined : {
 		ttl: 5 * 60 * 60 * 1000, // 5 minutes
 		max_size: 5 * 1024 * 1024, // 5 MB
 		use_canary_reporting: true,
 		use_etags: true
 	},
-
+	
 	error: {
 		use_canary_reporting: true,
 		error_page: Bun.file('./html/error.html')
 	},
-
+	
 	static: {
 		directory: './static',
 		route: '/static',
 		sub_ext: ['.css', '.s.js']
 	},
-
+	
 	cache_bust: true,
-
+	
 	global_subs: {
 		test: 'foobar',
 		scripts: cache_bust(['static/js/client_bootstrap.s.js'])
 	},
-
+	
 	routes: {
 		'/': {
 			content: Bun.file('./html/index.html'),
@@ -356,7 +544,7 @@ server.bootstrap({
 				stylesheets: cache_bust(['static/css/landing.css'])
 			}
 		},
-
+		
 		'/links': {
 			content: Bun.file('./html/links.html'),
 			subs: {
@@ -366,7 +554,7 @@ server.bootstrap({
 				links: async () => db.get_all('SELECT * FROM `links`')
 			}
 		},
-
+		
 		'/login': {
 			content: Bun.file('./html/login.html'),
 			subs: {
@@ -377,7 +565,7 @@ server.bootstrap({
 				login_form: () => form_render_html(schema_login)
 			}
 		},
-
+		
 		'/verify-account': {
 			content: Bun.file('./html/verify-account.html'),
 			subs: {
@@ -397,7 +585,7 @@ if (typeof process.env.GH_WEBHOOK_SECRET === 'string') {
 			await server.stop(false);
 			process.exit(0);
 		});
-
+		
 		return HTTP_STATUS_CODE.OK_200;
 	});
 } else {
