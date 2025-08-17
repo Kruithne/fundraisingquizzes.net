@@ -369,7 +369,7 @@ function register_session_endpoint(id: string, handler: SessionRequestHandler<bo
 
 function register_throttled_endpoint(id: string, handler: JSONRequestHandler) {
 	server.json(id, async (req, url, json) => {
-		await new Promise(resolve => Bun.sleep(1000));
+		await new Promise(resolve => setTimeout(resolve, 1000));
 		server.allow_slow_request(req);
 
 		return await handler(req, url, json);
