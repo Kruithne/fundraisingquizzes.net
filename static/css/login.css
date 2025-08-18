@@ -48,11 +48,6 @@
 	margin: 20px 0;
 }
 
-.verify-inner-container {
-	margin: 0 auto;
-	max-width: 500px;
-}
-
 .code-digit {
 	width: 55px !important;
 	height: 60px;
@@ -73,7 +68,7 @@
 	border-color: var(--error-red);
 }
 
-#verify-container input[type="button"] {
+.form-container input[type="button"] {
 	width: 100%;
 	margin-top: 15px;
 }
@@ -83,7 +78,7 @@
 	text-align: center;
 }
 
-#verification-links {
+.form-links {
 	margin-top: 15px;
 	display: flex;
 	flex-direction: column;

@@ -18,6 +18,53 @@ const schema_today_in_history = form_create_schema({
 	}
 });
 
+const schema_recover = form_create_schema({
+	id: 'recover_form',
+	endpoint: '/api/recover',
+	fields: {
+		email: {
+			type: 'email',
+			placeholder: 'Enter your e-mail address'
+		}
+	},
+
+	buttons: {
+		submit: {
+			text: 'Recover Account',
+			pending_text: 'Working...'
+		}
+	}
+});
+
+const schema_reset_password = form_create_schema({
+	id: 'password_reset_form',
+	endpoint: '/api/password_reset',
+	fields: {
+		password: {
+			type: 'password',
+			label: 'Choose a strong password:'
+		},
+		
+		password_confirm: {
+			type: 'password',
+			match_field: 'password',
+			label: 'Re-type your password again:'
+		},
+
+		token: {
+			type: 'query_param',
+			regex: '^[a-f0-9\\\\-]{36}$'
+		}
+	},
+
+	buttons: {
+		submit: {
+			text: 'Reset Password',
+			pending_text: 'Working...'
+		}
+	}
+});
+
 const schema_register = form_create_schema({
 	id: 'register_form',
 	endpoint: '/api/register',
@@ -427,6 +474,53 @@ register_session_endpoint('/api/query_user_presence', async (req, url, json, ses
 	};
 }, true);
 
+register_throttled_endpoint('/api/password_reset', async (req, url, json) => {
+	const form = form_validate_req(schema_reset_password, json);
+	if (form.error)
+		return form;
+
+	const reset_ent = await db.get_single('SELECT `user_id` FROM `user_reset_tokens` WHERE `reset_token` = ?', form.fields.token);
+	if (reset_ent === null)
+		return form.raise_form_error('Invalid reset token');
+
+	const hashed_pw = await Bun.password.hash(form.fields.password);
+	await db.execute('UPDATE `users` SET `password` = ? WHERE `id` = ?', hashed_pw, reset_ent.user_id);
+	await db.execute('DELETE FROM `user_reset_tokens` WHERE `reset_token` = ?', form.fields.token);
+	
+	return { success: true, flux_disable: true };
+});
+
+register_throttled_endpoint('/api/recover', async (req, url, json) => {
+	const form = form_validate_req(schema_recover, json);
+	if (form.error)
+		return form;
+
+	const user_email = form.fields.email.toLowerCase();
+	const user = await db.get_single('SELECT `id` FROM `users` WHERE LOWER(`email`) = ?', user_email);
+
+	if (user === null)
+		return form.raise_field_error('email', 'No account registered with this e-mail address.');
+
+	const existing_recovery = await db.get_single('SELECT `reset_sent` FROM `user_reset_tokens` WHERE `user_id` = ?', user.id);
+	if (existing_recovery !== null) {
+		if (Date.now() - existing_recovery.reset_sent < 300000)
+			return form.raise_form_error('Reset link has already been sent recently.');
+
+		await db.execute('DELETE FROM `user_reset_tokens` WHERE `user_id` = ?', user.id);
+	}
+
+	const reset_token = crypto.randomUUID();
+	await db.insert_object('user_reset_tokens', {
+		reset_token,
+		user_id: user.id,
+		reset_sent: Date.now()
+	});
+
+	mail_queue_template('account_password_reset', [user_email], { reset_token });
+
+	return { success: true, recovery_address: form.fields.email };
+});
+
 register_throttled_endpoint('/api/register', async (req, url, json) => {
 	const form = form_validate_req(schema_register, json);
 	if (form.error)
@@ -630,6 +724,26 @@ const routes: Record<string, RouteOptions> = {
 			title: 'Account Verification',
 			scripts: cache_bust(['static/js/page_account_verify.s.js']),
 			stylesheets: cache_bust(['static/css/login.css'])
+		}
+	},
+
+	'/recovery': {
+		content: Bun.file('./html/recovery.html'),
+		subs: {
+			title: 'Account Recovery',
+			scripts: cache_bust(['static/js/page_account_recovery.s.js']),
+			stylesheets: cache_bust(['static/css/login.css']),
+			recover_form: () => form_render_html(schema_recover)
+		}
+	},
+
+	'/reset-password': {
+		content: Bun.file('./html/reset_password.html'),
+		subs: {
+			title: 'Password Reset',
+			scripts: cache_bust(['static/js/page_reset_password.s.js']),
+			stylesheets: cache_bust(['static/css/login.css']),
+			reset_form: () => form_render_html(schema_reset_password)
 		}
 	}
 }

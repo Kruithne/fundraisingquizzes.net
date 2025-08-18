@@ -1,0 +1,23 @@
+<div id="recovery-container" class="form-container">
+	<div class="module module-padded">
+		<div class="module-inner-center" v-if="recovery_sent">
+			<h1>Recovery Link Sent</h1>
+			<p>We have sent a recovery link to <b>{{ recovery_address }}</b>, check your e-mail inbox for instructions.</p>
+			<p>It may take a moment for the mail to arrive; check your spam folder if it does not arrive.</p>
+
+			<div class="form-links">
+				<a href="/login">Back to Login</a>
+			</div>
+		</div>
+		<div class="module-inner-center" v-else>
+			<h1>Account Recovery</h1>
+			<p>To recover access to your account, enter the e-mail address associated with your account and we will e-mail you a link that allows you to reset your password.</p>
+			
+			<div>{{ recover_form }}</div>
+
+			<div class="form-links">
+				<a href="/login">Back to Login</a>
+			</div>
+		</div>
+	</div>
+</div>

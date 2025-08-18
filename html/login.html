@@ -1,6 +1,7 @@
 <div id="login-container" class="login-container">
 	<div class="module module-padded" id="login-left">
 		<h1>Already have an account?</h1>
+		<p class="form-success" v-if="password_reset">Your password has been reset! Login below.</p>
 		<div id="container">
 			{{ login_form }}
 		</div>
