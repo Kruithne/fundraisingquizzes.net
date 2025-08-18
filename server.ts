@@ -625,7 +625,7 @@ const routes: Record<string, RouteOptions> = {
 	},
 	
 	'/verify-account': {
-		content: Bun.file('./html/verify-account.html'),
+		content: Bun.file('./html/verify_account.html'),
 		subs: {
 			title: 'Account Verification',
 			scripts: cache_bust(['static/js/page_account_verify.s.js']),

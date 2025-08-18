@@ -1,10 +1,10 @@
-<div id="verify-container">
+<div id="verify-container" class="form-container">
 	<div class="module module-padded">
-		<div class="verify-inner-container">
+		<div class="module-inner-center">
 			<h1>Account Verification</h1>
 			<p>Enter the 5-digit verification code sent to your email address:</p>
 			
-			<div id="verification-form">
+			<div>
 				<div id="code-input-container">
 					<input 
 						v-for="(digit, index) in digits"
@@ -31,7 +31,7 @@
 				<input type="button" :disabled="!is_verify_enabled" @click="submit" :value="is_submitting ? 'Verifying...' : 'Verify Account'" />
 			</div>
 
-			<div id="verification-links">
+			<div class="form-links">
 				<a @click="resend_code">Not received your code? Click here to re-send.</a>
 				<a href="/login">Back to Login</a>
 			</div>
