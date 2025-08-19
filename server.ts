@@ -877,6 +877,8 @@ async function resolve_bootstrap_content(content: string | BunFile): Promise<str
 
 					// keep session_updated in sync
 					set_response_cookie(res, 'session_updated', user_session.user_updated_timestamp, false);
+
+					return res;
 				}
 
 				const res = Response.redirect('/login?referrer=' + encodeURIComponent(url.pathname), 302);
