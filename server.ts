@@ -243,7 +243,8 @@ enum UserAccountFlags { // 32-bit
 	None = 0,
 	AccountVerified = 1 << 0,
 	AccountDisabled = 2 << 0,
-	AdminAccount = 3 << 0
+	AdminAccount = 3 << 0,
+	ForcePasswordReset = 4 << 0
 };
 
 enum SendVerificationCodeResponse {
@@ -392,6 +393,36 @@ async function user_send_verification_code(verify_token: string, force = false):
 	return SendVerificationCodeResponse.Success;
 }
 
+enum PasswordResetResult {
+	NoUser,
+	Throttled,
+	Success
+};
+
+async function user_trigger_password_reset(user_id: number): Promise<PasswordResetResult> {
+	const user = await db.get_single('SELECT `email` FROM `users` WHERE `id` = ?', user_id);
+	if (user === null)
+		return PasswordResetResult.NoUser;
+
+	const existing_recovery = await db.get_single('SELECT `reset_sent` FROM `user_reset_tokens` WHERE `user_id` = ?', user_id);
+	if (existing_recovery !== null) {
+		if (Date.now() - existing_recovery.reset_sent < 300000)
+			return PasswordResetResult.Throttled;
+
+		await db.execute('DELETE FROM `user_reset_tokens` WHERE `user_id` = ?', user_id);
+	}
+
+	const reset_token = crypto.randomUUID();
+	await db.insert_object('user_reset_tokens', {
+		reset_token,
+		user_id: user_id,
+		reset_sent: Date.now()
+	});
+
+	mail_queue_template('account_password_reset', [user.email], { reset_token });
+	return PasswordResetResult.Success;
+}
+
 function generate_verification_token(): string {
 	return [...Array(16)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
 }
@@ -501,22 +532,16 @@ register_throttled_endpoint('/api/recover', async (req, url, json) => {
 	if (user === null)
 		return form.raise_field_error('email', 'No account registered with this e-mail address.');
 
-	const existing_recovery = await db.get_single('SELECT `reset_sent` FROM `user_reset_tokens` WHERE `user_id` = ?', user.id);
-	if (existing_recovery !== null) {
-		if (Date.now() - existing_recovery.reset_sent < 300000)
-			return form.raise_form_error('Reset link has already been sent recently.');
-
-		await db.execute('DELETE FROM `user_reset_tokens` WHERE `user_id` = ?', user.id);
+	const reset_res = await user_trigger_password_reset(user.id);
+	
+	// in theory, this cannot happen, because we're passing in an ID we just got from the database
+	if (reset_res === PasswordResetResult.NoUser) {
+		caution('user lookup failed in recovery', { user_email, user });
+		return form.raise_form_error('Internal server error, please try again later');
 	}
 
-	const reset_token = crypto.randomUUID();
-	await db.insert_object('user_reset_tokens', {
-		reset_token,
-		user_id: user.id,
-		reset_sent: Date.now()
-	});
-
-	mail_queue_template('account_password_reset', [user_email], { reset_token });
+	if (reset_res === PasswordResetResult.Throttled)
+		return form.raise_form_error('Reset link has already been sent recently.');
 
 	return { success: true, recovery_address: form.fields.email };
 });
@@ -655,6 +680,11 @@ register_throttled_endpoint('/api/login', async (req, url, json) => {
 	
 	if (user_data.flags & UserAccountFlags.AccountDisabled)
 		return form.raise_form_error('Account is disabled');
+
+	if (user_data.flags & UserAccountFlags.ForcePasswordReset) {
+		await user_trigger_password_reset(user_data.id);
+		return { require_reset: true, flux_disable: true };
+	}
 	
 	const result: Record<string, any> = { success: true, flux_disable: true };
 	
@@ -744,6 +774,13 @@ const routes: Record<string, RouteOptions> = {
 			scripts: cache_bust(['static/js/page_reset_password.s.js']),
 			stylesheets: cache_bust(['static/css/login.css']),
 			reset_form: () => form_render_html(schema_reset_password)
+		}
+	},
+
+	'/account-migration': {
+		content: Bun.file('./html/account_migration.html'),
+		subs: {
+			title: 'Account Migration'
 		}
 	}
 }

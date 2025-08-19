@@ -19,7 +19,17 @@ document_load().then(() => {
 	});
 
 	login_form.on('submit_success', data => {
-		location.href = data.needs_verify ? '/verify-account?token=' + data.needs_verify : '/';
+		if (data.needs_verify) {
+			location.href = '/verify-account?token' + data.needs_verify;
+			return;
+		}
+
+		if (data.require_reset) {
+			location.href = '/account-migration';
+			return;
+		}
+
+		location.href = '/';
 	});
 
 	const state = app.mount('#login-container');
