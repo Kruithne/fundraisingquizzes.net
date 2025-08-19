@@ -200,6 +200,12 @@ body
 	margin-bottom: 10px;
 }
 
+.p-list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
 #logo
 {
 	margin: 20px;

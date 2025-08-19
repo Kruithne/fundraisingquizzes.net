@@ -25,7 +25,7 @@ document_load().then(() => {
 			return location.href = '/verify-account?token' + data.needs_verify;
 
 		if (data.require_reset)
-			return location.href = '/account-migration';
+			return location.href = '/account-migration?acc=' + encodeURIComponent(data.account_addr);
 
 		const referrer = url_params.get('referrer');
 		if (referrer !== null)

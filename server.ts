@@ -430,6 +430,17 @@ function generate_verification_token(): string {
 function generate_verification_code(): string {
 	return (Math.floor(Math.random() * 55565) + 10000).toString();
 }
+
+function mask_user_email(email: string): string {
+	const [local_part, domain] = email.split('@');
+
+	let masked_local = local_part;
+	if (local_part.length > 2)
+		masked_local = local_part.slice(0, 2) + '*****' + local_part.slice(-1);
+
+	const masked_domain = domain.split('.').pop();
+	return `${masked_local}@${masked_domain}`;
+}
 // endregion
 
 // region api factory
@@ -667,12 +678,12 @@ register_throttled_endpoint('/api/login', async (req, url, json) => {
 	let user_data;
 	if (is_email_login) {
 		user_data = await db.get_single(
-			'SELECT `id`, `flags`, `password` FROM `users` WHERE `email` = ? LIMIT 1',
+			'SELECT `id`, `flags`, `password`, `email` FROM `users` WHERE `email` = ? LIMIT 1',
 			identifier.toLowerCase()
 		);
 	} else {
 		user_data = await db.get_single(
-			'SELECT `id`, `flags`, `password` FROM `users` WHERE LOWER(`username`) = ? LIMIT 1',
+			'SELECT `id`, `flags`, `password`, `email` FROM `users` WHERE LOWER(`username`) = ? LIMIT 1',
 			identifier.toLowerCase()
 		);
 	}
@@ -689,7 +700,8 @@ register_throttled_endpoint('/api/login', async (req, url, json) => {
 
 	if (user_data.flags & UserAccountFlags.ForcePasswordReset) {
 		await user_trigger_password_reset(user_data.id);
-		return { require_reset: true, flux_disable: true };
+		const masked_email = mask_user_email(user_data.email);
+		return { require_reset: true, flux_disable: true, account_addr: masked_email };
 	}
 	
 	const result: Record<string, any> = { success: true, flux_disable: true };
@@ -793,7 +805,7 @@ const routes: Record<string, RouteOptions> = {
 		prevent_indexing: true,
 		subs: {
 			title: 'Account Migration',
-			scripts: [],
+			scripts: cache_bust(['static/js/page_account_migration.s.js']),
 			stylesheets: []
 		}
 	}
