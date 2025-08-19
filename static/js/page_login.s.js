@@ -14,27 +14,31 @@ document_load().then(() => {
 	const register_form = form_component(app, 'register_form');
 	const login_form = form_component(app, 'login_form');
 
+	const params = new URLSearchParams(window.location.search);
+
 	register_form.on('submit_success', data => {
 		location.href = '/verify-account?token=' + data.verify_token;
 	});
 
 	login_form.on('submit_success', data => {
-		if (data.needs_verify) {
-			location.href = '/verify-account?token' + data.needs_verify;
-			return;
-		}
+		if (data.needs_verify)
+			return location.href = '/verify-account?token' + data.needs_verify;
 
-		if (data.require_reset) {
-			location.href = '/account-migration';
-			return;
-		}
+		if (data.require_reset)
+			return location.href = '/account-migration';
+
+		const referrer = url_params.get('referrer');
+		if (referrer !== null)
+			return location.href = location.origin + referrer;
+		
+		if (document.referrer?.startsWith(location.origin))
+			return location.href = document.referrer;
 
 		location.href = '/';
 	});
 
 	const state = app.mount('#login-container');
 
-	const params = new URLSearchParams(window.location.search);
 	if (params.has('reset'))
 		state.password_reset = true;
 });
