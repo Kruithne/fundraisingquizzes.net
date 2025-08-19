@@ -690,6 +690,12 @@ register_throttled_endpoint('/api/login', async (req, url, json) => {
 	
 	if (!user_data)
 		return form.raise_field_error('username', 'Invalid username or password');
+
+	if (user_data.flags & UserAccountFlags.ForcePasswordReset) {
+		await user_trigger_password_reset(user_data.id);
+		const masked_email = mask_user_email(user_data.email);
+		return { require_reset: true, flux_disable: true, account_addr: masked_email };
+	}
 	
 	const password_valid = await Bun.password.verify(form.fields.password, user_data.password);
 	if (!password_valid)
@@ -697,12 +703,6 @@ register_throttled_endpoint('/api/login', async (req, url, json) => {
 	
 	if (user_data.flags & UserAccountFlags.AccountDisabled)
 		return form.raise_form_error('Account is disabled');
-
-	if (user_data.flags & UserAccountFlags.ForcePasswordReset) {
-		await user_trigger_password_reset(user_data.id);
-		const masked_email = mask_user_email(user_data.email);
-		return { require_reset: true, flux_disable: true, account_addr: masked_email };
-	}
 	
 	const result: Record<string, any> = { success: true, flux_disable: true };
 	
