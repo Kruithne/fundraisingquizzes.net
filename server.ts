@@ -513,9 +513,15 @@ register_throttled_endpoint('/api/password_reset', async (req, url, json) => {
 	const reset_ent = await db.get_single('SELECT `user_id` FROM `user_reset_tokens` WHERE `reset_token` = ?', form.fields.token);
 	if (reset_ent === null)
 		return form.raise_form_error('Invalid reset token');
+	
+	const current_user = await db.get_single('SELECT `flags` FROM `users` WHERE `id` = ? LIMIT 1', reset_ent.user_id);
+	if (!current_user)
+		return form.raise_form_error('User account not found');
 
+	const new_flags = (current_user.flags & ~UserAccountFlags.ForcePasswordReset) | UserAccountFlags.AccountVerified;
+	
 	const hashed_pw = await Bun.password.hash(form.fields.password);
-	await db.execute('UPDATE `users` SET `password` = ? WHERE `id` = ?', hashed_pw, reset_ent.user_id);
+	await db.execute('UPDATE `users` SET `password` = ?, `flags` = ? WHERE `id` = ?', hashed_pw, new_flags, reset_ent.user_id);
 	await db.execute('DELETE FROM `user_reset_tokens` WHERE `reset_token` = ?', form.fields.token);
 	
 	return { success: true, flux_disable: true };
