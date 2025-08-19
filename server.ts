@@ -439,7 +439,7 @@ function mask_user_email(email: string): string {
 		masked_local = local_part.slice(0, 2) + '*****' + local_part.slice(-1);
 
 	const masked_domain = domain.split('.').pop();
-	return `${masked_local}@${masked_domain}`;
+	return `${masked_local}@$*****.{masked_domain}`;
 }
 // endregion
 
