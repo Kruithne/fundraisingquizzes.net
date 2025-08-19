@@ -792,7 +792,9 @@ const routes: Record<string, RouteOptions> = {
 		content: Bun.file('./html/account_migration.html'),
 		prevent_indexing: true,
 		subs: {
-			title: 'Account Migration'
+			title: 'Account Migration',
+			scripts: [],
+			stylesheets: []
 		}
 	}
 }
