@@ -721,6 +721,7 @@ type RouteOptions = {
 	content: BunFile;
 	subs: Record<string, any>;
 	require_auth?: boolean;
+	prevent_indexing?: boolean;
 };
 
 const routes: Record<string, RouteOptions> = {
@@ -745,6 +746,7 @@ const routes: Record<string, RouteOptions> = {
 	
 	'/login': {
 		content: Bun.file('./html/login.html'),
+		prevent_indexing: true,
 		subs: {
 			title: 'Login',
 			scripts: cache_bust(['static/js/page_login.s.js']),
@@ -756,6 +758,7 @@ const routes: Record<string, RouteOptions> = {
 	
 	'/verify-account': {
 		content: Bun.file('./html/verify_account.html'),
+		prevent_indexing: true,
 		subs: {
 			title: 'Account Verification',
 			scripts: cache_bust(['static/js/page_account_verify.s.js']),
@@ -765,6 +768,7 @@ const routes: Record<string, RouteOptions> = {
 
 	'/recovery': {
 		content: Bun.file('./html/recovery.html'),
+		prevent_indexing: true,
 		subs: {
 			title: 'Account Recovery',
 			scripts: cache_bust(['static/js/page_account_recovery.s.js']),
@@ -775,6 +779,7 @@ const routes: Record<string, RouteOptions> = {
 
 	'/reset-password': {
 		content: Bun.file('./html/reset_password.html'),
+		prevent_indexing: true,
 		subs: {
 			title: 'Password Reset',
 			scripts: cache_bust(['static/js/page_reset_password.s.js']),
@@ -785,6 +790,7 @@ const routes: Record<string, RouteOptions> = {
 
 	'/account-migration': {
 		content: Bun.file('./html/account_migration.html'),
+		prevent_indexing: true,
 		subs: {
 			title: 'Account Migration'
 		}
@@ -857,14 +863,21 @@ async function resolve_bootstrap_content(content: string | BunFile): Promise<str
 		};
 
 		const get_response = async (req: Request): Promise<Response> => {
-			if (cache)
-				return cache.request(req, route, content_generator);
+			let res;
+			if (cache) {
+				res = await cache.request(req, route, content_generator);
+			} else {
+				res = new Response(await content_generator(), {
+					headers: {
+						'content-type': 'text/html'
+					}
+				});
+			}
 
-			return new Response(await content_generator(), {
-				headers: {
-					'content-type': 'text/html'	
-				}
-			});
+			if (route_opts.prevent_indexing)
+				res.headers.append('X-Robots-Tag', 'noindex');
+
+			return res;
 		};
 
 		server.route(route, async (req, url) => {
