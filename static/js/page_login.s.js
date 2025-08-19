@@ -27,7 +27,7 @@ document_load().then(() => {
 		if (data.require_reset)
 			return location.href = '/account-migration?acc=' + encodeURIComponent(data.account_addr);
 
-		const referrer = url_params.get('referrer');
+		const referrer = params.get('referrer');
 		if (referrer !== null)
 			return location.href = location.origin + referrer;
 		
