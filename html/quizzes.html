@@ -12,7 +12,10 @@
 	<div class="quiz-icon"></div>
 	<div class="quiz-info">
 		<h1>{{ quiz.title }} in aid of {{ quiz.charity }}</h1>
-		<p class="quiz-sub">{{ QUIZ_TYPES[quiz.type] }}</p>
+		<div class="quiz-sub">
+			<p>{{ QUIZ_TYPES[quiz.type] }}</p>
+			<p>Closes {{ format_date_relative(quiz.closing) }} ({{ format_date(quiz.closing) }})</p>
+		</div>
 		<p>{{ quiz.description }}</p>
 		<div class="quiz-options">
 			<a class="quiz-option-bookmark">[Bookmark]</a>

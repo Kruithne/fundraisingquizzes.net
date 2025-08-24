@@ -14,3 +14,6 @@ ALTER TABLE `quizzes` DROP COLUMN `description_extra`;
 
 -- [3] add quiz_type column
 ALTER TABLE `quizzes` ADD COLUMN `type` TINYINT UNSIGNED NOT NULL DEFAULT 0
+
+-- [4] add closing column
+ALTER TABLE `quizzes` ADD column `closing` DATE;

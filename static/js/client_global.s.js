@@ -63,3 +63,82 @@ export function get_user_presence() {
 	return user_presence;
 }
 // endregion
+
+// region dates
+export function format_date(date) {
+	if (!(date instanceof Date))
+		date = new Date(date);
+
+	const day = date.getDate();
+	const month = date.toLocaleString('en-GB', { month: 'long' });
+	const year = date.getFullYear();
+
+	let ordinal;
+	if (day >= 11 && day <= 13) {
+		ordinal = 'th';
+	} else {
+		switch (day % 10) {
+			case 1: ordinal = 'st'; break;
+			case 2: ordinal = 'nd'; break;
+			case 3: ordinal = 'rd'; break;
+			default: ordinal = 'th'; break;
+		}
+	}
+
+	return `${day}${ordinal} ${month} ${year}`;
+}
+
+export function format_date_relative(date) {
+	if (!(date instanceof Date))
+		date = new Date(date);
+
+	const now = new Date();
+	const diff_ms = date - now;
+	const abs_diff_ms = Math.abs(diff_ms);
+	const abs_diff_seconds = Math.floor(abs_diff_ms / 1000);
+	const is_future = diff_ms > 0;
+	
+	if (abs_diff_seconds < 60)
+		return is_future ? "in a moment" : "just now";
+	
+	const abs_diff_minutes = Math.floor(abs_diff_seconds / 60);
+	if (abs_diff_minutes < 60) {
+		if (is_future)
+			return abs_diff_minutes === 1 ? "in 1 minute" : `in ${abs_diff_minutes} minutes`;
+		return abs_diff_minutes === 1 ? "1 minute ago" : `${abs_diff_minutes} minutes ago`;
+	}
+	
+	const abs_diff_hours = Math.floor(abs_diff_minutes / 60);
+	if (abs_diff_hours < 24) {
+		if (is_future)
+			return abs_diff_hours === 1 ? "in 1 hour" : `in ${abs_diff_hours} hours`;
+		return abs_diff_hours === 1 ? "1 hour ago" : `${abs_diff_hours} hours ago`;
+	}
+	
+	const abs_diff_days = Math.floor(abs_diff_hours / 24);
+	if (abs_diff_days < 7) {
+		if (is_future)
+			return abs_diff_days === 1 ? "in 1 day" : `in ${abs_diff_days} days`;
+		return abs_diff_days === 1 ? "1 day ago" : `${abs_diff_days} days ago`;
+	}
+	
+	const abs_diff_weeks = Math.floor(abs_diff_days / 7);
+	if (abs_diff_weeks < 4) {
+		if (is_future)
+			return abs_diff_weeks === 1 ? "in 1 week" : `in ${abs_diff_weeks} weeks`;
+		return abs_diff_weeks === 1 ? "1 week ago" : `${abs_diff_weeks} weeks ago`;
+	}
+	
+	const abs_diff_months = Math.floor(abs_diff_days / 30);
+	if (abs_diff_months < 12) {
+		if (is_future)
+			return abs_diff_months === 1 ? "in 1 month" : `in ${abs_diff_months} months`;
+		return abs_diff_months === 1 ? "1 month ago" : `${abs_diff_months} months ago`;
+	}
+	
+	const abs_diff_years = Math.floor(abs_diff_days / 365);
+	if (is_future)
+		return abs_diff_years === 1 ? "in 1 year" : `in ${abs_diff_years} years`;
+	return abs_diff_years === 1 ? "1 year ago" : `${abs_diff_years} years ago`;
+}
+// endregion

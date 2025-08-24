@@ -1,5 +1,5 @@
 import { createApp } from '/{{cache_bust=static/js/lib/vue.esm.prod.js}}';
-import { document_load, query_api, on_user_presence } from '/{{cache_bust=static/js/client_global.s.js}}';
+import { document_load, query_api, on_user_presence, format_date_relative, format_date } from '/{{cache_bust=static/js/client_global.s.js}}';
 
 const QUIZ_TYPES = [
 	'Miscellaneous',
@@ -26,6 +26,11 @@ const app = createApp({
 
 			quizzes: []
 		}
+	},
+
+	methods: {
+		format_date_relative,
+		format_date
 	}
 });
 

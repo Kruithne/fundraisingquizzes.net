@@ -19,6 +19,15 @@
 
 .quiz-sub {
 	font-style: italic;
+	display: flex;
+	align-items: center;
+}
+
+.quiz-sub > p:not(:last-child)::after {
+	content: "•";
+	font-size: 1.2em;
+	margin: 0 10px;
+	font-weight: bold;
 }
 
 .quiz-entry h1 {
