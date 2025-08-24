@@ -1,5 +1,5 @@
 import { createApp } from '/{{cache_bust=static/js/lib/vue.esm.prod.js}}';
-import { document_load, query_api, on_user_presence, format_date_relative, format_date } from '/{{cache_bust=static/js/client_global.s.js}}';
+import { document_load, query_api, on_user_presence, format_date_relative, format_date, create_hyperlinks } from '/{{cache_bust=static/js/client_global.s.js}}';
 
 const UNIX_SECOND = 1000;
 const UNIX_MINUTE = UNIX_SECOND * 60;
@@ -46,6 +46,7 @@ const app = createApp({
 	methods: {
 		format_date_relative,
 		format_date,
+		create_hyperlinks,
 
 		is_quiz_new(quiz) {
 			const current_ts = Date.now();

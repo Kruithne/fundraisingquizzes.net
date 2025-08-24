@@ -37,6 +37,15 @@ export function get_cookies() {
 	return cookie_map;
 }
 
+const url_regex = /https?:\/\/(?:[-\w.])+(?:\:[0-9]+)?(?:\/(?:[\w\/_.])*(?:\?(?:[\w&=%.])*)?(?:\#(?:[\w.])*)?)?/gi;
+const email_regex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
+
+export function create_hyperlinks(text) {
+	return text
+		.replace(url_regex, '<a href="$&" target="_blank">$&</a>')
+		.replace(email_regex, '<a href="mailto:$&" target="_blank">$&</a>');
+}
+
 // region user presence
 let user_presence = null;
 let user_presence_callbacks = [];
