@@ -1001,3 +1001,24 @@ if (typeof process.env.GH_WEBHOOK_SECRET === 'string') {
 	caution('GH_WEBHOOK_SECRET environment variable not configured');
 }
 // endregion
+
+// region maintenance
+const MAINTENANCE_ROUTINE_TIMER = 86400000; // 24 hours
+
+async function maintenance_routine() {
+	const time_now = Date.now();
+
+	// expire in-memory sessions older than 24 hours.
+	for (const [session_id, session] of user_session_cache.entries()) {
+		if (time_now - session.last_access > MAINTENANCE_ROUTINE_TIMER)
+			user_session_cache.delete(session_id)
+	}
+
+	// delete expired user_reset_tokens
+	await db.execute('DELETE FROM `user_reset_tokens` WHERE `reset_sent` < (NOW() - INTERVAL 24 HOUR)');
+
+	setTimeout(maintenance_routine, MAINTENANCE_ROUTINE_TIMER);
+}
+
+setTimeout(maintenance_routine, MAINTENANCE_ROUTINE_TIMER);
+// endregion
