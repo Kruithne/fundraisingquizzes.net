@@ -500,7 +500,16 @@ server.json('/api/today_in_history', async (req, url, json) => {
 		fact: result?.text ?? null
 	};
 });
+// endregion
 
+// region api quizzes
+server.json('/api/quiz_list', async (req, url, json) => {
+	const quizzes = await db.get_all('SELECT * FROM quizzes');
+	return { quizzes };
+});
+// endregion
+
+// region api user
 register_session_endpoint('/api/query_user_presence', async (req, url, json, session) => {
 	const user_info = await db.get_single('SELECT `username` FROM `users` WHERE `id` = ? LIMIT 1', session.user_id);
 	if (user_info === null)
@@ -807,6 +816,15 @@ const routes: Record<string, RouteOptions> = {
 			title: 'Account Migration',
 			scripts: cache_bust(['static/js/page_account_migration.s.js']),
 			stylesheets: []
+		}
+	},
+
+	'/quizzes': {
+		content: Bun.file('./html/quizzes.html'),
+		subs: {
+			title: 'Quizzes',
+			scripts: cache_bust(['static/js/page_quizzes.s.js']),
+			stylesheets: cache_bust(['static/css/quizzes.css'])
 		}
 	}
 }

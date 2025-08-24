@@ -1,0 +1,26 @@
+<div v-if="!loaded" class="module module-padded">
+	<div class="loader">
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+	</div>
+</div>
+<div v-else v-for="quiz in quizzes" class="module module-padded quiz-entry">
+	<div class="quiz-icon"></div>
+	<div class="quiz-info">
+		<h1>{{ quiz.title }} in aid of {{ quiz.charity }}</h1>
+		<p class="quiz-sub">{{ QUIZ_TYPES[quiz.type] }}</p>
+		<p>{{ quiz.description }}</p>
+		<div class="quiz-options">
+			<a class="quiz-option-bookmark">[Bookmark]</a>
+			<a class="quiz-option-vote">[Vote]</a>
+			<a class="quiz-option-queries">[Queries]</a>
+			<a class="quiz-option-edit">[Edit]</a>
+			<a class="quiz-option-approve">[Approve]</a>
+			<a class="quiz-option-delete">[Delete]</a>
+		</div>
+	</div>
+</div>

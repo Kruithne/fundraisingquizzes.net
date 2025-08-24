@@ -523,3 +523,71 @@ input[type="number"]:focus
 	align-items: center;
 	justify-content: center;
 }
+
+/* Loading Spinner */
+.loader {
+	width: 80px;
+	height: 80px;
+	position: relative;
+	margin: 20px auto;
+}
+
+.loader div {
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	animation: wave 1.8s ease-in-out infinite;
+	transform: scale(0.4);
+}
+
+.loader div:nth-child(1) {
+	background-color: #5fb4ed;
+	top: 8px;
+	left: 32px;
+	animation-delay: 0s;
+}
+
+.loader div:nth-child(2) {
+	background-color: #d27572;
+	top: 20px;
+	left: 56px;
+	animation-delay: 0.3s;
+}
+
+.loader div:nth-child(3) {
+	background-color: #b8c168;
+	top: 48px;
+	left: 56px;
+	animation-delay: 0.6s;
+}
+
+.loader div:nth-child(4) {
+	background-color: #ea9d60;
+	top: 60px;
+	left: 32px;
+	animation-delay: 0.9s;
+}
+
+.loader div:nth-child(5) {
+	background-color: #b19cd9;
+	top: 48px;
+	left: 8px;
+	animation-delay: 1.2s;
+}
+
+.loader div:nth-child(6) {
+	background-color: #ffce61;
+	top: 20px;
+	left: 8px;
+	animation-delay: 1.5s;
+}
+
+@keyframes wave {
+	0%, 100% {
+		transform: scale(0.4);
+	}
+	50% {
+		transform: scale(1.2);
+	}
+}

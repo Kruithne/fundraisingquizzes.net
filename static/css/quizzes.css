@@ -1,0 +1,72 @@
+.quiz-entry {
+	display: flex;
+	gap: 10px;
+}
+
+.quiz-icon {
+	width: 60px;
+	height: 60px;
+	min-width: 60px;
+	background-image: url('/{{cache_bust=static/images/quiz_type_icons.png}}');
+}
+
+.quiz-info {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	gap: 5px;
+}
+
+.quiz-sub {
+	font-style: italic;
+}
+
+.quiz-entry h1 {
+	font-size: 1.5em;
+}
+
+.quiz-options {
+	display: flex;
+	gap: 20px;
+}
+
+.quiz-options > a {
+	padding-left: 20px;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+
+.quiz-option-bookmark {
+	background-image: url('/{{cache_bust=static/images/bookmark_16.png}}');
+}
+
+.quiz-option-vote {
+	background-image: url('/{{cache_bust=static/images/megaphone_16.png}}');
+}
+
+.quiz-option-queries {
+	background-image: url('/{{cache_bust=static/images/bubble_16.png}}');
+}
+
+.quiz-option-edit {
+	background-image: url('/{{cache_bust=static/images/pencil_16.png}}');
+}
+
+.quiz-option-delete {
+	background-image: url('/{{cache_bust=static/images/delete_16.png}}');
+}
+
+.quiz-option-approve {
+	background-image: url('/{{cache_bust=static/images/tick_16.png}}');
+}
+
+@media (max-width: 880px) {
+	.quiz-info {
+		gap: 10px;
+	}
+
+	.quiz-options {
+		gap: 5px;
+		flex-direction: column;
+	}
+}
