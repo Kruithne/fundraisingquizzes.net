@@ -151,3 +151,50 @@ export function format_date_relative(date) {
 	return abs_diff_years === 1 ? "1 year ago" : `${abs_diff_years} years ago`;
 }
 // endregion
+
+// region toast
+let toast_auto_hide_timeout = -1;
+
+export function show_toast(text, auto_hide = 3000, style_class = null) {
+	const $toast = document.getElementById('toast');
+	if ($toast) {
+		$toast.style.display = 'flex';
+		$toast.setAttribute('data-text', text);
+		
+		const class_list = $toast.classList;
+		class_list.remove('error', 'success', 'pending');
+		
+		if (style_class)
+			class_list.add(style_class);
+		
+		clearTimeout(toast_auto_hide_timeout);
+		
+		if (auto_hide)
+			toast_auto_hide_timeout = setTimeout(() => hide_toast(), auto_hide);
+	}
+	
+	return $toast;
+}
+
+export function hide_toast() {
+	const $toast = document.getElementById('toast');
+	if ($toast) {
+		$toast.style.display = 'none';
+		$toast.setAttribute('data-text', '');
+		
+		clearTimeout(toast_auto_hide_timeout);
+	}
+}
+
+export function show_toast_error(text, auto_hide) {
+	show_toast(text, auto_hide, 'error');
+}
+
+export function show_toast_success(text, auto_hide) {
+	show_toast(text, auto_hide, 'success');
+}
+
+export function show_toast_pending(text, auto_hide) {
+	show_toast(text, auto_hide, 'pending');
+}
+// endregion
