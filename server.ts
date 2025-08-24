@@ -242,9 +242,9 @@ function delete_response_cookie(response: Response, name: string, http_only = tr
 enum UserAccountFlags { // 32-bit
 	None = 0,
 	AccountVerified = 1 << 0,
-	AccountDisabled = 2 << 0,
-	AdminAccount = 3 << 0,
-	ForcePasswordReset = 4 << 0
+	AccountDisabled = 1 << 1,
+	AdminAccount = 1 << 2,
+	ForcePasswordReset = 1 << 3
 };
 
 enum SendVerificationCodeResponse {
