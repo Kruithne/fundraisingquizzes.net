@@ -17,3 +17,6 @@ ALTER TABLE `quizzes` ADD COLUMN `type` TINYINT UNSIGNED NOT NULL DEFAULT 0
 
 -- [4] add closing column
 ALTER TABLE `quizzes` ADD column `closing` DATE;
+
+-- [5] add flags column
+ALTER TABLE `quizzes` ADD column `flags` INT UNSIGNED NOT NULL DEFAULT 0;

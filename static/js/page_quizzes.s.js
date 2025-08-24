@@ -15,6 +15,15 @@ const QUIZ_TYPES = [
 	'Ditloids'
 ];
 
+const QUIZ_FLAGS = { // 32-bit
+	None: 0,
+	AnswerPolicyNoAskingAllowed: 1 << 0,
+	AnswerPolicyNoAskingBefore: 1 << 1,
+	UNUSED_FLAG_1: 1 << 2,
+	UNUSED_FLAG_2: 1 << 3,
+	IsAccepted: 1 << 4,
+};
+
 const app = createApp({
 	data() {
 		return {
@@ -23,6 +32,7 @@ const app = createApp({
 			loaded: true,
 
 			QUIZ_TYPES,
+			QUIZ_FLAGS,
 
 			quizzes: []
 		}

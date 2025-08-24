@@ -503,6 +503,15 @@ server.json('/api/today_in_history', async (req, url, json) => {
 // endregion
 
 // region api quizzes
+enum QuizFlags { // 32-bit
+	None = 0,
+	AnswerPolicyNoAskingAllowed = 1 << 0,
+	AnswerPolicyNoAskingBefore = 1 << 1,
+	UNUSED_FLAG_1 = 1 << 2,
+	UNUSED_FLAG_2 = 1 << 3,
+	IsAccepted = 1 << 4
+};
+
 server.json('/api/quiz_list', async (req, url, json) => {
 	const quizzes = await db.get_all('SELECT * FROM quizzes');
 	return { quizzes };
