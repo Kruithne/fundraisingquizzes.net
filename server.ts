@@ -549,7 +549,11 @@ register_session_endpoint('/api/quiz_list', async (req, url, json, session) => {
 
 register_session_endpoint('/api/quiz_bookmark', async (req, url, json, session) => {
 	if (typeof json.quiz_id !== 'number')
-		return { error: 'Invalid quiz bookmarked' };
+		return { error: 'Invalid quiz ID' };
+
+	const quiz_exists = await db.exists('SELECT 1 FROM `quizzes` WHERE `id` = ?', json.quiz_id);
+	if (!quiz_exists)
+		return { error: 'Selected quiz does not exist' };
 
 	const existing = await db.get_single(
 		'SELECT `id` FROM `quiz_bookmarks` WHERE `quiz_id` = ? AND `user_id` = ?',
