@@ -56,6 +56,10 @@ const app = createApp({
 		is_quiz_updated(quiz) {
 			const current_ts = Date.now();
 			return quiz.updated_ts !== quiz.created_ts && (current_ts - quiz.updated_ts) <= (4 * UNIX_DAY);
+		},
+
+		is_quiz_closed(quiz) {
+			return new Date() > new Date(quiz.closing);
 		}
 	}
 });

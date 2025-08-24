@@ -14,7 +14,7 @@
 		<h1>{{ quiz.title }} in aid of {{ quiz.charity }}</h1>
 		<div class="quiz-sub">
 			<p>{{ QUIZ_TYPES[quiz.type] }}</p>
-			<p>Closes {{ format_date_relative(quiz.closing) }} ({{ format_date(quiz.closing) }})</p>
+			<p>{{ is_quiz_closed(quiz) ? 'Closed' : 'Closes' }} {{ format_date_relative(quiz.closing) }} ({{ format_date(quiz.closing) }})</p>
 			<p v-if="quiz.flags & QUIZ_FLAGS.AnswerPolicyNoAskingAllowed">No asking allowed</p>
 			<p v-if="quiz.flags & QUIZ_FLAGS.AnswerPolicyNoAskingBefore">No asking before closing</p>
 			<p v-if="is_quiz_new(quiz)" class="quiz-flag quiz-flag-new">New!</p>
