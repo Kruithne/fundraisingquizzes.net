@@ -512,10 +512,15 @@ enum QuizFlags { // 32-bit
 	IsAccepted = 1 << 4
 };
 
-server.json('/api/quiz_list', async (req, url, json) => {
-	const quizzes = await db.get_all('SELECT * FROM quizzes');
+register_session_endpoint('/api/quiz_list', async (req, url, json, session) => {
+	if (session && session.flags & UserAccountFlags.AdminAccount) {
+		const quizzes = await db.get_all('SELECT * FROM `quizzes`');
+		return { quizzes };
+	}
+
+	const quizzes = await db.get_all('SELECT * FROM `quizzes` WHERE (`flags` & ?) > 0', QuizFlags.IsAccepted);
 	return { quizzes };
-});
+}, false);
 // endregion
 
 // region api user
