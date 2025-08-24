@@ -20,3 +20,7 @@ ALTER TABLE `quizzes` ADD column `closing` DATE;
 
 -- [5] add flags column
 ALTER TABLE `quizzes` ADD column `flags` INT UNSIGNED NOT NULL DEFAULT 0;
+
+-- [6] add created_ts and updated_ts columns
+ALTER TABLE `quizzes` ADD column `created_ts` BIGINT UNSIGNED NOT NULL DEFAULT (UNIX_TIMESTAMP() * 1000);
+ALTER TABLE `quizzes` ADD column `updated_ts` BIGINT UNSIGNED NOT NULL DEFAULT (UNIX_TIMESTAMP() * 1000);

@@ -17,6 +17,8 @@
 			<p>Closes {{ format_date_relative(quiz.closing) }} ({{ format_date(quiz.closing) }})</p>
 			<p v-if="quiz.flags & QUIZ_FLAGS.AnswerPolicyNoAskingAllowed">No asking allowed</p>
 			<p v-if="quiz.flags & QUIZ_FLAGS.AnswerPolicyNoAskingBefore">No asking before closing</p>
+			<p v-if="is_quiz_new(quiz)" class="quiz-flag quiz-flag-new">New!</p>
+			<p v-if="is_quiz_updated(quiz)" class="quiz-flag quiz-flag-updated">Updated!</p>
 		</div>
 		<p>{{ quiz.description }}</p>
 		<div class="quiz-options">

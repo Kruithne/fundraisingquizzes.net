@@ -1,6 +1,11 @@
 import { createApp } from '/{{cache_bust=static/js/lib/vue.esm.prod.js}}';
 import { document_load, query_api, on_user_presence, format_date_relative, format_date } from '/{{cache_bust=static/js/client_global.s.js}}';
 
+const UNIX_SECOND = 1000;
+const UNIX_MINUTE = UNIX_SECOND * 60;
+const UNIX_HOUR = UNIX_MINUTE * 60;
+const UNIX_DAY = UNIX_HOUR * 24;
+
 const QUIZ_TYPES = [
 	'Miscellaneous',
 	'Picture Quiz',
@@ -40,7 +45,17 @@ const app = createApp({
 
 	methods: {
 		format_date_relative,
-		format_date
+		format_date,
+
+		is_quiz_new(quiz) {
+			const current_ts = Date.now();
+			return (current_ts - quiz.created_ts) <= (7 * UNIX_DAY);
+		},
+
+		is_quiz_updated(quiz) {
+			const current_ts = Date.now();
+			return quiz.updated_ts !== quiz.created_ts && (current_ts - quiz.updated_ts) <= (4 * UNIX_DAY);
+		}
 	}
 });
 
