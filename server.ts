@@ -513,14 +513,61 @@ enum QuizFlags { // 32-bit
 };
 
 register_session_endpoint('/api/quiz_list', async (req, url, json, session) => {
-	if (session && session.flags & UserAccountFlags.AdminAccount) {
-		const quizzes = await db.get_all('SELECT * FROM `quizzes`');
-		return { quizzes };
+	if (session) {
+		const params = [session.user_id];
+		let query = `
+			SELECT 
+				q.id,
+				q.title,
+				q.charity,
+				q.description,
+				q.type,
+				q.closing,
+				q.flags,
+				q.created_ts,
+				q.updated_ts,
+				CASE WHEN b.quiz_id IS NOT NULL THEN 1 ELSE 0 END AS is_bookmarked
+			FROM quizzes AS q 
+			LEFT JOIN quiz_bookmarks AS b ON b.quiz_id = q.id AND b.user_id = ?
+		`;
+
+		if (session.flags & UserAccountFlags.AdminAccount) {
+			// todo
+		} else {
+			query += ' WHERE (q.`flags` & ?) > 0';
+			params.push(QuizFlags.IsAccepted);
+		}
+
+		return {
+			quizzes: await db.get_all(query, ...params)
+		};
 	}
 
 	const quizzes = await db.get_all('SELECT * FROM `quizzes` WHERE (`flags` & ?) > 0', QuizFlags.IsAccepted);
 	return { quizzes };
 }, false);
+
+register_session_endpoint('/api/quiz_bookmark', async (req, url, json, session) => {
+	if (typeof json.quiz_id !== 'number')
+		return { error: 'Invalid quiz bookmarked' };
+
+	const existing = await db.get_single(
+		'SELECT `id` FROM `quiz_bookmarks` WHERE `quiz_id` = ? AND `user_id` = ?',
+		json.quiz_id, session.user_id
+	);
+
+	if (existing !== null) {
+		await db.execute('DELETE FROM `quiz_bookmarks` WHERE `id` = ?', existing.id);
+		return { success: true, removed: true };
+	} else {
+		await db.insert_object('quiz_bookmarks', {
+			quiz_id: json.quiz_id,
+			user_id: session.user_id
+		});
+
+		return { success: true, removed: false };
+	}
+}, true);
 // endregion
 
 // region api user

@@ -100,6 +100,11 @@
 	background-image: url('/{{cache_bust=static/images/query_flag_16.png}}');
 }
 
+.quiz-bookmarked {
+	border-color: #ffa500;
+	background-color: #fff6e6;
+}
+
 @media (max-width: 880px) {
 	.quiz-info {
 		gap: 10px;

@@ -1,5 +1,16 @@
 import { createApp } from '/{{cache_bust=static/js/lib/vue.esm.prod.js}}';
-import { document_load, query_api, on_user_presence, format_date_relative, format_date, create_hyperlinks } from '/{{cache_bust=static/js/client_global.s.js}}';
+
+import {
+	document_load,
+	query_api,
+	on_user_presence,
+	format_date_relative,
+	format_date,
+	create_hyperlinks,
+	show_toast_pending,
+	show_toast_success,
+	show_toast_error
+} from '/{{cache_bust=static/js/client_global.s.js}}';
 
 const UNIX_SECOND = 1000;
 const UNIX_MINUTE = UNIX_SECOND * 60;
@@ -35,6 +46,7 @@ const app = createApp({
 			is_logged_in: false,
 			is_admin: false,
 			loaded: true,
+			is_working: false,
 
 			QUIZ_TYPES,
 			QUIZ_FLAGS,
@@ -46,6 +58,9 @@ const app = createApp({
 	computed: {
 		quizzes_sorted() {
 			return [...this.quizzes].sort((a, b) => {
+				if (a.is_bookmarked !== b.is_bookmarked)
+					return b.is_bookmarked - a.is_bookmarked;
+				
 				const date_a = new Date(a.closing);
 				const date_b = new Date(b.closing);
 				return date_a.getTime() - date_b.getTime();
@@ -70,6 +85,31 @@ const app = createApp({
 
 		is_quiz_closed(quiz) {
 			return new Date() > new Date(quiz.closing);
+		},
+
+		async bookmark_quiz(quiz) {
+			if (this.is_working)
+				return;
+
+			this.is_working = true;
+			show_toast_pending(`Bookmarking ${quiz.title}...`, false);
+
+			const res = await query_api('quiz_bookmark', {
+				quiz_id: quiz.id
+			});
+
+			if (res.error) {
+				show_toast_error(res.error);
+			} else {
+				quiz.is_bookmarked = !res.removed;
+
+				if (res.removed)
+					show_toast_success(`Removed ${quiz.title} from bookmarks`);
+				else
+					show_toast_success(`Added ${quiz.title} to bookmarks`);
+			}
+
+			this.is_working = false;
 		}
 	}
 });

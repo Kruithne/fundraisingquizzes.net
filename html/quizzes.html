@@ -8,7 +8,7 @@
 		<div></div>
 	</div>
 </div>
-<div v-else v-for="quiz in quizzes_sorted" class="module module-padded quiz-entry">
+<div v-else v-for="quiz in quizzes_sorted" class="module module-padded quiz-entry" :class="{ 'quiz-bookmarked': quiz.is_bookmarked }">
 	<div class="quiz-icon" :class="'quiz-type-' + quiz.type"></div>
 	<div class="quiz-info">
 		<h1>{{ quiz.title }} in aid of {{ quiz.charity }}</h1>
@@ -22,7 +22,7 @@
 		</div>
 		<p v-html="create_hyperlinks(quiz.description)"></p>
 		<div class="quiz-options">
-			<a class="quiz-option-bookmark">[Bookmark]</a>
+			<a class="quiz-option-bookmark" v-if="is_logged_in" @click="bookmark_quiz(quiz)">{{ quiz.is_bookmarked ? '[Remove Bookmark]' : '[Bookmark]' }}</a>
 			<a class="quiz-option-vote">[Vote]</a>
 			<a class="quiz-option-queries">[Queries]</a>
 			<a class="quiz-option-edit">[Edit]</a>
