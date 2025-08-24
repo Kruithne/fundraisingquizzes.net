@@ -69,6 +69,18 @@
 	background-image: url('/{{cache_bust=static/images/tick_16.png}}');
 }
 
+.quiz-type-0 { background-position: -240px -60px; }
+.quiz-type-1 { background-position: -60px 0; }
+.quiz-type-2 { background-position: -120px 0; }
+.quiz-type-3 { background-position: -180px 0; }
+.quiz-type-4 { background-position: -240px 0; }
+.quiz-type-5 { background-position: 0 -60px; }
+.quiz-type-6 { background-position: -60px -60px; }
+.quiz-type-7 { background-position: -120px -60px; }
+.quiz-type-8 { background-position: -300px -60px; }
+.quiz-type-9 { background-position: 0 -120px; }
+.quiz-type-10 { background-position: -180px -60px; }
+
 @media (max-width: 880px) {
 	.quiz-info {
 		gap: 10px;
