@@ -238,6 +238,51 @@ function delete_response_cookie(response: Response, name: string, http_only = tr
 }
 // endregion
 
+// region quizzes
+const MAX_QUIZ_VOTES = 3;
+const WEEKLY_QUIZ_CHECK = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+enum QuizFlags { // 32-bit
+	None = 0,
+	AnswerPolicyNoAskingAllowed = 1 << 0,
+	AnswerPolicyNoAskingBefore = 1 << 1,
+	QuizOfTheWeek = 1 << 2,
+	UNUSED_FLAG_2 = 1 << 3,
+	IsAccepted = 1 << 4
+};
+
+let current_weekly_quiz: string|null = null;
+async function quiz_retrieve_weekly_winner() {
+	const quiz_winner = await db.get_single('SELECT `title` FROM `quizzes` WHERE (`flags` & ?) > 0 LIMIT 1', QuizFlags.QuizOfTheWeek);
+	if (quiz_winner !== null) {
+		log(`set quiz of the week to {${quiz_winner.title}}`);
+		current_weekly_quiz = quiz_winner.title;
+	}
+}
+
+async function quiz_process_weekly_winner() {
+	const current_ts = Date.now();
+
+	const winner = await db.get_single('SELECT qv.`quiz_id`, q.`title` FROM `quiz_votes` qv LEFT JOIN `quizzes` q ON q.`id` = qv.`quiz_id` GROUP BY qv.`quiz_id` ORDER BY COUNT(*) DESC LIMIT 1');
+	if (winner !== null) {
+		current_weekly_quiz = winner.title;
+		
+		await db.execute('UPDATE `quizzes` SET `flags` = `flags` & ~? WHERE (`flags` & ?) > 0', QuizFlags.QuizOfTheWeek, QuizFlags.QuizOfTheWeek);
+		await db.execute('UPDATE `quizzes` SET `flags` = `flags` | ? WHERE `id` = ?', QuizFlags.QuizOfTheWeek, winner.quiz_id);
+	}
+
+	await db.execute('DELETE FROM `quiz_votes`');
+	await db.execute('UPDATE `kv_store` SET `value` = ? WHERE `key` = ?', current_ts, 'last_weekly_quiz');
+}
+
+function quiz_exists(quiz_id: number): Promise<boolean> {
+	return db.exists('SELECT 1 FROM `quizzes` WHERE `id` = ?', quiz_id);
+}
+
+quiz_retrieve_weekly_winner();
+quiz_process_weekly_winner();
+// endregion
+
 // region users
 enum UserAccountFlags { // 32-bit
 	None = 0,
@@ -503,18 +548,9 @@ server.json('/api/today_in_history', async (req, url, json) => {
 // endregion
 
 // region api quizzes
-enum QuizFlags { // 32-bit
-	None = 0,
-	AnswerPolicyNoAskingAllowed = 1 << 0,
-	AnswerPolicyNoAskingBefore = 1 << 1,
-	UNUSED_FLAG_1 = 1 << 2,
-	UNUSED_FLAG_2 = 1 << 3,
-	IsAccepted = 1 << 4
-};
-
 register_session_endpoint('/api/quiz_list', async (req, url, json, session) => {
 	if (session) {
-		const params = [session.user_id];
+		const params = [session.user_id, session.user_id];
 		let query = `
 			SELECT 
 				q.id,
@@ -526,9 +562,11 @@ register_session_endpoint('/api/quiz_list', async (req, url, json, session) => {
 				q.flags,
 				q.created_ts,
 				q.updated_ts,
-				CASE WHEN b.quiz_id IS NOT NULL THEN 1 ELSE 0 END AS is_bookmarked
+				CASE WHEN b.quiz_id IS NOT NULL THEN 1 ELSE 0 END AS is_bookmarked,
+				CASE WHEN v.quiz_id IS NOT NULL THEN 1 ELSE 0 END AS is_voted
 			FROM quizzes AS q 
 			LEFT JOIN quiz_bookmarks AS b ON b.quiz_id = q.id AND b.user_id = ?
+			LEFT JOIN quiz_votes AS v ON v.quiz_id = q.id AND v.user_id = ?
 		`;
 
 		if (session.flags & UserAccountFlags.AdminAccount) {
@@ -547,12 +585,37 @@ register_session_endpoint('/api/quiz_list', async (req, url, json, session) => {
 	return { quizzes };
 }, false);
 
+server.json('/api/quiz_of_the_week', async (req, url, json) => {
+	return { quiz: current_weekly_quiz };
+});
+
+register_session_endpoint('/api/quiz_vote', async (req, url, json, session) => {
+	if (typeof json.quiz_id !== 'number')
+		return { error: 'Invalid quiz ID' };
+
+	if (!(await quiz_exists(json.quiz_id)))
+		return { error: 'Selected quiz does not exist' };
+
+	const votes = await db.get_all('SELECT `quiz_id` FROM `quiz_votes` WHERE `user_id` = ?', session.user_id);
+	if (votes.some(e => e.quiz_id === json.quiz_id))
+		return { error: 'You have already voted for this quiz' };
+
+	if (votes.length >= MAX_QUIZ_VOTES)
+		return { error: `You have already voted for ${MAX_QUIZ_VOTES} quizzes this week` }
+	
+	await db.insert_object('quiz_votes', {
+		quiz_id: json.quiz_id,
+		user_id: session.user_id
+	});
+
+	return { success: true };
+}, true);
+
 register_session_endpoint('/api/quiz_bookmark', async (req, url, json, session) => {
 	if (typeof json.quiz_id !== 'number')
 		return { error: 'Invalid quiz ID' };
 
-	const quiz_exists = await db.exists('SELECT 1 FROM `quizzes` WHERE `id` = ?', json.quiz_id);
-	if (!quiz_exists)
+	if (!(await quiz_exists(json.quiz_id)))
 		return { error: 'Selected quiz does not exist' };
 
 	const existing = await db.get_single(
@@ -1090,6 +1153,11 @@ const MAINTENANCE_ROUTINE_TIMER = 86400000; // 24 hours
 
 async function maintenance_routine() {
 	const time_now = Date.now();
+
+	// process quiz of the week
+	const kv_qotw = await db.get_single('SELECT `value` FROM `kv_store` WHERE `key` = ? LIMIT 1', 'last_weekly_quiz');
+	if (kv_qotw === null || time_now - kv_qotw.value >= WEEKLY_QUIZ_CHECK)
+		quiz_process_weekly_winner();
 
 	// expire in-memory sessions older than 24 hours.
 	for (const [session_id, session] of user_session_cache.entries()) {

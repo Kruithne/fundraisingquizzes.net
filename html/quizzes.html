@@ -1,3 +1,7 @@
+<div class="module module-padded">
+	<p><b>Voting:</b> You can vote for three quizzes a week, the quiz with the highest vote at the end of each week becomes Quiz of the Week.</p>
+	<p><b>Bookmarking:</b> Quizzes you bookmark will show up at the top of the list for you regardless of their closing date.</p>
+</div>
 <div v-if="!loaded" class="module module-padded">
 	<div class="loader">
 		<div></div>
@@ -22,8 +26,11 @@
 		</div>
 		<p v-html="create_hyperlinks(quiz.description)"></p>
 		<div class="quiz-options">
-			<a class="quiz-option-bookmark" v-if="is_logged_in" @click="bookmark_quiz(quiz)">{{ quiz.is_bookmarked ? '[Remove Bookmark]' : '[Bookmark]' }}</a>
-			<a class="quiz-option-vote">[Vote]</a>
+			<template v-if="is_logged_in">
+				<a class="quiz-option-bookmark" @click="bookmark_quiz(quiz)">{{ quiz.is_bookmarked ? '[Remove Bookmark]' : '[Bookmark]' }}</a>
+				<span class="quiz-option-vote" v-if="quiz.is_voted">You have voted for this quiz!</span>
+				<a v-else-if="can_vote" class="quiz-option-vote" @click="vote_quiz(quiz)">[Vote]</a>
+			</template>
 			<a class="quiz-option-queries">[Queries]</a>
 			<a class="quiz-option-edit">[Edit]</a>
 			<a class="quiz-option-approve">[Approve]</a>

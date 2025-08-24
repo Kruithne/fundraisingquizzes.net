@@ -39,7 +39,7 @@
 	gap: 20px;
 }
 
-.quiz-options > a {
+.quiz-options > * {
 	padding-left: 20px;
 	background-repeat: no-repeat;
 	background-position: center left;

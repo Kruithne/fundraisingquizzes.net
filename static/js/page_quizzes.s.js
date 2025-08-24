@@ -17,6 +17,8 @@ const UNIX_MINUTE = UNIX_SECOND * 60;
 const UNIX_HOUR = UNIX_MINUTE * 60;
 const UNIX_DAY = UNIX_HOUR * 24;
 
+const MAX_QUIZ_VOTES = 3;
+
 const QUIZ_TYPES = [
 	'Miscellaneous',
 	'Picture Quiz',
@@ -65,6 +67,14 @@ const app = createApp({
 				const date_b = new Date(b.closing);
 				return date_a.getTime() - date_b.getTime();
 			});
+		},
+
+		user_vote_count() {
+			return this.quizzes.filter(e => e.is_voted).length;
+		},
+
+		can_vote() {
+			return this.user_vote_count < MAX_QUIZ_VOTES;
 		}
 	},
 
@@ -85,6 +95,27 @@ const app = createApp({
 
 		is_quiz_closed(quiz) {
 			return new Date() > new Date(quiz.closing);
+		},
+
+		async vote_quiz(quiz) {
+			if (this.is_working)
+				return;
+
+			this.is_working = true;
+			show_toast_pending(`Voting for ${quiz.title}...`, false);
+
+			const res = await query_api('quiz_vote', {
+				quiz_id: quiz.id
+			});
+
+			if (res.error) {
+				show_toast_error(res.error);
+			} else {
+				quiz.is_voted = true;
+				show_toast_success(`Voted for ${quiz.title}`);
+			}
+
+			this.is_working = false;
 		},
 
 		async bookmark_quiz(quiz) {

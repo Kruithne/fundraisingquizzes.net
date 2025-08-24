@@ -4,7 +4,8 @@ import { createApp } from '/{{cache_bust=static/js/lib/vue.esm.prod.js}}';
 const app = createApp({
 	data() {
 		return {
-			today_in_history: new Date().toLocaleDateString('en-US', { weekday: 'long' })
+			today_in_history: new Date().toLocaleDateString('en-US', { weekday: 'long' }),
+			quiz_of_the_week: 'Find out next week!'
 		}
 	}
 });
@@ -13,6 +14,11 @@ const app = createApp({
 	await document_load();
 
 	const state = app.mount('#content-container');
+
+	query_api('quiz_of_the_week').then(data => {
+		if (data.quiz !== null)
+			state.quiz_of_the_week = data.quiz;
+	});
 
 	const today = new Date();
 	const cache_key = 'fq_today_in_history';
