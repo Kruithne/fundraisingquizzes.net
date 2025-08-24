@@ -8,7 +8,7 @@
 		<div></div>
 	</div>
 </div>
-<div v-else v-for="quiz in quizzes" class="module module-padded quiz-entry">
+<div v-else v-for="quiz in quizzes_sorted" class="module module-padded quiz-entry">
 	<div class="quiz-icon" :class="'quiz-type-' + quiz.type"></div>
 	<div class="quiz-info">
 		<h1>{{ quiz.title }} in aid of {{ quiz.charity }}</h1>

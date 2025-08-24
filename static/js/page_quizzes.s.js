@@ -43,6 +43,16 @@ const app = createApp({
 		}
 	},
 
+	computed: {
+		quizzes_sorted() {
+			return [...this.quizzes].sort((a, b) => {
+				const date_a = new Date(a.closing);
+				const date_b = new Date(b.closing);
+				return date_a.getTime() - date_b.getTime();
+			});
+		}
+	},
+
 	methods: {
 		format_date_relative,
 		format_date,
