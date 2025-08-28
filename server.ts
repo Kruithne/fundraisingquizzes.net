@@ -1183,6 +1183,12 @@ const MAINTENANCE_ROUTINE_TIMER = 86400000; // 24 hours
 async function maintenance_routine() {
 	const time_now = Date.now();
 
+	// mark quizzes that are over their closing date as deleted
+	await db.execute('UPDATE `quizzes` SET `flags` = `flags` | ? WHERE `closing` < CURDATE()');
+
+	// delete quizzes that are over 1 month past their closing date.
+	await db.execute('DELETE FROM `quizzes` WHERE `closing` < DATE_SUB(NOW(), INTERVAL 1 MONTH)');
+
 	// process quiz of the week
 	const kv_qotw = await db.get_single('SELECT `value` FROM `kv_store` WHERE `key` = ? LIMIT 1', 'last_weekly_quiz');
 	if (kv_qotw === null || time_now - kv_qotw.value >= WEEKLY_QUIZ_CHECK)
