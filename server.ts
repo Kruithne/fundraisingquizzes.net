@@ -279,6 +279,10 @@ function quiz_exists(quiz_id: number): Promise<boolean> {
 	return db.exists('SELECT 1 FROM `quizzes` WHERE `id` = ?', quiz_id);
 }
 
+function quiz_query_exists(query_id: number): Promise<boolean> {
+	return db.exists('SELECT 1 FROM `quiz_queries` WHERE `id` = ?', query_id);
+}
+
 quiz_retrieve_weekly_winner();
 quiz_process_weekly_winner();
 // endregion
@@ -580,10 +584,16 @@ register_session_endpoint('/api/quiz_list', async (req, url, json, session) => {
 				q.created_ts,
 				q.updated_ts,
 				CASE WHEN b.quiz_id IS NOT NULL THEN 1 ELSE 0 END AS is_bookmarked,
-				CASE WHEN v.quiz_id IS NOT NULL THEN 1 ELSE 0 END AS is_voted
+				CASE WHEN v.quiz_id IS NOT NULL THEN 1 ELSE 0 END AS is_voted,
+				COALESCE(qq.query_count, 0) AS query_count
 			FROM quizzes AS q 
 			LEFT JOIN quiz_bookmarks AS b ON b.quiz_id = q.id AND b.user_id = ?
 			LEFT JOIN quiz_votes AS v ON v.quiz_id = q.id AND v.user_id = ?
+			LEFT JOIN (
+				SELECT quiz_id, COUNT(*) AS query_count
+				FROM quiz_queries
+				GROUP BY quiz_id
+			) AS qq ON qq.quiz_id = q.id
 			WHERE (q.flags & ?) = 0
 		`;
 
@@ -603,48 +613,130 @@ register_session_endpoint('/api/quiz_list', async (req, url, json, session) => {
 	return { quizzes };
 }, false);
 
+server.json('/api/quiz_queries', async (req, url, json) => {
+	if (typeof json.id !== 'number')
+		return { error: 'Invalid quiz ID' };
+
+	if (!(await quiz_exists(json.id)))
+		return { error: 'Selected quiz does not exist' };
+
+	const queries = await db.get_all('SELECT * FROM `view_quiz_queries` WHERE `quiz_id` = ?', json.id);
+	return { queries };
+});
+
 server.json('/api/quiz_of_the_week', async (req, url, json) => {
 	return { quiz: current_weekly_quiz };
 });
 
-register_admin_endpoint('/api/quiz_approve', async (req, url, json, session) => {
-	if (typeof json.quiz_id !== 'number')
+register_session_endpoint('/api/quiz_add_query_answer', async (req, url, json, session) => {
+	if (typeof json.id !== 'number')
 		return { error: 'Invalid quiz ID' };
 
-	if (!(await quiz_exists(json.quiz_id)))
+	if (typeof json.text !== 'string')
+		return { error: 'No query answer provided' };
+
+	if (json.text.length > 255)
+		return { error: 'Query answer cannot be longer than 255 characters' };
+
+	if (!(await quiz_query_exists(json.id)))
+		return { error: 'Selected query does not exist' };
+
+	await db.execute(
+		'UPDATE `quiz_queries` SET `answer_text` = ?, `answer_user_id` = ? WHERE `id` = ?',
+		json.text,
+		session.user_id,
+		json.id
+	);
+
+	return { success: true, text: json.text };
+}, true);
+
+register_session_endpoint('/api/quiz_add_query', async (req, url, json, session) => {
+	if (typeof json.id !== 'number')
+		return { error: 'Invalid quiz ID' };
+
+	if (typeof json.text !== 'string')
+		return { error: 'No query provided' };
+
+	if (json.text.length > 255)
+		return { error: 'Query cannot be longer than 255 characters' };
+
+	if (!(await quiz_exists(json.id)))
 		return { error: 'Selected quiz does not exist' };
 
-	await db.execute('UPDATE `quizzes` SET `flags` = `flags` | ? WHERE `id` = ? LIMIT 1', QuizFlags.IsAccepted, json.quiz_id);
+	const query_id = db.insert_object('quiz_queries', {
+		quiz_id: json.id,
+		query_user_id: session.user_id,
+		query_text: json.text
+	});
+
+	return {
+		success: true,
+		text: json.text,
+		query_id: query_id
+	} as any;
+}, true);
+
+register_admin_endpoint('/api/quiz_delete_query', async (req, url, json, session) => {
+	if (typeof json.id !== 'number')
+		return { error: 'Invalid query ID' };
+
+	if (!(await quiz_query_exists(json.id)))
+		return { error: 'Selected query does not exist' };
+
+	await db.execute('DELETE FROM `quiz_queries` WHERE `id` = ? LIMIT 1', json.id);
+	return { success: true };
+});
+
+register_admin_endpoint('/api/quiz_delete_query_answer', async (req, url, json, session) => {
+	if (typeof json.id !== 'number')
+		return { error: 'Invalid query ID' };
+
+	if (!(await quiz_query_exists(json.id)))
+		return { error: 'Selected query does not exist' };
+
+	await db.execute('UPDATE `quiz_queries` SET `answer_text` = NULL, `answer_user_id` = NULL WHERE `id` = ?', json.id);
+	return { success: true };
+});
+
+register_admin_endpoint('/api/quiz_approve', async (req, url, json, session) => {
+	if (typeof json.id !== 'number')
+		return { error: 'Invalid quiz ID' };
+
+	if (!(await quiz_exists(json.id)))
+		return { error: 'Selected quiz does not exist' };
+
+	await db.execute('UPDATE `quizzes` SET `flags` = `flags` | ? WHERE `id` = ? LIMIT 1', QuizFlags.IsAccepted, json.id);
 	return { success: true };
 });
 
 register_admin_endpoint('/api/quiz_delete', async (req, url, json, session) => {
-	if (typeof json.quiz_id !== 'number')
+	if (typeof json.id !== 'number')
 		return { error: 'Invalid quiz ID' };
 
-	if (!(await quiz_exists(json.quiz_id)))
+	if (!(await quiz_exists(json.id)))
 		return { error: 'Selected quiz does not exist' };
 
-	await db.execute('UPDATE `quizzes` SET `flags` = `flags` | ? WHERE `id` = ? LIMIT 1', QuizFlags.IsDeleted, json.quiz_id);
+	await db.execute('UPDATE `quizzes` SET `flags` = `flags` | ? WHERE `id` = ? LIMIT 1', QuizFlags.IsDeleted, json.id);
 	return { success: true };
 });
 
 register_session_endpoint('/api/quiz_vote', async (req, url, json, session) => {
-	if (typeof json.quiz_id !== 'number')
+	if (typeof json.id !== 'number')
 		return { error: 'Invalid quiz ID' };
 
-	if (!(await quiz_exists(json.quiz_id)))
+	if (!(await quiz_exists(json.id)))
 		return { error: 'Selected quiz does not exist' };
 
 	const votes = await db.get_all('SELECT `quiz_id` FROM `quiz_votes` WHERE `user_id` = ?', session.user_id);
-	if (votes.some(e => e.quiz_id === json.quiz_id))
+	if (votes.some(e => e.quiz_id === json.id))
 		return { error: 'You have already voted for this quiz' };
 
 	if (votes.length >= MAX_QUIZ_VOTES)
 		return { error: `You have already voted for ${MAX_QUIZ_VOTES} quizzes this week` }
 	
 	await db.insert_object('quiz_votes', {
-		quiz_id: json.quiz_id,
+		quiz_id: json.id,
 		user_id: session.user_id
 	});
 
@@ -652,15 +744,15 @@ register_session_endpoint('/api/quiz_vote', async (req, url, json, session) => {
 }, true);
 
 register_session_endpoint('/api/quiz_bookmark', async (req, url, json, session) => {
-	if (typeof json.quiz_id !== 'number')
+	if (typeof json.id !== 'number')
 		return { error: 'Invalid quiz ID' };
 
-	if (!(await quiz_exists(json.quiz_id)))
+	if (!(await quiz_exists(json.id)))
 		return { error: 'Selected quiz does not exist' };
 
 	const existing = await db.get_single(
 		'SELECT `id` FROM `quiz_bookmarks` WHERE `quiz_id` = ? AND `user_id` = ?',
-		json.quiz_id, session.user_id
+		json.id, session.user_id
 	);
 
 	if (existing !== null) {
@@ -668,7 +760,7 @@ register_session_endpoint('/api/quiz_bookmark', async (req, url, json, session) 
 		return { success: true, removed: true };
 	} else {
 		await db.insert_object('quiz_bookmarks', {
-			quiz_id: json.quiz_id,
+			quiz_id: json.id,
 			user_id: session.user_id
 		});
 

@@ -50,6 +50,9 @@ const app = createApp({
 			loaded: true,
 			is_working: false,
 
+			current_user_id: 0,
+			current_username: 'Unknown Quizzer',
+
 			QUIZ_TYPES,
 			QUIZ_FLAGS,
 
@@ -103,16 +106,30 @@ const app = createApp({
 			return new Date() > new Date(quiz.closing);
 		},
 
-		async process_quiz_action(quiz, options) {
+		async process_quiz_action(target, options) {
 			if (options.confirm && !window.confirm(options.confirm))
 				return;
+
+			let response;
+			if (options.prompt) {
+				response = window.prompt(options.prompt);
+
+				if (response === null)
+					return;
+
+				if (options.prompt_max_length && response.length > options.prompt_max_length)
+					return show_toast_error(`Please use less than ${options.prompt_max_length} characters`);
+			}
 
 			this.is_working = true;
 			show_toast_pending(options.pending ?? 'Working, please wait...', false);
 
-			const res = await query_api(options.endpoint, {
-				quiz_id: quiz.id
-			});
+			const payload = { id: target.id };
+
+			if (options.prompt)
+				payload.text = response;
+
+			const res = await query_api(options.endpoint, payload);
 
 			if (res.error) {
 				show_toast_error(res.error);
@@ -138,15 +155,87 @@ const app = createApp({
 
 		},
 
+		async delete_query(quiz, query) {
+			await this.process_quiz_action(query, {
+				endpoint: 'quiz_delete_query',
+				confirm: `Are you sure you want to delete this query by ${query.query_username}? This action cannot be reversed.`,
+				pending: `Deleting query...`,
+				success: res => {
+					quiz.queries.splice(quiz.queries.indexOf(query), 1);
+					return `Successfully deleted query by ${query.query_username}`;
+				}
+			});
+		},
+
+		async delete_query_answer(query) {
+			await this.process_quiz_action(query, {
+				endpoint: 'quiz_delete_query_answer',
+				confirm: `Are you sure you want to delete this answer by ${query.answer_username}? This action cannot be reversed.`,
+				pending: `Deleting query answer...`,
+				success: res => {
+					query.answer_text = null;
+					query.answer_user_id = null;
+					query.answer_username = null;
+					return `Successfully deleted query answer by ${query.answer_username}`;
+				}
+			});
+		},
+
+		async toggle_quiz_queries(quiz) {
+			quiz.is_showing_queries = !quiz.is_showing_queries
+
+			if (quiz.is_showing_queries && !quiz.queries) {
+				const res = await query_api('quiz_queries', { id: quiz.id });
+				if (!res.error)
+					quiz.queries = res.queries;
+			}
+		},
+
+		async add_query(quiz) {
+			await this.process_quiz_action(quiz, {
+				endpoint: 'quiz_add_query',
+				prompt: 'Enter your query',
+				prompt_max_length: 255,
+				pending: `Submitting query for ${quiz.title}...`,
+				success: res => {
+					(quiz.queries ??= []).push({
+						id: res.query_id,
+						quiz_id: quiz.id,
+						query_user_id: this.current_user_id,
+						query_username: this.current_username,
+						query_text: res.text,
+					});
+
+					quiz.query_count += 1;
+
+					return `Successfully submitted query`
+				}
+			});
+		},
+
+		async add_query_answer(query) {
+			await this.process_quiz_action(query, {
+				endpoint: 'quiz_add_query_answer',
+				prompt: 'Enter your answer',
+				prompt_max_length: 255,
+				pending: `Submitting query answer...`,
+				success: res => {
+					query.answer_text = res.text;
+					query.answer_user_id = this.current_user_id;
+					query.answer_username = this.current_username;
+
+					return `Successfully answered quiz query`;
+				}
+			});
+		},
+
 		async delete_quiz(quiz) {
 			await this.process_quiz_action(quiz, {
 				endpoint: 'quiz_delete',
 				confirm: `Are you sure you want to delete ${quiz.title}? This action cannot be reversed.`,
 				pending: `Deleting quiz ${quiz.title}...`,
 				success: res => {
-					const quiz_idx = this.quizzes.indexOf(quiz);
-					this.quizzes.splice(quiz_idx, 1);
-					
+					this.quizzes.splice(this.quizzes.indexOf(quiz), 1);
 					return `Deleted quiz ${quiz.title}`;
 				}
 			});
@@ -185,6 +274,8 @@ document_load().then(async () => {
 
 	on_user_presence(presence => {
 		state.is_logged_in = true;
+		state.current_user_id = presence.user_id;
+		state.current_username = presence.username;
 
 		if (presence.flags & (1 << 2))
 			state.is_admin = true;

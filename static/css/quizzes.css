@@ -110,6 +110,37 @@
 	background-color: #e6f7ff;
 }
 
+.quiz-queries-visible {
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+.quiz-queries {
+	margin-top: -10px;
+	border-top: 0;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.quiz-query {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	border: 1px dashed grey;
+	padding: 10px;
+}
+
+.quiz-query-header {
+	font-weight: bold;
+}
+
+.quiz-query-text {
+	font-style: italic;
+}
+
 @media (max-width: 880px) {
 	.quiz-info {
 		gap: 10px;
