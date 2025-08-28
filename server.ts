@@ -562,7 +562,12 @@ server.json('/api/today_in_history', async (req, url, json) => {
 // region api quizzes
 register_session_endpoint('/api/quiz_list', async (req, url, json, session) => {
 	if (session) {
-		const params = [session.user_id, session.user_id];
+		const params = [
+			session.user_id,
+			session.user_id,
+			QuizFlags.IsDeleted
+		];
+
 		let query = `
 			SELECT 
 				q.id,
@@ -579,12 +584,13 @@ register_session_endpoint('/api/quiz_list', async (req, url, json, session) => {
 			FROM quizzes AS q 
 			LEFT JOIN quiz_bookmarks AS b ON b.quiz_id = q.id AND b.user_id = ?
 			LEFT JOIN quiz_votes AS v ON v.quiz_id = q.id AND v.user_id = ?
+			WHERE (q.flags & ?) = 0
 		`;
 
 		if (session.flags & UserAccountFlags.AdminAccount) {
 			// todo
 		} else {
-			query += ' WHERE (q.`flags` & ?) > 0';
+			query += ' AND (q.flags & ?) > 0';
 			params.push(QuizFlags.IsAccepted);
 		}
 
