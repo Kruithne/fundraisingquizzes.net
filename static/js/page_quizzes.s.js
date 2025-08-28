@@ -97,50 +97,57 @@ const app = createApp({
 			return new Date() > new Date(quiz.closing);
 		},
 
-		async vote_quiz(quiz) {
-			if (this.is_working)
+		async process_quiz_action(quiz, options) {
+			if (options.confirm && !window.confirm(options.confirm))
 				return;
 
 			this.is_working = true;
-			show_toast_pending(`Voting for ${quiz.title}...`, false);
+			show_toast_pending(options.pending ?? 'Working, please wait...', false);
 
-			const res = await query_api('quiz_vote', {
+			const res = await query_api(options.endpoint, {
 				quiz_id: quiz.id
 			});
 
 			if (res.error) {
 				show_toast_error(res.error);
 			} else {
-				quiz.is_voted = true;
-				show_toast_success(`Voted for ${quiz.title}`);
+				if (typeof options.success === 'function')
+					show_toast_success(options.success(res));
+				else
+					show_toast_success(options.success ?? 'Completed successfully!');
 			}
 
 			this.is_working = false;
 		},
 
-		async bookmark_quiz(quiz) {
-			if (this.is_working)
-				return;
-
-			this.is_working = true;
-			show_toast_pending(`Bookmarking ${quiz.title}...`, false);
-
-			const res = await query_api('quiz_bookmark', {
-				quiz_id: quiz.id
+		async delete_quiz(quiz) {
+			await this.process_quiz_action(quiz, {
+				endpoint: 'quiz_delete',
+				confirm: `Are you sure you want to delete ${quiz.title}? This action cannot be reversed.`,
+				pending: `Deleting quiz ${quiz.title}...`,
+				success: `Deleted quiz ${quiz.title}`
 			});
+		},
 
-			if (res.error) {
-				show_toast_error(res.error);
-			} else {
-				quiz.is_bookmarked = !res.removed;
+		async vote_quiz(quiz) {
+			await this.process_quiz_action(quiz, {
+				endpoint: 'quiz_vote',
+				pending: `Voting for ${quiz.title}...`,
+				success: `Voted for ${quiz.title}`
+			});
+		},
 
-				if (res.removed)
-					show_toast_success(`Removed ${quiz.title} from bookmarks`);
-				else
-					show_toast_success(`Added ${quiz.title} to bookmarks`);
-			}
+		async bookmark_quiz(quiz) {
+			await this.process_quiz_action(quiz, {
+				endpoint: 'quiz_bookmark',
+				pending: `Bookmarking ${quiz.title}...`,
+				success: res => {
+					if (res.removed)
+						return `Removed ${quiz.title} from bookmarks`;
 
-			this.is_working = false;
+					return `Added ${quiz.title} to bookmarks`;
+				}
+			});
 		}
 	}
 });
@@ -151,7 +158,7 @@ document_load().then(async () => {
 	on_user_presence(presence => {
 		state.is_logged_in = true;
 
-		if (presence.flags & (3 << 0))
+		if (presence.flags & (1 << 3))
 			state.is_admin = true;
 	});
 
