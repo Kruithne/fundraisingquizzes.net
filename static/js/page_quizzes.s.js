@@ -163,6 +163,8 @@ const app = createApp({
 				endpoint: 'quiz_bookmark',
 				pending: `Bookmarking ${quiz.title}...`,
 				success: res => {
+					quiz.is_bookmarked = !res.removed;
+					
 					if (res.removed)
 						return `Removed ${quiz.title} from bookmarks`;
 
