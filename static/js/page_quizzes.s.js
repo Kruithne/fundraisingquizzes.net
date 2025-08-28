@@ -151,7 +151,10 @@ const app = createApp({
 			await this.process_quiz_action(quiz, {
 				endpoint: 'quiz_vote',
 				pending: `Voting for ${quiz.title}...`,
-				success: `Voted for ${quiz.title}`
+				success: res => {
+					quiz.is_voted = true;
+					return `Voted for ${quiz.title}`;
+				}
 			});
 		},
 
