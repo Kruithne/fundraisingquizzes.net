@@ -158,7 +158,7 @@ document_load().then(async () => {
 	on_user_presence(presence => {
 		state.is_logged_in = true;
 
-		if (presence.flags & (1 << 3))
+		if (presence.flags & (1 << 2))
 			state.is_admin = true;
 	});
 
