@@ -143,7 +143,12 @@ const app = createApp({
 				endpoint: 'quiz_delete',
 				confirm: `Are you sure you want to delete ${quiz.title}? This action cannot be reversed.`,
 				pending: `Deleting quiz ${quiz.title}...`,
-				success: `Deleted quiz ${quiz.title}`
+				success: res => {
+					const quiz_idx = this.quizzes.indexOf(quiz);
+					this.quizzes.splice(quiz_idx, 1);
+					
+					return `Deleted quiz ${quiz.title}`;
+				}
 			});
 		},
 
@@ -164,7 +169,7 @@ const app = createApp({
 				pending: `Bookmarking ${quiz.title}...`,
 				success: res => {
 					quiz.is_bookmarked = !res.removed;
-					
+
 					if (res.removed)
 						return `Removed ${quiz.title} from bookmarks`;
 
