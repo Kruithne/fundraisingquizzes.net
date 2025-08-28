@@ -607,6 +607,17 @@ server.json('/api/quiz_of_the_week', async (req, url, json) => {
 	return { quiz: current_weekly_quiz };
 });
 
+register_admin_endpoint('/api/quiz_approve', async (req, url, json, session) => {
+	if (typeof json.quiz_id !== 'number')
+		return { error: 'Invalid quiz ID' };
+
+	if (!(await quiz_exists(json.quiz_id)))
+		return { error: 'Selected quiz does not exist' };
+
+	await db.execute('UPDATE `quizzes` SET `flags` = `flags` | ? WHERE `id` = ? LIMIT 1', QuizFlags.IsAccepted, json.quiz_id);
+	return { success: true };
+});
+
 register_admin_endpoint('/api/quiz_delete', async (req, url, json, session) => {
 	if (typeof json.quiz_id !== 'number')
 		return { error: 'Invalid quiz ID' };

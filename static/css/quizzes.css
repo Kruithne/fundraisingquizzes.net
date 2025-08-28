@@ -105,6 +105,11 @@
 	background-color: #fff6e6;
 }
 
+.quiz-pending-approval {
+	border-color: #00b7ff;
+	background-color: #e6f7ff;
+}
+
 @media (max-width: 880px) {
 	.quiz-info {
 		gap: 10px;

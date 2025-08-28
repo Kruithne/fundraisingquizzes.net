@@ -37,8 +37,8 @@ const QUIZ_FLAGS = { // 32-bit
 	None: 0,
 	AnswerPolicyNoAskingAllowed: 1 << 0,
 	AnswerPolicyNoAskingBefore: 1 << 1,
-	UNUSED_FLAG_1: 1 << 2,
-	UNUSED_FLAG_2: 1 << 3,
+	QuizOfTheWeek: 1 << 2,
+	IsDeleted: 1 << 3,
 	IsAccepted: 1 << 4,
 };
 
@@ -60,6 +60,12 @@ const app = createApp({
 	computed: {
 		quizzes_sorted() {
 			return [...this.quizzes].sort((a, b) => {
+				const a_not_accepted = (a.flags & QUIZ_FLAGS.IsAccepted) === 0;
+				const b_not_accepted = (b.flags & QUIZ_FLAGS.IsAccepted) === 0;
+
+				if (a_not_accepted !== b_not_accepted)
+					return b_not_accepted - a_not_accepted;
+				
 				if (a.is_bookmarked !== b.is_bookmarked)
 					return b.is_bookmarked - a.is_bookmarked;
 				
@@ -118,6 +124,18 @@ const app = createApp({
 			}
 
 			this.is_working = false;
+		},
+
+		async approve_quiz(quiz) {
+			await this.process_quiz_action(quiz, {
+				endpoint: 'quiz_approve',
+				pending: `Approving quiz ${quiz.title}...`,
+				success: res => {
+					quiz.flags |= QUIZ_FLAGS.IsAccepted;
+					return `Approved quiz ${quiz.title}`;
+				}
+			});
+
 		},
 
 		async delete_quiz(quiz) {

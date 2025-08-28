@@ -12,7 +12,7 @@
 		<div></div>
 	</div>
 </div>
-<div v-else v-for="quiz in quizzes_sorted" class="module module-padded quiz-entry" :class="{ 'quiz-bookmarked': quiz.is_bookmarked }">
+<div v-else v-for="quiz in quizzes_sorted" class="module module-padded quiz-entry" :class="{ 'quiz-bookmarked': quiz.is_bookmarked, 'quiz-pending-approval': (quiz.flags & QUIZ_FLAGS.IsAccepted) == 0 }">
 	<div class="quiz-icon" :class="'quiz-type-' + quiz.type"></div>
 	<div class="quiz-info">
 		<h1>{{ quiz.title }} in aid of {{ quiz.charity }}</h1>
@@ -33,7 +33,7 @@
 			</template>
 			<a class="quiz-option-queries">[Queries]</a>
 			<a class="quiz-option-edit">[Edit]</a>
-			<a class="quiz-option-approve">[Approve]</a>
+			<a v-if="is_admin && (quiz.flags & QUIZ_FLAGS.IsAccepted) == 0" class="quiz-option-approve" @click="approve_quiz(quiz)">[Approve]</a>
 			<a v-if="is_admin" class="quiz-option-delete" @click="delete_quiz(quiz)">[Delete]</a>
 		</div>
 	</div>
