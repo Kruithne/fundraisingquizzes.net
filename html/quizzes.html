@@ -34,7 +34,7 @@
 			<a class="quiz-option-queries">[Queries]</a>
 			<a class="quiz-option-edit">[Edit]</a>
 			<a class="quiz-option-approve">[Approve]</a>
-			<a class="quiz-option-delete">[Delete]</a>
+			<a v-if="is_admin" class="quiz-option-delete" @click="delete_quiz(quiz)">[Delete]</a>
 		</div>
 	</div>
 </div>

@@ -247,7 +247,7 @@ enum QuizFlags { // 32-bit
 	AnswerPolicyNoAskingAllowed = 1 << 0,
 	AnswerPolicyNoAskingBefore = 1 << 1,
 	QuizOfTheWeek = 1 << 2,
-	UNUSED_FLAG_2 = 1 << 3,
+	IsDeleted = 1 << 3,
 	IsAccepted = 1 << 4
 };
 
@@ -519,6 +519,18 @@ function register_session_endpoint(id: string, handler: SessionRequestHandler<bo
 	});
 }
 
+function register_admin_endpoint(id: string, handler: SessionRequestHandler<true>) {
+	server.json(id, async (req, url, json) => {
+		const user_session_id = get_cookies(req).session_id ?? null;
+		const user_session = await user_get_session(user_session_id);
+
+		if (user_session === null || !(user_session.flags & UserAccountFlags.AdminAccount))
+			return HTTP_STATUS_CODE.Unauthorized_401;
+
+		return handler(req, url, json, user_session);
+	});
+}
+
 function register_throttled_endpoint(id: string, handler: JSONRequestHandler) {
 	server.json(id, async (req, url, json) => {
 		await new Promise(resolve => setTimeout(resolve, 1000));
@@ -587,6 +599,17 @@ register_session_endpoint('/api/quiz_list', async (req, url, json, session) => {
 
 server.json('/api/quiz_of_the_week', async (req, url, json) => {
 	return { quiz: current_weekly_quiz };
+});
+
+register_admin_endpoint('/api/quiz_delete', async (req, url, json, session) => {
+	if (typeof json.quiz_id !== 'number')
+		return { error: 'Invalid quiz ID' };
+
+	if (!(await quiz_exists(json.quiz_id)))
+		return { error: 'Selected quiz does not exist' };
+
+	await db.execute('UPDATE `quizzes` SET `flags` = `flags` | ? WHERE `id` = ? LIMIT 1', QuizFlags.IsDeleted, json.quiz_id);
+	return { success: true };
 });
 
 register_session_endpoint('/api/quiz_vote', async (req, url, json, session) => {
