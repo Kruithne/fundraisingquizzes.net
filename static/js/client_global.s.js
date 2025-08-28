@@ -132,7 +132,7 @@ export function format_date_relative(date) {
 	}
 	
 	const abs_diff_weeks = Math.floor(abs_diff_days / 7);
-	if (abs_diff_weeks < 4) {
+	if (abs_diff_weeks < 8) {
 		if (is_future)
 			return abs_diff_weeks === 1 ? "in 1 week" : `in ${abs_diff_weeks} weeks`;
 		return abs_diff_weeks === 1 ? "1 week ago" : `${abs_diff_weeks} weeks ago`;
