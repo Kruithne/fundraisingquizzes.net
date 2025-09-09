@@ -34,8 +34,10 @@
 							</select>	
 						</p>
 						<p>
-							<!-- TODO: this needs to be human editable in yyyy/mm/dd format. quiz.closing is a Date object. -->
-							<input type="text" v-model="quiz.closing"/>
+							<input type="text" 
+								   :value="date_to_input_format(quiz.closing)" 
+								   @input="quiz.closing_input = $event.target.value"
+								   placeholder="yyyy/mm/dd"/>
 						</p>
 						<p v-if="quiz.flags & QUIZ_FLAGS.AnswerPolicyNoAskingAllowed">No asking allowed</p>
 						<p v-if="quiz.flags & QUIZ_FLAGS.AnswerPolicyNoAskingBefore">No asking before closing</p>

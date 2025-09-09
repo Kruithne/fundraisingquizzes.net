@@ -92,6 +92,24 @@ const app = createApp({
 		format_date,
 		create_hyperlinks,
 
+		date_to_input_format(date) {
+			if (!date)
+				return '';
+
+			const d = new Date(date);
+			const year = d.getFullYear();
+			const month = String(d.getMonth() + 1).padStart(2, '0');
+			const day = String(d.getDate()).padStart(2, '0');
+			
+			return `${year}/${month}/${day}`;
+		},
+
+		input_format_to_date(dateString) {
+			if (!dateString) return null;
+			const [year, month, day] = dateString.split('/');
+			return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+		},
+
 		is_quiz_new(quiz) {
 			const current_ts = Date.now();
 			return (current_ts - quiz.created_ts) <= (7 * UNIX_DAY);
@@ -150,6 +168,9 @@ const app = createApp({
 		},
 
 		discard_changes(quiz) {
+			// Clean up temporary input data
+			delete quiz.closing_input;
+
 			// todo: we need to restore the original data of the quiz from whatever
 			// we store in edit_quiz() here.
 
@@ -157,6 +178,12 @@ const app = createApp({
 		},
 
 		async save_quiz(quiz) {
+			// Convert the input format back to Date object before saving
+			if (quiz.closing_input) {
+				quiz.closing = this.input_format_to_date(quiz.closing_input);
+				delete quiz.closing_input;
+			}
+
 			// todo: we need to submit the changes of the quiz to the server and handle
 			// the response from the server.
 
