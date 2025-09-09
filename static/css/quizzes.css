@@ -15,12 +15,23 @@
 	flex-direction: column;
 	justify-content: space-around;
 	gap: 5px;
+	width: 100%;
+}
+
+.quiz-info h1 input[type="text"] {
+	font-size: 0.9em;
+	font-weight: bold;
 }
 
 .quiz-sub {
 	font-style: italic;
 	display: flex;
 	align-items: center;
+}
+
+.quiz-sub input[type="text"],
+.quiz-sub select {
+	width: auto;
 }
 
 .quiz-sub > p:not(:last-child)::after {
@@ -139,6 +150,20 @@
 
 .quiz-query-text {
 	font-style: italic;
+}
+
+#quiz-submit-entry {
+	font-size: 1.3em;
+	padding-left: 65px;
+	background-image: url('/{{cache_bust=static/images/plus_32.png}}');
+	background-repeat: no-repeat;
+	background-position: 20px center;
+	cursor: pointer;
+}
+
+#quiz-submit-entry:hover {
+	border-color: #4fa43b;
+	background-color: #e9ffe6;
 }
 
 @media (max-width: 880px) {

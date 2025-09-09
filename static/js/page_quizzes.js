@@ -143,6 +143,26 @@ const app = createApp({
 			this.is_working = false;
 		},
 
+		edit_quiz(quiz) {
+			// todo: we need to clone the data of this quiz somewhere so if we discard the
+			// changes we can substitute them back in (title, charity, closing, description, type, flags)
+			quiz.is_editing = true;
+		},
+
+		discard_changes(quiz) {
+			// todo: we need to restore the original data of the quiz from whatever
+			// we store in edit_quiz() here.
+
+			quiz.is_editing = false;
+		},
+
+		async save_quiz(quiz) {
+			// todo: we need to submit the changes of the quiz to the server and handle
+			// the response from the server.
+
+			quiz.is_editing = false;
+		},
+
 		async approve_quiz(quiz) {
 			await this.process_quiz_action(quiz, {
 				endpoint: 'quiz_approve',

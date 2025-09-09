@@ -12,69 +12,104 @@
 		<div></div>
 	</div>
 </div>
-<template v-else v-for="quiz in quizzes_sorted">
-	<div class="module module-padded quiz-entry" :class="{ 'quiz-bookmarked': quiz.is_bookmarked, 'quiz-pending-approval': (quiz.flags & QUIZ_FLAGS.IsAccepted) == 0, 'quiz-queries-visible': quiz.is_showing_queries }">
-		<div class="quiz-icon" :class="'quiz-type-' + quiz.type"></div>
-		<div class="quiz-info">
-			<h1>{{ quiz.title }} in aid of {{ quiz.charity }}</h1>
-			<div class="quiz-sub">
-				<p>{{ QUIZ_TYPES[quiz.type] }}</p>
-				<p>{{ is_quiz_closed(quiz) ? 'Closed' : 'Closes' }} {{ format_date_relative(quiz.closing) }} ({{ format_date(quiz.closing) }})</p>
-				<p v-if="quiz.flags & QUIZ_FLAGS.AnswerPolicyNoAskingAllowed">No asking allowed</p>
-				<p v-if="quiz.flags & QUIZ_FLAGS.AnswerPolicyNoAskingBefore">No asking before closing</p>
-				<p v-if="is_quiz_new(quiz)" class="quiz-flag quiz-flag-new">New!</p>
-				<p v-if="is_quiz_updated(quiz)" class="quiz-flag quiz-flag-updated">Updated!</p>
-				<p v-if="quiz.query_count > 0" class="quiz-flag quiz-flag-queries">Queries!</p>
-			</div>
-			<p v-html="create_hyperlinks(quiz.description)"></p>
-			<div class="quiz-options">
-				<template v-if="is_logged_in">
-					<a class="quiz-option-bookmark" @click="bookmark_quiz(quiz)">{{ quiz.is_bookmarked ? '[Remove Bookmark]' : '[Bookmark]' }}</a>
-					<span class="quiz-option-vote" v-if="quiz.is_voted">You have voted for this quiz!</span>
-					<a v-else-if="can_vote" class="quiz-option-vote" @click="vote_quiz(quiz)">[Vote]</a>
-				</template>
-				<a class="quiz-option-queries" @click="toggle_quiz_queries(quiz)">[{{ quiz.query_count }} {{ quiz.query_count > 1 ? 'Queries' : 'Query' }}]</a>
-				<a class="quiz-option-edit">[Edit]</a>
-				<a v-if="is_admin && (quiz.flags & QUIZ_FLAGS.IsAccepted) == 0" class="quiz-option-approve" @click="approve_quiz(quiz)">[Approve]</a>
-				<a v-if="is_admin" class="quiz-option-delete" @click="delete_quiz(quiz)">[Delete]</a>
+<template v-else>
+	<div id="quiz-submit-entry" class="module module-padded">
+		Want to add your own quiz to this list? Click here to submit one!
+	</div>
+	<template v-for="quiz in quizzes_sorted">
+		<div class="module module-padded quiz-entry" :class="{ 'quiz-bookmarked': quiz.is_bookmarked, 'quiz-pending-approval': (quiz.flags & QUIZ_FLAGS.IsAccepted) == 0, 'quiz-queries-visible': quiz.is_showing_queries }">
+			<div class="quiz-icon" :class="'quiz-type-' + quiz.type"></div>
+			<div class="quiz-info">
+				<h1 v-if="quiz.is_editing">
+					<input type="text" v-model="quiz.title" :style="{ width: quiz.title.length + 'ch' }"/>
+					 in aid of 
+					<input type="text" v-model="quiz.charity" :style="{ width: quiz.charity.length + 'ch' }"/>
+				</h1>
+				<h1 v-else>{{ quiz.title }} in aid of {{ quiz.charity }}</h1>
+				<div class="quiz-sub">
+					<template v-if="quiz.is_editing">
+						<p>
+							<!-- TODO: v-model this and show the selected type -->
+							<select>
+								<option v-for="type in QUIZ_TYPES">{{ type }}</option>
+							</select>	
+						</p>
+						<p>
+							<!-- TODO: this needs to be human editable in yyyy/mm/dd format. quiz.closing is a Date object. -->
+							<input type="text" v-model="quiz.closing"/>
+						</p>
+						<p v-if="quiz.flags & QUIZ_FLAGS.AnswerPolicyNoAskingAllowed">No asking allowed</p>
+						<p v-if="quiz.flags & QUIZ_FLAGS.AnswerPolicyNoAskingBefore">No asking before closing</p>
+					</template>
+					<template v-else>
+						<p>{{ QUIZ_TYPES[quiz.type] }}</p>
+						<p>{{ is_quiz_closed(quiz) ? 'Closed' : 'Closes' }} {{ format_date_relative(quiz.closing) }} ({{ format_date(quiz.closing) }})</p>
+						<p v-if="quiz.flags & QUIZ_FLAGS.AnswerPolicyNoAskingAllowed">No asking allowed</p>
+						<p v-if="quiz.flags & QUIZ_FLAGS.AnswerPolicyNoAskingBefore">No asking before closing</p>
+					</template>
+					<p v-if="is_quiz_new(quiz)" class="quiz-flag quiz-flag-new">New!</p>
+					<p v-if="is_quiz_updated(quiz)" class="quiz-flag quiz-flag-updated">Updated!</p>
+					<p v-if="quiz.query_count > 0" class="quiz-flag quiz-flag-queries">Queries!</p>
+				</div>
+				<p v-if="quiz.is_editing">
+					<textarea v-model="quiz.description"></textarea>
+				</p>
+				<p v-else v-html="create_hyperlinks(quiz.description)"></p>
+				<div class="quiz-options">
+					<template v-if="quiz.is_editing">
+						<a class="quiz-option-approve" @click="save_changes(quiz)">[Save Changes]</a>
+						<a class="quiz-option-delete" @click="discard_changes(quiz)">[Discard Changes]</a>
+					</template>
+					<template v-else>
+						<template v-if="is_logged_in">
+							<a class="quiz-option-bookmark" @click="bookmark_quiz(quiz)">{{ quiz.is_bookmarked ? '[Remove Bookmark]' : '[Bookmark]' }}</a>
+							<span class="quiz-option-vote" v-if="quiz.is_voted">You have voted for this quiz!</span>
+							<a v-else-if="can_vote" class="quiz-option-vote" @click="vote_quiz(quiz)">[Vote]</a>
+						</template>
+						<a class="quiz-option-queries" @click="toggle_quiz_queries(quiz)">[{{ quiz.query_count }} {{ quiz.query_count > 1 ? 'Queries' : 'Query' }}]</a>
+						<a v-if="is_admin && !quiz.is_editing" class="quiz-option-edit" @click="edit_quiz(quiz)">[Edit]</a>
+						<a v-if="is_admin && (quiz.flags & QUIZ_FLAGS.IsAccepted) == 0" class="quiz-option-approve" @click="approve_quiz(quiz)">[Approve]</a>
+						<a v-if="is_admin" class="quiz-option-delete" @click="delete_quiz(quiz)">[Delete]</a>
+					</template>
+				</div>
 			</div>
 		</div>
-	</div>
-	<div v-if="quiz.is_showing_queries" class="module module-padded quiz-queries">
-		<template v-if="quiz.query_count > 0">
-			<template v-if="quiz.queries">
-				<div v-for="query of quiz.queries" class="quiz-query">
-					<div>
-						<p class="quiz-query-header">Query by {{ query.query_username }}</p>
-						<p class="quiz-query-text">{{ query.query_text }}</p>
-						<div class="quiz-options">
-							<a v-if="is_admin" class="quiz-option-delete" @click="delete_query(quiz, query)">[Delete Query]</a>
+		<div v-if="quiz.is_showing_queries" class="module module-padded quiz-queries">
+			<template v-if="quiz.query_count > 0">
+				<template v-if="quiz.queries">
+					<div v-for="query of quiz.queries" class="quiz-query">
+						<div>
+							<p class="quiz-query-header">Query by {{ query.query_username }}</p>
+							<p class="quiz-query-text">{{ query.query_text }}</p>
+							<div class="quiz-options">
+								<a v-if="is_admin" class="quiz-option-delete" @click="delete_query(quiz, query)">[Delete Query]</a>
+							</div>
+						</div>
+						<div v-if="query.answer_text">
+							<p class="quiz-query-header">Answered by {{ query.answer_username }}</p>
+							<p class="quiz-query-text">{{ query.answer_text }}</p>
+							<div class="quiz-options">
+								<a v-if="is_admin" class="quiz-option-delete" @click="delete_query_answer(query)">[Delete Answer]</a>
+							</div>
+						</div>
+						<div v-else>
+							<p>This query has not been answered yet. <a @click="add_query_answer(query)">Click here to answer it!</a></p>
 						</div>
 					</div>
-					<div v-if="query.answer_text">
-						<p class="quiz-query-header">Answered by {{ query.answer_username }}</p>
-						<p class="quiz-query-text">{{ query.answer_text }}</p>
-						<div class="quiz-options">
-							<a v-if="is_admin" class="quiz-option-delete" @click="delete_query_answer(query)">[Delete Answer]</a>
-						</div>
-					</div>
-					<div v-else>
-						<p>This query has not been answered yet. <a @click="add_query_answer(query)">Click here to answer it!</a></p>
-					</div>
+					<p>Have another query not covered above? <a @click="add_query(quiz)">Click here to submit another!</a></p>
+				</template>
+				<div class="loader" v-else>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
 				</div>
-				<p>Have another query not covered above? <a @click="add_query(quiz)">Click here to submit another!</a></p>
 			</template>
-			<div class="loader" v-else>
-				<div></div>
-				<div></div>
-				<div></div>
-				<div></div>
-				<div></div>
-				<div></div>
-			</div>
-		</template>
-		<template v-else>
-			<p>This quiz does not have any queries. <a @click="add_query(quiz)">Click here to submit one!</a></p>
-		</template>
-	</div>
+			<template v-else>
+				<p>This quiz does not have any queries. <a @click="add_query(quiz)">Click here to submit one!</a></p>
+			</template>
+		</div>
+	</template>
 </template>
