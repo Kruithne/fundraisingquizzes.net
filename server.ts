@@ -1237,15 +1237,13 @@ async function resolve_bootstrap_content(content: string | BunFile): Promise<str
 		if (stat.isDirectory())
 			return HTTP_STATUS_CODE.Unauthorized_401;
 
-		if (STATIC_SUB_EXT?.some(ext => file_path.endsWith(ext))) {
-			const file_path_split = file_path.split(/[/\\]+/);
-			if (file_path_split.at(-2) !== 'lib') {
+		const ext_idx = file_path.lastIndexOf('.');
+		if (ext_idx > -1) {
+			const ext = file_path.slice(ext_idx);
+			
+			if (STATIC_SUB_EXT.includes(ext)) {
 				const content = await parse_template(await file.text(), global_sub_table, false);
-				return new Response(content, {
-					headers: {
-						'Content-Type': file.type
-					}
-				});
+				return new Response(content, { headers: { 'Content-Type': file.type }});
 			}
 		}
 		
