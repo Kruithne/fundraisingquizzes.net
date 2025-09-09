@@ -85,6 +85,7 @@
 					</template>
 					<template v-else>
 						<p>{{ QUIZ_TYPES[quiz.type] }}</p>
+						<p v-if="quiz.submitter_username">Submitted by {{ quiz.submitter_username }}</p>
 						<p>{{ is_quiz_closed(quiz) ? 'Closed' : 'Closes' }} {{ format_date_relative(quiz.closing) }} ({{ format_date(quiz.closing) }})</p>
 						<p v-if="quiz.flags & QUIZ_FLAGS.AnswerPolicyNoAskingAllowed">No asking allowed</p>
 						<p v-if="quiz.flags & QUIZ_FLAGS.AnswerPolicyNoAskingBefore">No asking before closing</p>

@@ -616,7 +616,8 @@ register_session_endpoint('/api/quiz_list', async (req, url, json, session) => {
 				q.updated_ts,
 				CASE WHEN b.quiz_id IS NOT NULL THEN 1 ELSE 0 END AS is_bookmarked,
 				CASE WHEN v.quiz_id IS NOT NULL THEN 1 ELSE 0 END AS is_voted,
-				COALESCE(qq.query_count, 0) AS query_count
+				COALESCE(qq.query_count, 0) AS query_count,
+				u.username AS submitter_username
 			FROM quizzes AS q 
 			LEFT JOIN quiz_bookmarks AS b ON b.quiz_id = q.id AND b.user_id = ?
 			LEFT JOIN quiz_votes AS v ON v.quiz_id = q.id AND v.user_id = ?
@@ -625,12 +626,11 @@ register_session_endpoint('/api/quiz_list', async (req, url, json, session) => {
 				FROM quiz_queries
 				GROUP BY quiz_id
 			) AS qq ON qq.quiz_id = q.id
+			LEFT JOIN users AS u ON u.id = q.user_id
 			WHERE (q.flags & ?) = 0
 		`;
 
-		if (session.flags & UserAccountFlags.AdminAccount) {
-			// todo
-		} else {
+		if (!(session.flags & UserAccountFlags.AdminAccount)) {
 			query += ' AND (q.flags & ?) > 0';
 			params.push(QuizFlags.IsAccepted);
 		}
