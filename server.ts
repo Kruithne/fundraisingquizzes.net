@@ -672,7 +672,7 @@ register_session_endpoint('/api/quiz_add_query', async (req, url, json, session)
 	if (!(await quiz_exists(json.id)))
 		return { error: 'Selected quiz does not exist' };
 
-	const query_id = db.insert_object('quiz_queries', {
+	const query_id = await db.insert_object('quiz_queries', {
 		quiz_id: json.id,
 		query_user_id: session.user_id,
 		query_text: json.text
@@ -1240,7 +1240,7 @@ async function resolve_bootstrap_content(content: string | BunFile): Promise<str
 		const ext_idx = file_path.lastIndexOf('.');
 		if (ext_idx > -1) {
 			const ext = file_path.slice(ext_idx);
-			
+
 			if (STATIC_SUB_EXT.includes(ext)) {
 				const content = await parse_template(await file.text(), global_sub_table, false);
 				return new Response(content, { headers: { 'Content-Type': file.type }});
