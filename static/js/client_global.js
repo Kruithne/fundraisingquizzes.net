@@ -198,3 +198,69 @@ export function show_toast_pending(text, auto_hide) {
 	show_toast(text, auto_hide, 'pending');
 }
 // endregion
+
+// region form validation error rendering
+export function render_validation_error(validation_result) {
+	// If there's a form-level error message, use that
+	if (validation_result.form_error_message)
+		return validation_result.form_error_message;
+
+	const field_error_messages = [];
+	
+	if (validation_result.field_errors) {
+		for (const [field_id, field_error] of Object.entries(validation_result.field_errors)) {
+			let error_message;
+			
+			if (typeof field_error === 'string') {
+				// Handle string error codes
+				error_message = render_error_code(field_error, {});
+			} else if (typeof field_error === 'object' && field_error.err) {
+				// Handle error objects with parameters
+				error_message = render_error_code(field_error.err, field_error.params);
+			} else {
+				error_message = String(field_error);
+			}
+			
+			// Clean up field ID for display (remove schema prefix if present)
+			const clean_field_id = field_id.includes('-') ? field_id.split('-').pop() || field_id : field_id;
+			field_error_messages.push(`${clean_field_id}: ${error_message}`);
+		}
+	}
+	
+	return field_error_messages.length > 0 
+		? field_error_messages.join(', ') 
+		: 'Validation failed';
+}
+
+function render_error_code(error_code, params) {
+	switch (error_code) {
+		case 'required':
+			return 'This field is required';
+		case 'invalid_number':
+			return 'Please enter a valid number';
+		case 'number_too_small':
+			return `Value must be at least ${params.min}`;
+		case 'number_too_large':
+			return `Value must be at most ${params.max}`;
+		case 'number_range':
+			return `Value must be between ${params.min} and ${params.max}`;
+		case 'text_too_small':
+			return `Must be at least ${params.min} characters`;
+		case 'text_too_large':
+			return `Must be at most ${params.max} characters`;
+		case 'text_range':
+			return `Must be between ${params.min} and ${params.max} characters`;
+		case 'regex_validation':
+			return 'Invalid format';
+		case 'invalid_email':
+			return 'Please enter a valid email address';
+		case 'field_match_error':
+			return 'Fields do not match';
+		case 'generic_validation':
+		case 'generic_malformed':
+		case 'generic_form_error':
+		default:
+			return 'Invalid input';
+	}
+}
+// endregion

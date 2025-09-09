@@ -9,7 +9,8 @@ import {
 	create_hyperlinks,
 	show_toast_pending,
 	show_toast_success,
-	show_toast_error
+	show_toast_error,
+	render_validation_error
 } from '/{{cache_bust=static/js/client_global.js}}';
 
 const UNIX_SECOND = 1000;
@@ -170,7 +171,11 @@ const app = createApp({
 			const res = await query_api(options.endpoint, payload);
 
 			if (res.error) {
-				show_toast_error(res.error);
+				if (res.error === 'generic_validation' && res.field_errors) {
+					show_toast_error(render_validation_error(res));
+				} else {
+					show_toast_error(res.error);
+				}
 			} else {
 				if (typeof options.success === 'function')
 					show_toast_success(options.success(res));
@@ -229,7 +234,11 @@ const app = createApp({
 			const res = await query_api('quiz_edit', payload);
 
 			if (res.error) {
-				show_toast_error(res.error);
+				if (res.error === 'generic_validation' && res.field_errors) {
+					show_toast_error(render_validation_error(res));
+				} else {
+					show_toast_error(res.error);
+				}
 			} else {
 				quiz.closing = this.input_format_to_date(quiz.closing_input);
 				quiz.updated_ts = Date.now();
@@ -400,7 +409,11 @@ const app = createApp({
 			const res = await query_api('quiz_submit', payload);
 
 			if (res.error) {
-				show_toast_error(res.error);
+				if (res.error === 'generic_validation' && res.field_errors) {
+					show_toast_error(render_validation_error(res));
+				} else {
+					show_toast_error(res.error);
+				}
 			} else {
 				const submitted_title = this.new_quiz.title;
 				this.cancel_submit_quiz();
