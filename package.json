@@ -29,6 +29,6 @@
 	"type": "module",
 	"dependencies": {
 		"nodemailer": "^7.0.5",
-		"spooder": "^5.1.8"
+		"spooder": "^5.1.12"
 	}
 }
