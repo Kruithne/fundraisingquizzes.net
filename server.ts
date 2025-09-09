@@ -152,6 +152,18 @@ const schema_account_resend_verification_code = form_create_schema({
 		}
 	}
 });
+
+const schema_quiz_edit = form_create_schema({
+	fields: {
+		id: { type: 'number' },
+		title: { type: 'text', max_length: 255, min_length: 1 },
+		charity: { type: 'text', max_length: 255, min_length: 1 },
+		description: { type: 'text', max_length: 2000 },
+		type: { type: 'number', min: 0, max: 10 },
+		closing: { type: 'text', regex: '^[0-9]{4}/[0-9]{2}/[0-9]{2}$' },
+		flags: { type: 'number' }
+	}
+});
 // endregion
 
 // region mail
@@ -726,6 +738,32 @@ register_admin_endpoint('/api/quiz_delete', async (req, url, json, session) => {
 		return { error: 'Selected quiz does not exist' };
 
 	await db.execute('UPDATE `quizzes` SET `flags` = `flags` | ? WHERE `id` = ? LIMIT 1', QuizFlags.IsDeleted, json.id);
+	return { success: true };
+});
+
+register_admin_endpoint('/api/quiz_edit', async (req, url, json, session) => {
+	const form = form_validate_req(schema_quiz_edit, json);
+	if (form.error)
+		return form;
+
+	if (!(await quiz_exists(form.fields.id)))
+		return { error: 'Selected quiz does not exist' };
+
+	const result = await db.execute(
+		'UPDATE `quizzes` SET `title` = ?, `charity` = ?, `description` = ?, `type` = ?, `closing` = ?, `flags` = ?, `updated_ts` = ? WHERE `id` = ? LIMIT 1',
+		form.fields.title,
+		form.fields.charity,
+		form.fields.description,
+		form.fields.type,
+		form.fields.closing,
+		form.fields.flags,
+		Date.now(),
+		form.fields.id
+	);
+	
+	if (result === -1)
+		return { error: 'Failed to update quiz' };
+	
 	return { success: true };
 });
 

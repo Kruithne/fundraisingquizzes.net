@@ -63,7 +63,7 @@
 				<p v-else v-html="create_hyperlinks(quiz.description)"></p>
 				<div class="quiz-options">
 					<template v-if="quiz.is_editing">
-						<a class="quiz-option-approve" @click="save_changes(quiz)">[Save Changes]</a>
+						<a class="quiz-option-approve" @click="save_quiz(quiz)">[Save Changes]</a>
 						<a class="quiz-option-delete" @click="discard_changes(quiz)">[Discard Changes]</a>
 					</template>
 					<template v-else>

@@ -189,6 +189,7 @@ const app = createApp({
 				flags: quiz.flags
 			};
 			
+			quiz.closing_input = this.date_to_input_format(quiz.closing);
 			quiz.is_editing = true;
 		},
 
@@ -208,16 +209,33 @@ const app = createApp({
 		},
 
 		async save_quiz(quiz) {
-			// Convert the input format back to Date object before saving
-			if (quiz.closing_input) {
+			this.is_working = true;
+			show_toast_pending(`Saving changes to ${quiz.title}...`, false);
+
+			const payload = {
+				fields: {
+					id: quiz.id,
+					title: quiz.title,
+					charity: quiz.charity,
+					description: quiz.description,
+					type: quiz.type,
+					flags: quiz.flags,
+					closing: quiz.closing_input
+				}
+			};
+
+			const res = await query_api('quiz_edit', payload);
+
+			if (res.error) {
+				show_toast_error(res.error);
+			} else {
 				quiz.closing = this.input_format_to_date(quiz.closing_input);
-				delete quiz.closing_input;
+				quiz.updated_ts = Date.now();
+				quiz.is_editing = false;
+				show_toast_success(`Successfully saved changes to ${quiz.title}`);
 			}
 
-			// todo: we need to submit the changes of the quiz to the server and handle
-			// the response from the server.
-
-			quiz.is_editing = false;
+			this.is_working = false;
 		},
 
 		async approve_quiz(quiz) {
