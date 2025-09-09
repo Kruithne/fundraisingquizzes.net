@@ -29,9 +29,8 @@
 				<div class="quiz-sub">
 					<template v-if="quiz.is_editing">
 						<p>
-							<!-- TODO: v-model this and show the selected type -->
-							<select>
-								<option v-for="type in QUIZ_TYPES">{{ type }}</option>
+							<select v-model="quiz.type">
+								<option v-for="(type, index) in QUIZ_TYPES" :value="index">{{ type }}</option>
 							</select>	
 						</p>
 						<p>
