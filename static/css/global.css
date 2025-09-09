@@ -235,6 +235,10 @@ body
 	text-align: right;
 }
 
+textarea {
+	resize: none;
+}
+
 input[type="button"]
 {
 	padding: 8px 20px;
