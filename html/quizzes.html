@@ -39,8 +39,13 @@
 								   @input="quiz.closing_input = $event.target.value"
 								   placeholder="yyyy/mm/dd"/>
 						</p>
-						<p v-if="quiz.flags & QUIZ_FLAGS.AnswerPolicyNoAskingAllowed">No asking allowed</p>
-						<p v-if="quiz.flags & QUIZ_FLAGS.AnswerPolicyNoAskingBefore">No asking before closing</p>
+						<p>
+							<select :value="get_answer_policy(quiz)" @change="set_answer_policy(quiz, parseInt($event.target.value))">
+								<option value="0">No answer policy</option>
+								<option value="1">No asking allowed</option>
+								<option value="2">No asking before closing</option>
+							</select>
+						</p>
 					</template>
 					<template v-else>
 						<p>{{ QUIZ_TYPES[quiz.type] }}</p>

@@ -110,6 +110,24 @@ const app = createApp({
 			return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
 		},
 
+		get_answer_policy(quiz) {
+			if (quiz.flags & QUIZ_FLAGS.AnswerPolicyNoAskingAllowed) return 1;
+			if (quiz.flags & QUIZ_FLAGS.AnswerPolicyNoAskingBefore) return 2;
+			return 0;
+		},
+
+		set_answer_policy(quiz, policy) {
+			// Clear both answer policy flags first
+			quiz.flags &= ~(QUIZ_FLAGS.AnswerPolicyNoAskingAllowed | QUIZ_FLAGS.AnswerPolicyNoAskingBefore);
+			
+			// Set the appropriate flag based on policy
+			if (policy === 1) {
+				quiz.flags |= QUIZ_FLAGS.AnswerPolicyNoAskingAllowed;
+			} else if (policy === 2) {
+				quiz.flags |= QUIZ_FLAGS.AnswerPolicyNoAskingBefore;
+			}
+		},
+
 		is_quiz_new(quiz) {
 			const current_ts = Date.now();
 			return (current_ts - quiz.created_ts) <= (7 * UNIX_DAY);
