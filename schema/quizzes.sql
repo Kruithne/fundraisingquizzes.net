@@ -24,3 +24,9 @@ ALTER TABLE `quizzes` ADD column `flags` INT UNSIGNED NOT NULL DEFAULT 0;
 -- [6] add created_ts and updated_ts columns
 ALTER TABLE `quizzes` ADD column `created_ts` BIGINT UNSIGNED NOT NULL DEFAULT (UNIX_TIMESTAMP() * 1000);
 ALTER TABLE `quizzes` ADD column `updated_ts` BIGINT UNSIGNED NOT NULL DEFAULT (UNIX_TIMESTAMP() * 1000);
+
+-- [7] add user_id column to track quiz creators
+ALTER TABLE `quizzes` ADD COLUMN `user_id` BIGINT UNSIGNED NULL;
+UPDATE `quizzes` SET `user_id` = (SELECT MIN(`id`) FROM `users` LIMIT 1) WHERE `user_id` IS NULL;
+ALTER TABLE `quizzes` MODIFY COLUMN `user_id` BIGINT UNSIGNED NOT NULL;
+ALTER TABLE `quizzes` ADD FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE;
