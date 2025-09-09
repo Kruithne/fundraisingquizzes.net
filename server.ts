@@ -156,9 +156,9 @@ const schema_account_resend_verification_code = form_create_schema({
 const schema_quiz_edit = form_create_schema({
 	fields: {
 		id: { type: 'number' },
-		title: { type: 'text', max_length: 255, min_length: 1 },
-		charity: { type: 'text', max_length: 255, min_length: 1 },
-		description: { type: 'text', max_length: 2000 },
+		title: { type: 'text', max_length: 100, min_length: 1 },
+		charity: { type: 'text', max_length: 100, min_length: 1 },
+		description: { type: 'text', max_length: 1000 },
 		type: { type: 'number', min: 0, max: 10 },
 		closing: { type: 'text', regex: '^[0-9]{4}/[0-9]{2}/[0-9]{2}$' },
 		flags: { type: 'number' }

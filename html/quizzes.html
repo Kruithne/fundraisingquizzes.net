@@ -21,9 +21,9 @@
 			<div class="quiz-icon" :class="'quiz-type-' + quiz.type"></div>
 			<div class="quiz-info">
 				<h1 v-if="quiz.is_editing">
-					<input type="text" v-model="quiz.title" :style="{ width: quiz.title.length + 'ch' }"/>
+					<input type="text" v-model="quiz.title" maxlength="100" :style="{ width: quiz.title.length + 'ch' }"/>
 					 in aid of 
-					<input type="text" v-model="quiz.charity" :style="{ width: quiz.charity.length + 'ch' }"/>
+					<input type="text" v-model="quiz.charity" maxlength="100" :style="{ width: quiz.charity.length + 'ch' }"/>
 				</h1>
 				<h1 v-else>{{ quiz.title }} in aid of {{ quiz.charity }}</h1>
 				<div class="quiz-sub">
@@ -58,7 +58,7 @@
 					<p v-if="quiz.query_count > 0" class="quiz-flag quiz-flag-queries">Queries!</p>
 				</div>
 				<p v-if="quiz.is_editing">
-					<textarea v-model="quiz.description"></textarea>
+					<textarea v-model="quiz.description" maxlength="1000"></textarea>
 				</p>
 				<p v-else v-html="create_hyperlinks(quiz.description)"></p>
 				<div class="quiz-options">
