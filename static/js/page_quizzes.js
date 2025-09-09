@@ -162,17 +162,29 @@ const app = createApp({
 		},
 
 		edit_quiz(quiz) {
-			// todo: we need to clone the data of this quiz somewhere so if we discard the
-			// changes we can substitute them back in (title, charity, closing, description, type, flags)
+			quiz.original = {
+				title: quiz.title,
+				charity: quiz.charity,
+				closing: quiz.closing,
+				description: quiz.description,
+				type: quiz.type,
+				flags: quiz.flags
+			};
+			
 			quiz.is_editing = true;
 		},
 
 		discard_changes(quiz) {
-			// Clean up temporary input data
 			delete quiz.closing_input;
 
-			// todo: we need to restore the original data of the quiz from whatever
-			// we store in edit_quiz() here.
+			if (quiz.original) {
+				quiz.title = quiz.original.title;
+				quiz.charity = quiz.original.charity;
+				quiz.closing = quiz.original.closing;
+				quiz.description = quiz.original.description;
+				quiz.type = quiz.original.type;
+				quiz.flags = quiz.original.flags;
+			}
 
 			quiz.is_editing = false;
 		},
