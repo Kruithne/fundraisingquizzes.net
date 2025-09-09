@@ -12,8 +12,8 @@
 	</div>
 </div>
 <template v-else>
-	<div v-if="!is_submitting_answer" id="answer-submit-entry" class="module module-padded">
-		<a @click="start_submit_answer()">Have the answers to a closed quiz? Click here to submit them!</a>
+	<div v-if="!is_submitting_answer" id="answer-submit-entry" class="module module-padded" @click="start_submit_answer()">
+		Have the answers to a closed quiz? Click here to submit them!
 	</div>
 	<div v-else class="module module-padded answer-entry answer-entry-submitting">
 		<div class="answer-icon"></div>

@@ -13,8 +13,8 @@
 	</div>
 </div>
 <template v-else>
-	<div v-if="!is_submitting_quiz" id="quiz-submit-entry" class="module module-padded">
-		<a @click="start_submit_quiz()">Want to add your own quiz to this list? Click here to submit one!</a>
+	<div v-if="!is_submitting_quiz" id="quiz-submit-entry" class="module module-padded" @click="start_submit_quiz()">
+		Want to add your own quiz to this list? Click here to submit one!
 	</div>
 	<div v-else class="module module-padded quiz-entry quiz-entry-submitting">
 		<div class="quiz-icon" :class="'quiz-type-' + new_quiz.type"></div>
