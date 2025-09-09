@@ -9,33 +9,79 @@
 	</div>
 </div>
 
-<template v-else>
-	<div class="module module-padded">
-		<h1>Account Settings</h1>
-		<p>Welcome to your account settings, {{ username }}!</p>
+<div class="module module-padded" v-show="loaded">
+	<h1>Account Settings</h1>
+	
+	<div class="account-info">
+		<div class="info-row">
+			<label>Username:</label>
+			<span>{{ username }}</span>
+		</div>
+		<div class="info-row">
+			<label>Email:</label>
+			<span>{{ email_masked }}</span>
+		</div>
+		<div class="info-row">
+			<label>Member since:</label>
+			<span>{{ format_date(created_date) }}</span>
+		</div>
 	</div>
+</div>
 
-	<div class="module module-padded">
-		<h2>Change Your Avatar</h2>
-		<p>Click on an avatar below to select it as your new avatar.</p>
+<div class="module module-padded" v-show="loaded">
+	<h2>Change Your Avatar</h2>
+	<p>Click on an avatar below to select it as your new avatar.</p>
+	
+	<div id="avatar-selector">
+		<div 
+			v-for="avatar in available_avatars" 
+			:key="avatar.id"
+			:class="{ 'avatar-option': true, 'avatar-selected': avatar.id === current_avatar_id }"
+			@click="select_avatar(avatar.id)"
+		>
+			<img :src="'static/images/avatars/' + avatar.filename" :alt="avatar.name" :title="avatar.name"/>
+			<div class="avatar-name">{{ avatar.name }}</div>
+		</div>
+	</div>
+	
+	<div v-if="avatar_changing" class="avatar-status">
+		Changing avatar...
+	</div>
+	<div v-if="avatar_error" class="avatar-error">
+		{{ avatar_error }}
+	</div>
+</div>
+
+<div class="module module-padded" v-show="loaded">
+	<h2>Forum Signature</h2>
+	<div class="p-list">
+		<p>Set a custom signature that appears with your forum posts.</p>
 		
-		<div id="avatar-selector">
-			<div 
-				v-for="avatar in available_avatars" 
-				:key="avatar.id"
-				:class="{ 'avatar-option': true, 'avatar-selected': avatar.id === current_avatar_id }"
-				@click="select_avatar(avatar.id)"
-			>
-				<img :src="'static/images/avatars/' + avatar.filename" :alt="avatar.name" :title="avatar.name"/>
-				<div class="avatar-name">{{ avatar.name }}</div>
+		<div class="signature-form">
+			<textarea 
+				v-model="signature_text" 
+				placeholder="Enter your forum signature (max 200 characters)..."
+				maxlength="200"
+				rows="3"
+			></textarea>
+			<div class="signature-controls">
+				<span class="character-count">{{ signature_text.length }}/200</span>
+				<input 
+					type="button" 
+					@click="update_signature" 
+					:disabled="signature_updating"
+					:value="signature_updating ? 'Updating...' : 'Update Signature'"
+				/>
 			</div>
 		</div>
 		
-		<div v-if="avatar_changing" class="avatar-status">
-			Changing avatar...
-		</div>
-		<div v-if="avatar_error" class="avatar-error">
-			{{ avatar_error }}
+		<div v-if="signature_error" class="signature-error">
+			{{ signature_error }}
 		</div>
 	</div>
-</template>
+</div>
+
+<div class="module module-padded">
+	<h2>Change Password</h2>
+	{{password_change_form}}
+</div>

@@ -195,6 +195,26 @@ const schema_answer_edit = form_create_schema({
 	}
 });
 
+const schema_password_change = form_create_schema({
+	id: 'password_change_form',
+	endpoint: '/api/user_change_password',
+	fields: {
+		current_password: {
+			type: 'password',
+			label: 'Current password:'
+		},
+		new_password: {
+			type: 'password', 
+			label: 'New password:'
+		},
+		confirm_password: {
+			type: 'password',
+			match_field: 'new_password',
+			label: 'Confirm new password:'
+		}
+	}
+});
+
 // endregion
 
 // region mail
@@ -548,8 +568,7 @@ function mask_user_email(email: string): string {
 	if (local_part.length > 2)
 		masked_local = local_part.slice(0, 2) + '*****' + local_part.slice(-1);
 
-	const masked_domain = domain.split('.').pop();
-	return `${masked_local}@$*****.{masked_domain}`;
+	return `${masked_local}@${domain}`;
 }
 // endregion
 
@@ -1018,6 +1037,27 @@ register_session_endpoint('/api/query_user_presence', async (req, url, json, ses
 	};
 }, true);
 
+register_session_endpoint('/api/user_get_info', async (req, url, json, session) => {
+	const user_info = await db.get_single(`
+		SELECT u.username, u.email, u.avatar_id, u.flags, u.created, u.forum_signature
+		FROM users u 
+		WHERE u.id = ? LIMIT 1
+	`, session.user_id);
+	
+	if (user_info === null) {
+		caution('user_get_info called on unknown user', { json, session });
+		return { error: 'User not found' };
+	}
+
+	return {
+		username: user_info.username,
+		email_masked: mask_user_email(user_info.email),
+		created_date: user_info.created,
+		avatar_id: user_info.avatar_id,
+		forum_signature: user_info.forum_signature
+	};
+}, true);
+
 register_throttled_endpoint('/api/password_reset', async (req, url, json) => {
 	const form = form_validate_req(schema_reset_password, json);
 	if (form.error)
@@ -1249,6 +1289,36 @@ register_session_endpoint('/api/query_avatars', async (req, url, json, session) 
 	const avatars = await db.get_all('SELECT id, filename, name FROM avatars WHERE hidden = 0 ORDER BY id');
 	return { avatars };
 });
+
+register_session_endpoint('/api/user_set_signature', async (req, url, json, session) => {
+	if (typeof json.signature !== 'string')
+		return { error: 'Invalid signature format' };
+
+	if (json.signature.length > 200)
+		return { error: 'Signature too long (maximum 200 characters)' };
+
+	const signature = json.signature.trim() || null;
+	await db.execute('UPDATE `users` SET `forum_signature` = ? WHERE `id` = ? LIMIT 1', signature, session.user_id);
+	
+	return { success: true };
+}, true);
+
+register_session_endpoint('/api/user_change_password', async (req, url, json, session) => {
+	const form = form_validate_req(schema_password_change, json);
+	if (form.error)
+		return form;
+
+	const user = await db.get_single('SELECT `password` FROM `users` WHERE `id` = ? LIMIT 1', session.user_id);
+	if (!user || !(await Bun.password.verify(form.fields.current_password, user.password)))
+		return form.raise_field_error('current_password', 'Current password is incorrect');
+
+	const hashed_password = await Bun.password.hash(form.fields.new_password);
+	await db.execute('UPDATE `users` SET `password` = ? WHERE `id` = ? LIMIT 1', hashed_password, session.user_id);
+
+	log('password changed for user {%s}', session.user_id);
+
+	return { success: true };
+}, true);
 // endregion
 
 // region routes
@@ -1357,7 +1427,8 @@ const routes: Record<string, RouteOptions> = {
 		subs: {
 			title: 'Settings',
 			scripts: cache_bust(['static/js/page_settings.js']),
-			stylesheets: cache_bust(['static/css/settings.css'])
+			stylesheets: cache_bust(['static/css/settings.css']),
+			password_change_form: () => form_render_html(schema_password_change)
 		}
 	}
 }
