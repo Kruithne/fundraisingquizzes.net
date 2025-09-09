@@ -536,12 +536,20 @@ function register_admin_endpoint(id: string, handler: SessionRequestHandler<true
 }
 
 function register_throttled_endpoint(id: string, handler: JSONRequestHandler) {
-	server.json(id, async (req, url, json) => {
-		await new Promise(resolve => setTimeout(resolve, 1000));
-		server.allow_slow_request(req);
-
-		return await handler(req, url, json);
-	});
+    server.json(id, async (req, url, json) => {
+        const t_start = Date.now();
+        
+        const result = await handler(req, url, json);
+        
+        const t_elapsed = Date.now() - t_start;
+        const t_remaining = Math.max(0, 1000 - t_elapsed);
+        
+        if (t_remaining > 0)
+            await new Promise(resolve => setTimeout(resolve, t_remaining));
+        
+        server.allow_slow_request(req);
+        return result;
+    });
 }
 // endregion
 
