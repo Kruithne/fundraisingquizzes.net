@@ -175,6 +175,25 @@ const schema_quiz_submit = form_create_schema({
 		flags: { type: 'number' }
 	}
 });
+
+const schema_answer_submit = form_create_schema({
+	fields: {
+		title: { type: 'text', max_length: 100, min_length: 1 },
+		charity: { type: 'text', max_length: 100, min_length: 1 },
+		answers: { type: 'text', max_length: 10000, min_length: 1 },
+		closing: { type: 'text', regex: '^[0-9]{4}/[0-9]{2}/[0-9]{2}$' }
+	}
+});
+
+const schema_answer_edit = form_create_schema({
+	fields: {
+		id: { type: 'number' },
+		title: { type: 'text', max_length: 100, min_length: 1 },
+		charity: { type: 'text', max_length: 100, min_length: 1 },
+		answers: { type: 'text', max_length: 10000, min_length: 1 },
+		closing: { type: 'text', regex: '^[0-9]{4}/[0-9]{2}/[0-9]{2}$' }
+	}
+});
 // endregion
 
 // region mail
@@ -308,6 +327,18 @@ function quiz_query_exists(query_id: number): Promise<boolean> {
 
 quiz_retrieve_weekly_winner();
 quiz_process_weekly_winner();
+// endregion
+
+// region answers
+enum AnswerFlags { // 32-bit
+	None = 0,
+	IsAccepted = 1 << 0,
+	IsDeleted = 1 << 1
+}
+
+function answer_exists(answer_id: number): Promise<boolean> {
+	return db.exists('SELECT 1 FROM `quiz_answers` WHERE `id` = ?', answer_id);
+}
 // endregion
 
 // region users
@@ -849,6 +880,114 @@ register_session_endpoint('/api/quiz_submit', async (req, url, json, session) =>
 }, true);
 // endregion
 
+// region api answers
+register_session_endpoint('/api/answer_list', async (req, url, json, session) => {
+	if (session) {
+		const params = [session.user_id, AnswerFlags.IsDeleted];
+
+		let query = `
+			SELECT 
+				a.id,
+				a.title,
+				a.charity,
+				a.answers,
+				a.closing,
+				a.flags,
+				a.created_ts,
+				a.updated_ts,
+				u.username AS submitter_username
+			FROM quiz_answers AS a 
+			LEFT JOIN users AS u ON u.id = a.user_id
+			WHERE (a.flags & ?) = 0
+		`;
+
+		if (!(session.flags & UserAccountFlags.AdminAccount)) {
+			query += ' AND (a.flags & ?) > 0';
+			params.push(AnswerFlags.IsAccepted);
+		}
+
+		query += ' ORDER BY a.closing DESC';
+
+		return {
+			answers: await db.get_all(query, ...params)
+		};
+	}
+
+	const answers = await db.get_all('SELECT * FROM `quiz_answers` WHERE (`flags` & ?) > 0 AND (`flags` & ?) = 0 ORDER BY closing DESC', AnswerFlags.IsAccepted, AnswerFlags.IsDeleted);
+	return { answers };
+}, false);
+
+register_session_endpoint('/api/answer_submit', async (req, url, json, session) => {
+	const form = form_validate_req(schema_answer_submit, json);
+	if (form.error)
+		return form;
+
+	const flags = (session.flags & UserAccountFlags.AdminAccount) ? AnswerFlags.IsAccepted : AnswerFlags.None;
+
+	const result = await db.insert_object('quiz_answers', {
+		title: form.fields.title,
+		charity: form.fields.charity,
+		answers: form.fields.answers,
+		closing: form.fields.closing,
+		flags: flags,
+		created_ts: Date.now(),
+		updated_ts: Date.now(),
+		user_id: session.user_id
+	});
+	
+	if (result === -1)
+		return { error: 'Failed to submit answers' };
+	
+	return { success: true, answer_id: result };
+}, true);
+
+register_admin_endpoint('/api/answer_edit', async (req, url, json, session) => {
+	const form = form_validate_req(schema_answer_edit, json);
+	if (form.error)
+		return form;
+
+	if (!(await answer_exists(form.fields.id)))
+		return { error: 'Selected answer does not exist' };
+
+	const result = await db.execute(
+		'UPDATE `quiz_answers` SET `title` = ?, `charity` = ?, `answers` = ?, `closing` = ?, `updated_ts` = ? WHERE `id` = ? LIMIT 1',
+		form.fields.title,
+		form.fields.charity,
+		form.fields.answers,
+		form.fields.closing,
+		Date.now(),
+		form.fields.id
+	);
+	
+	if (result === -1)
+		return { error: 'Failed to update answers' };
+	
+	return { success: true };
+});
+
+register_admin_endpoint('/api/answer_approve', async (req, url, json, session) => {
+	if (typeof json.id !== 'number')
+		return { error: 'Invalid answer ID' };
+
+	if (!(await answer_exists(json.id)))
+		return { error: 'Selected answer does not exist' };
+
+	await db.execute('UPDATE `quiz_answers` SET `flags` = `flags` | ? WHERE `id` = ? LIMIT 1', AnswerFlags.IsAccepted, json.id);
+	return { success: true };
+});
+
+register_admin_endpoint('/api/answer_delete', async (req, url, json, session) => {
+	if (typeof json.id !== 'number')
+		return { error: 'Invalid answer ID' };
+
+	if (!(await answer_exists(json.id)))
+		return { error: 'Selected answer does not exist' };
+
+	await db.execute('UPDATE `quiz_answers` SET `flags` = `flags` | ? WHERE `id` = ? LIMIT 1', AnswerFlags.IsDeleted, json.id);
+	return { success: true };
+});
+// endregion
+
 // region api user
 register_session_endpoint('/api/query_user_presence', async (req, url, json, session) => {
 	const user_info = await db.get_single('SELECT `username` FROM `users` WHERE `id` = ? LIMIT 1', session.user_id);
@@ -1166,6 +1305,15 @@ const routes: Record<string, RouteOptions> = {
 			scripts: cache_bust(['static/js/page_quizzes.js']),
 			stylesheets: cache_bust(['static/css/quizzes.css'])
 		}
+	},
+
+	'/answers': {
+		content: Bun.file('./html/answers.html'),
+		subs: {
+			title: 'Answers',
+			scripts: cache_bust(['static/js/page_answers.js']),
+			stylesheets: cache_bust(['static/css/answers.css'])
+		}
 	}
 }
 
@@ -1364,6 +1512,9 @@ async function maintenance_routine() {
 
 	// delete expired user_reset_tokens
 	await db.execute('DELETE FROM `user_reset_tokens` WHERE `reset_sent` < (NOW() - INTERVAL 24 HOUR)');
+
+	// delete quiz answers older than 1 month
+	await db.execute('DELETE FROM `quiz_answers` WHERE `closing` < DATE_SUB(NOW(), INTERVAL 1 MONTH)');
 
 	setTimeout(maintenance_routine, MAINTENANCE_ROUTINE_TIMER);
 }

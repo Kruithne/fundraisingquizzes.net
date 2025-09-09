@@ -1,0 +1,86 @@
+<div class="module module-padded">
+	<p><b>Quiz Answers:</b> Community-submitted answers to closed fundraising quizzes. Perfect for checking your solutions!</p>
+</div>
+<div v-if="!loaded" class="module module-padded">
+	<div class="loader">
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+	</div>
+</div>
+<template v-else>
+	<div v-if="!is_submitting_answer" id="answer-submit-entry" class="module module-padded">
+		<a @click="start_submit_answer()">Have the answers to a closed quiz? Click here to submit them!</a>
+	</div>
+	<div v-else class="module module-padded answer-entry answer-entry-submitting">
+		<div class="answer-icon"></div>
+		<div class="answer-info">
+			<h1>
+				<input type="text" v-model="new_answer.title" maxlength="100" :style="{ width: getInputWidth(new_answer.title, 'Quiz title', 'answer-entry-submitting') }" placeholder="Quiz title"/>
+				 in aid of 
+				<input type="text" v-model="new_answer.charity" maxlength="100" :style="{ width: getInputWidth(new_answer.charity, 'Charity name', 'answer-entry-submitting') }" placeholder="Charity name"/>
+			</h1>
+			<div class="answer-sub">
+				<p>
+					<input type="text" 
+						   v-model="new_answer.closing_input"
+						   placeholder="Closing date (yyyy/mm/dd)"/>
+				</p>
+			</div>
+			<p>
+				<textarea v-model="new_answer.answers" maxlength="10000" placeholder="Quiz answers (one answer per line or formatted as needed)"></textarea>
+			</p>
+			<div class="answer-options">
+				<a class="answer-option-approve" @click="submit_answer()">[Submit Answers]</a>
+				<a class="answer-option-delete" @click="cancel_submit_answer()">[Cancel]</a>
+			</div>
+		</div>
+	</div>
+	<template v-for="answer in answers_sorted">
+		<div class="module module-padded answer-entry" :class="{ 'answer-pending-approval': (answer.flags & ANSWER_FLAGS.IsAccepted) == 0 }">
+			<div class="answer-icon"></div>
+			<div class="answer-info">
+				<h1 v-if="answer.is_editing">
+					<input type="text" v-model="answer.title" maxlength="100" :style="{ width: getInputWidth(answer.title, answer.title, 'answer-entry') }"/>
+					 in aid of 
+					<input type="text" v-model="answer.charity" maxlength="100" :style="{ width: getInputWidth(answer.charity, answer.charity, 'answer-entry') }"/>
+				</h1>
+				<h1 v-else>{{ answer.title }} in aid of {{ answer.charity }}</h1>
+				<div class="answer-sub">
+					<template v-if="answer.is_editing">
+						<p>
+							<input type="text" 
+								   :value="date_to_input_format(answer.closing)" 
+								   @input="answer.closing_input = $event.target.value"
+								   placeholder="yyyy/mm/dd"/>
+						</p>
+					</template>
+					<template v-else>
+						<p v-if="answer.submitter_username">Submitted by {{ answer.submitter_username }}</p>
+						<p>Closed {{ format_date_relative(answer.closing) }} ({{ format_date(answer.closing) }})</p>
+					</template>
+					<p v-if="is_answer_new(answer)" class="answer-flag answer-flag-new">New!</p>
+					<p v-if="is_answer_updated(answer)" class="answer-flag answer-flag-updated">Updated!</p>
+				</div>
+				<div v-if="answer.is_editing" class="answer-text">
+					<textarea v-model="answer.answers" maxlength="10000"></textarea>
+				</div>
+				<div v-else class="answer-text" v-html="format_answer_text(answer.answers)"></div>
+				<div class="answer-options">
+					<template v-if="answer.is_editing">
+						<a class="answer-option-approve" @click="save_answer(answer)">[Save Changes]</a>
+						<a class="answer-option-delete" @click="discard_changes(answer)">[Discard Changes]</a>
+					</template>
+					<template v-else>
+						<a v-if="is_admin && !answer.is_editing" class="answer-option-edit" @click="edit_answer(answer)">[Edit]</a>
+						<a v-if="is_admin && (answer.flags & ANSWER_FLAGS.IsAccepted) == 0" class="answer-option-approve" @click="approve_answer(answer)">[Approve]</a>
+						<a v-if="is_admin" class="answer-option-delete" @click="delete_answer(answer)">[Delete]</a>
+					</template>
+				</div>
+			</div>
+		</div>
+	</template>
+</template>
