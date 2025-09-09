@@ -11,3 +11,10 @@ CREATE TABLE `users` (
 
 -- [2] add `password` column
 ALTER TABLE `users` ADD COLUMN `password` VARCHAR(255) NOT NULL;
+
+-- [3] add avatar_id column
+ALTER TABLE `users` ADD COLUMN `avatar_id` BIGINT UNSIGNED DEFAULT 8;
+
+-- [4] add foreign key constraint for avatar
+ALTER TABLE `users` ADD CONSTRAINT `fk_users_avatar` 
+    FOREIGN KEY (`avatar_id`) REFERENCES `avatars`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;

@@ -194,6 +194,7 @@ const schema_answer_edit = form_create_schema({
 		closing: { type: 'text', regex: '^[0-9]{4}/[0-9]{2}/[0-9]{2}$' }
 	}
 });
+
 // endregion
 
 // region mail
@@ -412,6 +413,12 @@ export async function user_start_session(user_id: number): Promise<user_session>
 	log('started session {%s} for user {%s}', session_id, user_id);
 	
 	return session;
+}
+
+async function user_refresh_session(session_id: string): Promise<void> {
+	const refresh_ts = Date.now();
+	user_session_cache.delete(session_id);
+	await db.execute('UPDATE user_sessions SET user_updated_timestamp = ? WHERE session_id = ?', refresh_ts, session_id);
 }
 
 async function user_get_session(session_id: string): Promise<user_session|null> {
@@ -990,7 +997,12 @@ register_admin_endpoint('/api/answer_delete', async (req, url, json, session) =>
 
 // region api user
 register_session_endpoint('/api/query_user_presence', async (req, url, json, session) => {
-	const user_info = await db.get_single('SELECT `username` FROM `users` WHERE `id` = ? LIMIT 1', session.user_id);
+	const user_info = await db.get_single(`
+		SELECT u.username, u.avatar_id, a.filename as avatar_filename 
+		FROM users u 
+		LEFT JOIN avatars a ON u.avatar_id = a.id 
+		WHERE u.id = ? LIMIT 1
+	`, session.user_id);
 	if (user_info === null)
 		caution('query_user_presence called on unknown user', { json, session });
 
@@ -998,7 +1010,9 @@ register_session_endpoint('/api/query_user_presence', async (req, url, json, ses
 		user_presence: {
 			username: user_info?.username,
 			user_id: session.user_id,
-			flags: session.flags
+			flags: session.flags,
+			avatar_id: user_info?.avatar_id || 8,
+			avatar_filename: user_info?.avatar_filename || 'avatar_devid.png'
 		},
 		session_updated: session.user_updated_timestamp
 	};
@@ -1214,6 +1228,27 @@ register_throttled_endpoint('/api/login', async (req, url, json) => {
 	
 	return response;
 });
+
+register_session_endpoint('/api/user_set_avatar', async (req, url, json, session) => {
+	const avatar_id = Number(json.avatar_id);
+	
+	if (!avatar_id || avatar_id < 1)
+		return { error: 'Invalid avatar ID' };
+
+	const avatar_exists = await db.get_single('SELECT id FROM avatars WHERE id = ? LIMIT 1', avatar_id);
+	if (!avatar_exists)
+		return { error: 'Avatar not found' };
+
+	await db.execute('UPDATE users SET avatar_id = ? WHERE id = ?', avatar_id, session.user_id);
+	await user_refresh_session(session.session_id);
+
+	return { success: true };
+}, true);
+
+register_session_endpoint('/api/query_avatars', async (req, url, json, session) => {
+	const avatars = await db.get_all('SELECT id, filename, name FROM avatars WHERE hidden = 0 ORDER BY id');
+	return { avatars };
+});
 // endregion
 
 // region routes
@@ -1313,6 +1348,16 @@ const routes: Record<string, RouteOptions> = {
 			title: 'Answers',
 			scripts: cache_bust(['static/js/page_answers.js']),
 			stylesheets: cache_bust(['static/css/answers.css'])
+		}
+	},
+	
+	'/settings': {
+		content: Bun.file('./html/settings.html'),
+		require_auth: true,
+		subs: {
+			title: 'Settings',
+			scripts: cache_bust(['static/js/page_settings.js']),
+			stylesheets: cache_bust(['static/css/settings.css'])
 		}
 	}
 }

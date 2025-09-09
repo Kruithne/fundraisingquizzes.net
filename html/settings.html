@@ -1,0 +1,41 @@
+<div v-if="!loaded" class="module module-padded">
+	<div class="loader">
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+	</div>
+</div>
+
+<template v-else>
+	<div class="module module-padded">
+		<h1>Account Settings</h1>
+		<p>Welcome to your account settings, {{ username }}!</p>
+	</div>
+
+	<div class="module module-padded">
+		<h2>Change Your Avatar</h2>
+		<p>Click on an avatar below to select it as your new avatar.</p>
+		
+		<div id="avatar-selector">
+			<div 
+				v-for="avatar in available_avatars" 
+				:key="avatar.id"
+				:class="{ 'avatar-option': true, 'avatar-selected': avatar.id === current_avatar_id }"
+				@click="select_avatar(avatar.id)"
+			>
+				<img :src="'static/images/avatars/' + avatar.filename" :alt="avatar.name" :title="avatar.name"/>
+				<div class="avatar-name">{{ avatar.name }}</div>
+			</div>
+		</div>
+		
+		<div v-if="avatar_changing" class="avatar-status">
+			Changing avatar...
+		</div>
+		<div v-if="avatar_error" class="avatar-error">
+			{{ avatar_error }}
+		</div>
+	</div>
+</template>
