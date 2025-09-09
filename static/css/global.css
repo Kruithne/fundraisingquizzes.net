@@ -229,6 +229,22 @@ body
 	text-align: left;
 }
 
+#github-link
+{
+	text-align: right;
+}
+
+#github-link a
+{
+	color: inherit;
+	text-decoration: none;
+}
+
+#github-link a:hover
+{
+	text-decoration: underline;
+}
+
 #author
 {
 	flex: 1;
@@ -439,7 +455,7 @@ select:focus
 		gap: 10px;
 	}
 	
-	#copyright
+	#copyright, #github-link
 	{
 		text-align: center;
 	}
