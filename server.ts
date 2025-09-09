@@ -1223,7 +1223,7 @@ async function resolve_bootstrap_content(content: string | BunFile): Promise<str
 
 	server.error((err, req) => {
 		caution(err?.message ?? err);
-		return cache.request(req, 'error_500', error_page(500), 500);
+		return cache.request(req, 'error_500', error_page(HTTP_STATUS_CODE.InternalServerError_500), HTTP_STATUS_CODE.InternalServerError_500);
 	});
 	
 	server.default((req, status_code) => cache.request(req, `error_${status_code}`, error_page(status_code), status_code));
@@ -1232,10 +1232,10 @@ async function resolve_bootstrap_content(content: string | BunFile): Promise<str
 	server.dir('/static', './static', async (file_path, file, stat, request) => {
 		// ignore hidden files by default, return 404 to prevent file sniffing
 		if (path.basename(file_path).startsWith('.'))
-			return 404; // Not Found
+			return HTTP_STATUS_CODE.NotFound_404;
 		
 		if (stat.isDirectory())
-			return 401; // Unauthorized
+			return HTTP_STATUS_CODE.Unauthorized_401;
 
 		if (static_sub_ext?.some(ext => file_path.endsWith(ext))) {
 			const content = await parse_template(await file.text(), global_sub_table, false);
