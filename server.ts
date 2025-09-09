@@ -1141,11 +1141,12 @@ async function resolve_bootstrap_content(content: string | BunFile): Promise<str
 		scripts: cache_bust(['static/js/client_bootstrap.s.js'])
 	});
 
-	let cache = process.env.SPOODER_ENV === 'dev' ? undefined : cache_http({
+	const cache = cache_http({
 		ttl: 5 * 60 * 60 * 1000, // 5 minutes
 		max_size: 5 * 1024 * 1024, // 5 MB
 		use_canary_reporting: true,
-		use_etags: true
+		use_etags: true,
+		enabled: process.env.SPOODER_ENV !== 'dev'
 	});
 
 	const base_content = await resolve_bootstrap_content(Bun.file('./html/base_template.html'));
@@ -1163,16 +1164,7 @@ async function resolve_bootstrap_content(content: string | BunFile): Promise<str
 		};
 
 		const get_response = async (req: Request): Promise<Response> => {
-			let res;
-			if (cache) {
-				res = await cache.request(req, route, content_generator);
-			} else {
-				res = new Response(await content_generator(), {
-					headers: {
-						'content-type': 'text/html'
-					}
-				});
-			}
+			const res = await cache.request(req, route, content_generator);
 
 			if (route_opts.prevent_indexing)
 				res.headers.append('X-Robots-Tag', 'noindex');
@@ -1215,7 +1207,7 @@ async function resolve_bootstrap_content(content: string | BunFile): Promise<str
 
 	const error_base_content = await resolve_bootstrap_content(Bun.file('./html/error.html'));
 
-	const create_error_content_generator = (status_code: number) => async () => {
+	const error_page = (status_code: number) => async () => {
 		const error_text = HTTP_STATUS_TEXT[status_code] as string;
 		let content = await resolve_bootstrap_content(error_base_content);
 		content = await parse_template(await resolve_bootstrap_content(base_content), { content }, false);
@@ -1229,26 +1221,12 @@ async function resolve_bootstrap_content(content: string | BunFile): Promise<str
 		return content;
 	};
 
-	const default_handler = async (req: Request, status_code: number): Promise<Response> => {
-		if (cache) {
-			return cache.request(req, `error_${status_code}`, create_error_content_generator(status_code), status_code);
-		} else {
-			const content = await create_error_content_generator(status_code)();
-			return new Response(content, {
-				status: status_code,
-				headers: {
-					'content-type': 'text/html'
-				}
-			});
-		}
-	};
-
 	server.error((err, req) => {
 		caution(err?.message ?? err);
-		return default_handler(req, 500);
+		return cache.request(req, 'error_500', error_page(500), 500);
 	});
 	
-	server.default((req, status_code) => default_handler(req, status_code));
+	server.default((req, status_code) => cache.request(req, `error_${status_code}`, error_page(status_code), status_code));
 	
 	const static_sub_ext = ['.css', '.s.js'];
 	server.dir('/static', './static', async (file_path, file, stat, request) => {
