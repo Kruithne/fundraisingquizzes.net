@@ -95,6 +95,40 @@ const app = createApp({
 		format_date,
 		create_hyperlinks,
 
+		getTextWidth(text, className) {
+			const spanKey = `measure-${className}`;
+			
+			let span = document.getElementById(spanKey);
+			if (!span) {
+				span = document.createElement('span');
+				span.id = spanKey;
+				span.style.visibility = 'hidden';
+				span.style.position = 'absolute';
+				span.style.whiteSpace = 'pre';
+				span.style.pointerEvents = 'none';
+				document.body.appendChild(span);
+			}
+			
+			const refElement = document.querySelector(`.${className} input[type="text"]`);
+			if (refElement) {
+				const styles = window.getComputedStyle(refElement);
+				span.style.font = styles.font;
+				span.style.fontSize = styles.fontSize;
+				span.style.fontWeight = styles.fontWeight;
+				span.style.fontFamily = styles.fontFamily;
+			}
+			
+			span.textContent = text || '';
+			return span.offsetWidth;
+		},
+
+		getInputWidth(value, placeholder, className) {
+			const text = value || placeholder || '';
+			const measuredWidth = this.getTextWidth(text, className);
+			// Add horizontal padding (12px * 2) + cursor space + slight buffer
+			return Math.max(measuredWidth + 24 + 10, 150) + 'px';
+		},
+
 		date_to_input_format(date) {
 			if (!date)
 				return '';
@@ -427,6 +461,11 @@ const app = createApp({
 
 			this.is_working = false;
 		}
+	},
+
+	beforeUnmount() {
+		const spans = document.querySelectorAll('[id^="measure-"]');
+		spans.forEach(span => span.remove());
 	}
 });
 

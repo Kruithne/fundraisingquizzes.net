@@ -20,9 +20,9 @@
 		<div class="quiz-icon" :class="'quiz-type-' + new_quiz.type"></div>
 		<div class="quiz-info">
 			<h1>
-				<input type="text" v-model="new_quiz.title" maxlength="100" :style="{ width: (new_quiz.title.length || 20) + 'ch' }" placeholder="Quiz title"/>
+				<input type="text" v-model="new_quiz.title" maxlength="100" :style="{ width: getInputWidth(new_quiz.title, 'Quiz title', 'quiz-entry-submitting') }" placeholder="Quiz title"/>
 				 in aid of 
-				<input type="text" v-model="new_quiz.charity" maxlength="100" :style="{ width: (new_quiz.charity.length || 20) + 'ch' }" placeholder="Charity name"/>
+				<input type="text" v-model="new_quiz.charity" maxlength="100" :style="{ width: getInputWidth(new_quiz.charity, 'Charity name', 'quiz-entry-submitting') }" placeholder="Charity name"/>
 			</h1>
 			<div class="quiz-sub">
 				<p>
@@ -57,9 +57,9 @@
 			<div class="quiz-icon" :class="'quiz-type-' + quiz.type"></div>
 			<div class="quiz-info">
 				<h1 v-if="quiz.is_editing">
-					<input type="text" v-model="quiz.title" maxlength="100" :style="{ width: quiz.title.length + 'ch' }"/>
+					<input type="text" v-model="quiz.title" maxlength="100" :style="{ width: getInputWidth(quiz.title, quiz.title, 'quiz-entry') }"/>
 					 in aid of 
-					<input type="text" v-model="quiz.charity" maxlength="100" :style="{ width: quiz.charity.length + 'ch' }"/>
+					<input type="text" v-model="quiz.charity" maxlength="100" :style="{ width: getInputWidth(quiz.charity, quiz.charity, 'quiz-entry') }"/>
 				</h1>
 				<h1 v-else>{{ quiz.title }} in aid of {{ quiz.charity }}</h1>
 				<div class="quiz-sub">
