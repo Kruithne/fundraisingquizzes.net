@@ -1,5 +1,5 @@
 import { createApp } from '/{{cache_bust=static/js/lib/vue.esm.prod.js}}';
-import { document_load, query_api } from '/{{cache_bust=static/js/client_global.s.js}}';
+import { document_load, query_api } from '/{{cache_bust=static/js/client_global.js}}';
 
 document_load().then(() => {
 	const app = createApp({

@@ -1018,7 +1018,7 @@ const routes: Record<string, RouteOptions> = {
 		content: Bun.file('./html/index.html'),
 		subs: {
 			title: 'Homepage',
-			scripts: cache_bust(['static/js/page_index.s.js']),
+			scripts: cache_bust(['static/js/page_index.js']),
 			stylesheets: cache_bust(['static/css/landing.css'])
 		}
 	},
@@ -1038,7 +1038,7 @@ const routes: Record<string, RouteOptions> = {
 		prevent_indexing: true,
 		subs: {
 			title: 'Login',
-			scripts: cache_bust(['static/js/page_login.s.js']),
+			scripts: cache_bust(['static/js/page_login.js']),
 			stylesheets: cache_bust(['static/css/login.css']),
 			register_form: () => form_render_html(schema_register),
 			login_form: () => form_render_html(schema_login)
@@ -1050,7 +1050,7 @@ const routes: Record<string, RouteOptions> = {
 		prevent_indexing: true,
 		subs: {
 			title: 'Account Verification',
-			scripts: cache_bust(['static/js/page_account_verify.s.js']),
+			scripts: cache_bust(['static/js/page_account_verify.js']),
 			stylesheets: cache_bust(['static/css/login.css'])
 		}
 	},
@@ -1060,7 +1060,7 @@ const routes: Record<string, RouteOptions> = {
 		prevent_indexing: true,
 		subs: {
 			title: 'Account Recovery',
-			scripts: cache_bust(['static/js/page_account_recovery.s.js']),
+			scripts: cache_bust(['static/js/page_account_recovery.js']),
 			stylesheets: cache_bust(['static/css/login.css']),
 			recover_form: () => form_render_html(schema_recover)
 		}
@@ -1071,7 +1071,7 @@ const routes: Record<string, RouteOptions> = {
 		prevent_indexing: true,
 		subs: {
 			title: 'Password Reset',
-			scripts: cache_bust(['static/js/page_reset_password.s.js']),
+			scripts: cache_bust(['static/js/page_reset_password.js']),
 			stylesheets: cache_bust(['static/css/login.css']),
 			reset_form: () => form_render_html(schema_reset_password)
 		}
@@ -1082,7 +1082,7 @@ const routes: Record<string, RouteOptions> = {
 		prevent_indexing: true,
 		subs: {
 			title: 'Account Migration',
-			scripts: cache_bust(['static/js/page_account_migration.s.js']),
+			scripts: cache_bust(['static/js/page_account_migration.js']),
 			stylesheets: []
 		}
 	},
@@ -1091,7 +1091,7 @@ const routes: Record<string, RouteOptions> = {
 		content: Bun.file('./html/quizzes.html'),
 		subs: {
 			title: 'Quizzes',
-			scripts: cache_bust(['static/js/page_quizzes.s.js']),
+			scripts: cache_bust(['static/js/page_quizzes.js']),
 			stylesheets: cache_bust(['static/css/quizzes.css'])
 		}
 	}
@@ -1138,7 +1138,7 @@ async function resolve_bootstrap_content(content: string | BunFile): Promise<str
 	
 	const global_sub_table = sub_table_merge(cache_bust_subs, {
 		year: new Date().getFullYear(),
-		scripts: cache_bust(['static/js/client_bootstrap.s.js'])
+		scripts: cache_bust(['static/js/client_bootstrap.js'])
 	});
 
 	const cache = cache_http({
@@ -1228,7 +1228,7 @@ async function resolve_bootstrap_content(content: string | BunFile): Promise<str
 	
 	server.default((req, status_code) => cache.request(req, `error_${status_code}`, error_page(status_code), status_code));
 	
-	const static_sub_ext = ['.css', '.s.js'];
+	const STATIC_SUB_EXT = ['.css', '.js'];
 	server.dir('/static', './static', async (file_path, file, stat, request) => {
 		// ignore hidden files by default, return 404 to prevent file sniffing
 		if (path.basename(file_path).startsWith('.'))
@@ -1237,13 +1237,16 @@ async function resolve_bootstrap_content(content: string | BunFile): Promise<str
 		if (stat.isDirectory())
 			return HTTP_STATUS_CODE.Unauthorized_401;
 
-		if (static_sub_ext?.some(ext => file_path.endsWith(ext))) {
-			const content = await parse_template(await file.text(), global_sub_table, false);
-			return new Response(content, {
-				headers: {
-					'Content-Type': file.type
-				}
-			});
+		if (STATIC_SUB_EXT?.some(ext => file_path.endsWith(ext))) {
+			const file_path_split = file_path.split(/[/\\]+/);
+			if (file_path_split.at(-2) !== 'lib') {
+				const content = await parse_template(await file.text(), global_sub_table, false);
+				return new Response(content, {
+					headers: {
+						'Content-Type': file.type
+					}
+				});
+			}
 		}
 		
 		return http_apply_range(file, request);

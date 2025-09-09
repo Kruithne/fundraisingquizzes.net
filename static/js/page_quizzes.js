@@ -10,7 +10,7 @@ import {
 	show_toast_pending,
 	show_toast_success,
 	show_toast_error
-} from '/{{cache_bust=static/js/client_global.s.js}}';
+} from '/{{cache_bust=static/js/client_global.js}}';
 
 const UNIX_SECOND = 1000;
 const UNIX_MINUTE = UNIX_SECOND * 60;
