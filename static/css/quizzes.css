@@ -166,6 +166,11 @@
 	background-color: #e9ffe6;
 }
 
+.quiz-entry-submitting {
+	border-color: #4fa43b;
+	background-color: #e9ffe6;
+}
+
 @media (max-width: 880px) {
 	.quiz-info {
 		gap: 10px;

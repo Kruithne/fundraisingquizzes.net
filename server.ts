@@ -164,6 +164,17 @@ const schema_quiz_edit = form_create_schema({
 		flags: { type: 'number' }
 	}
 });
+
+const schema_quiz_submit = form_create_schema({
+	fields: {
+		title: { type: 'text', max_length: 100, min_length: 1 },
+		charity: { type: 'text', max_length: 100, min_length: 1 },
+		description: { type: 'text', max_length: 1000 },
+		type: { type: 'number', min: 0, max: 10 },
+		closing: { type: 'text', regex: '^[0-9]{4}/[0-9]{2}/[0-9]{2}$' },
+		flags: { type: 'number' }
+	}
+});
 // endregion
 
 // region mail
@@ -812,6 +823,29 @@ register_session_endpoint('/api/quiz_bookmark', async (req, url, json, session) 
 
 		return { success: true, removed: false };
 	}
+}, true);
+
+register_session_endpoint('/api/quiz_submit', async (req, url, json, session) => {
+	const form = form_validate_req(schema_quiz_submit, json);
+	if (form.error)
+		return form;
+
+	const result = await db.insert_object('quizzes', {
+		title: form.fields.title,
+		charity: form.fields.charity,
+		description: form.fields.description,
+		type: form.fields.type,
+		closing: form.fields.closing,
+		flags: form.fields.flags,
+		created_ts: Date.now(),
+		updated_ts: Date.now(),
+		user_id: session.user_id
+	});
+	
+	if (result === -1)
+		return { error: 'Failed to submit quiz' };
+	
+	return { success: true, quiz_id: result };
 }, true);
 // endregion
 

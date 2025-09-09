@@ -56,7 +56,9 @@ const app = createApp({
 			QUIZ_TYPES,
 			QUIZ_FLAGS,
 
-			quizzes: []
+			quizzes: [],
+			is_submitting_quiz: false,
+			new_quiz: null
 		}
 	},
 
@@ -360,6 +362,57 @@ const app = createApp({
 					return `Added ${quiz.title} to bookmarks`;
 				}
 			});
+		},
+
+		start_submit_quiz() {
+			this.new_quiz = {
+				title: '',
+				charity: '',
+				description: '',
+				type: 0,
+				closing_input: '',
+				flags: QUIZ_FLAGS.None
+			};
+
+			this.is_submitting_quiz = true;
+		},
+
+		cancel_submit_quiz() {
+			this.new_quiz = null;
+			this.is_submitting_quiz = false;
+		},
+
+		async submit_quiz() {
+			this.is_working = true;
+			show_toast_pending(`Submitting ${this.new_quiz.title}...`, false);
+
+			const payload = {
+				fields: {
+					title: this.new_quiz.title,
+					charity: this.new_quiz.charity,
+					description: this.new_quiz.description,
+					type: this.new_quiz.type,
+					flags: this.new_quiz.flags,
+					closing: this.new_quiz.closing_input
+				}
+			};
+
+			const res = await query_api('quiz_submit', payload);
+
+			if (res.error) {
+				show_toast_error(res.error);
+			} else {
+				const submitted_title = this.new_quiz.title;
+				this.cancel_submit_quiz();
+				show_toast_success(`Successfully submitted ${submitted_title}! It will appear once approved.`);
+				
+				if (this.is_admin) {
+					const data = await query_api('quiz_list');
+					this.quizzes = data.quizzes;
+				}
+			}
+
+			this.is_working = false;
 		}
 	}
 });

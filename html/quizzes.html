@@ -13,8 +13,44 @@
 	</div>
 </div>
 <template v-else>
-	<div id="quiz-submit-entry" class="module module-padded">
-		Want to add your own quiz to this list? Click here to submit one!
+	<div v-if="!is_submitting_quiz" id="quiz-submit-entry" class="module module-padded">
+		<a @click="start_submit_quiz()">Want to add your own quiz to this list? Click here to submit one!</a>
+	</div>
+	<div v-else class="module module-padded quiz-entry quiz-entry-submitting">
+		<div class="quiz-icon" :class="'quiz-type-' + new_quiz.type"></div>
+		<div class="quiz-info">
+			<h1>
+				<input type="text" v-model="new_quiz.title" maxlength="100" :style="{ width: (new_quiz.title.length || 20) + 'ch' }" placeholder="Quiz title"/>
+				 in aid of 
+				<input type="text" v-model="new_quiz.charity" maxlength="100" :style="{ width: (new_quiz.charity.length || 20) + 'ch' }" placeholder="Charity name"/>
+			</h1>
+			<div class="quiz-sub">
+				<p>
+					<select v-model="new_quiz.type">
+						<option v-for="(type, index) in QUIZ_TYPES" :value="index">{{ type }}</option>
+					</select>	
+				</p>
+				<p>
+					<input type="text" 
+						   v-model="new_quiz.closing_input"
+						   placeholder="yyyy/mm/dd"/>
+				</p>
+				<p>
+					<select :value="get_answer_policy(new_quiz)" @change="set_answer_policy(new_quiz, parseInt($event.target.value))">
+						<option value="0">No answer policy</option>
+						<option value="1">No asking allowed</option>
+						<option value="2">No asking before closing</option>
+					</select>
+				</p>
+			</div>
+			<p>
+				<textarea v-model="new_quiz.description" maxlength="1000" placeholder="Quiz description"></textarea>
+			</p>
+			<div class="quiz-options">
+				<a class="quiz-option-approve" @click="submit_quiz()">[Submit Quiz]</a>
+				<a class="quiz-option-delete" @click="cancel_submit_quiz()">[Cancel]</a>
+			</div>
+		</div>
 	</div>
 	<template v-for="quiz in quizzes_sorted">
 		<div class="module module-padded quiz-entry" :class="{ 'quiz-bookmarked': quiz.is_bookmarked, 'quiz-pending-approval': (quiz.flags & QUIZ_FLAGS.IsAccepted) == 0, 'quiz-queries-visible': quiz.is_showing_queries }">
