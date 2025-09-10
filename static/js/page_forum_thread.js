@@ -1,5 +1,5 @@
 import { createApp } from '/{{cache_bust=static/js/lib/vue.esm.prod.js}}';
-import { document_load, query_api, get_user_presence, show_toast_success, show_toast_error, create_hyperlinks } from '/{{cache_bust=static/js/client_global.js}}';
+import { document_load, query_api, get_user_presence, show_toast_success, show_toast_error, create_hyperlinks, nl2br } from '/{{cache_bust=static/js/client_global.js}}';
 
 const app = createApp({
 	data() {
@@ -64,7 +64,7 @@ const app = createApp({
 				this.topic = response.topic;
 				this.replies = response.replies.map(reply => ({
 					...reply,
-					text: create_hyperlinks(reply.text),
+					text: create_hyperlinks(nl2br(reply.text)),
 					like_processing: false,
 					delete_processing: false
 				}));
@@ -121,7 +121,7 @@ const app = createApp({
 					
 					if (this.editing_reply) {
 						// Update the reply in place
-						this.editing_reply.text = create_hyperlinks(this.reply_form.message.trim());
+						this.editing_reply.text = create_hyperlinks(nl2br(this.reply_form.message.trim()));
 						this.editing_reply.updated = new Date().toISOString();
 						this.cancel_edit();
 					} else {

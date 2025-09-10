@@ -40,6 +40,13 @@ export function get_cookies() {
 const url_regex = /https?:\/\/(?:[-\w.])+(?:\:[0-9]+)?(?:\/(?:[\w\/_.])*(?:\?(?:[\w&=%.])*)?(?:\#(?:[\w.])*)?)?/gi;
 const email_regex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
 
+export function nl2br(text) {
+	if (typeof text !== 'string')
+		return text;
+	
+	return text.replace(/\r?\n/g, '<br>');
+}
+
 export function create_hyperlinks(text) {
 	return text
 		.replace(url_regex, '<a href="$&" target="_blank">$&</a>')
