@@ -7,3 +7,5 @@ This website was created for my mother, who still runs the website herself today
 Originally written in PHP in 2013, 12 years later, it was the last website running on a server that was scheduled to be decommissioned.
 
 The website is important to my mother and still had an active userbase, therefore rather than retire it into the sunset, I rewrote it TypeScript/Bun and modernized the codebase, giving it a new lease on life.
+
+<p align="center"><img src="static/images/avatars/avatar_boston.png"></p>
