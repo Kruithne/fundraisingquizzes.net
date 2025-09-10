@@ -6,10 +6,7 @@
 		"@types/nodemailer": "^6.4.17"
 	},
 	"spooder": {
-		"auto_restart": true,
-		"auto_restart_max": 30000,
-		"auto_restart_attempts": 10,
-		"auto_restart_grace": 30000,
+		"auto_restart": 0,
 		"run": "bun run server.ts",
 		"update": [
 			"git fetch --depth=1 origin master",
