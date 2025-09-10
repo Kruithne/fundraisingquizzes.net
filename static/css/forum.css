@@ -55,9 +55,20 @@
 
 .pagination-controls {
 	display: flex;
-	justify-content: center;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.pagination-left,
+.pagination-right {
+	display: flex;
 	align-items: center;
 	gap: 0.5rem;
+}
+
+.pagination-center {
+	display: flex;
+	align-items: center;
 }
 
 .pagination-btn {

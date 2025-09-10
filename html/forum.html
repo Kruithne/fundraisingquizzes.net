@@ -8,33 +8,39 @@
 <!-- Pagination Controls (Top) -->
 <div class="module module-padded forum-pagination" v-if="loaded && pagination.total_pages > 1">
 	<div class="pagination-controls">
-		<button 
-			@click="goto_page(1)" 
-			:disabled="!pagination.has_prev"
-			class="pagination-btn first"
-		>« First</button>
+		<div class="pagination-left">
+			<button 
+				@click="goto_page(1)" 
+				:disabled="!pagination.has_prev"
+				class="pagination-btn first"
+			>« First</button>
+			
+			<button 
+				@click="goto_page(pagination.current_page - 1)" 
+				:disabled="!pagination.has_prev"
+				class="pagination-btn prev"
+			>‹ Previous</button>
+		</div>
 		
-		<button 
-			@click="goto_page(pagination.current_page - 1)" 
-			:disabled="!pagination.has_prev"
-			class="pagination-btn prev"
-		>‹ Previous</button>
+		<div class="pagination-center">
+			<span class="pagination-info">
+				Page {{ pagination.current_page }} of {{ pagination.total_pages }}
+			</span>
+		</div>
 		
-		<span class="pagination-info">
-			Page {{ pagination.current_page }} of {{ pagination.total_pages }}
-		</span>
-		
-		<button 
-			@click="goto_page(pagination.current_page + 1)" 
-			:disabled="!pagination.has_next"
-			class="pagination-btn next"
-		>Next ›</button>
-		
-		<button 
-			@click="goto_page(pagination.total_pages)" 
-			:disabled="!pagination.has_next"
-			class="pagination-btn last"
-		>Last »</button>
+		<div class="pagination-right">
+			<button 
+				@click="goto_page(pagination.current_page + 1)" 
+				:disabled="!pagination.has_next"
+				class="pagination-btn next"
+			>Next ›</button>
+			
+			<button 
+				@click="goto_page(pagination.total_pages)" 
+				:disabled="!pagination.has_next"
+				class="pagination-btn last"
+			>Last »</button>
+		</div>
 	</div>
 </div>
 
@@ -80,33 +86,39 @@
 <!-- Pagination Controls (Bottom) -->
 <div class="module module-padded forum-pagination" v-if="loaded && pagination.total_pages > 1">
 	<div class="pagination-controls">
-		<button 
-			@click="goto_page(1)" 
-			:disabled="!pagination.has_prev"
-			class="pagination-btn first"
-		>« First</button>
+		<div class="pagination-left">
+			<button 
+				@click="goto_page(1)" 
+				:disabled="!pagination.has_prev"
+				class="pagination-btn first"
+			>« First</button>
+			
+			<button 
+				@click="goto_page(pagination.current_page - 1)" 
+				:disabled="!pagination.has_prev"
+				class="pagination-btn prev"
+			>‹ Previous</button>
+		</div>
 		
-		<button 
-			@click="goto_page(pagination.current_page - 1)" 
-			:disabled="!pagination.has_prev"
-			class="pagination-btn prev"
-		>‹ Previous</button>
+		<div class="pagination-center">
+			<span class="pagination-info">
+				Page {{ pagination.current_page }} of {{ pagination.total_pages }}
+			</span>
+		</div>
 		
-		<span class="pagination-info">
-			Page {{ pagination.current_page }} of {{ pagination.total_pages }}
-		</span>
-		
-		<button 
-			@click="goto_page(pagination.current_page + 1)" 
-			:disabled="!pagination.has_next"
-			class="pagination-btn next"
-		>Next ›</button>
-		
-		<button 
-			@click="goto_page(pagination.total_pages)" 
-			:disabled="!pagination.has_next"
-			class="pagination-btn last"
-		>Last »</button>
+		<div class="pagination-right">
+			<button 
+				@click="goto_page(pagination.current_page + 1)" 
+				:disabled="!pagination.has_next"
+				class="pagination-btn next"
+			>Next ›</button>
+			
+			<button 
+				@click="goto_page(pagination.total_pages)" 
+				:disabled="!pagination.has_next"
+				class="pagination-btn last"
+			>Last »</button>
+		</div>
 	</div>
 </div>
 
