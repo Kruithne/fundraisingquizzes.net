@@ -1404,10 +1404,7 @@ register_session_endpoint('/api/forum_topic_create', async (req, url, json, sess
 	if (form.error)
 		return form;
 
-	console.log('Creating topic:', { title: form.fields.title, message: form.fields.message, user_id: session.user_id });
-
 	try {
-		// Create the topic
 		const topic_id = await db.insert_object('forum_topics', {
 			title: form.fields.title,
 			creator_id: session.user_id,
@@ -1415,9 +1412,6 @@ register_session_endpoint('/api/forum_topic_create', async (req, url, json, sess
 			updated: new Date()
 		});
 
-		console.log('Topic created with ID:', topic_id);
-
-		// Create the initial reply with the message
 		const reply_id = await db.insert_object('forum_replies', {
 			topic_id: topic_id,
 			text: form.fields.message,
@@ -1425,14 +1419,11 @@ register_session_endpoint('/api/forum_topic_create', async (req, url, json, sess
 			created: new Date()
 		});
 
-		console.log('Initial reply created with ID:', reply_id);
-
 		return {
 			success: true,
 			topic_id: topic_id
 		};
 	} catch (error) {
-		console.error('Error creating topic:', error);
 		return { error: 'Failed to create topic' };
 	}
 }, true);
