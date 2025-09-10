@@ -31,7 +31,10 @@ document_load().then(() => {
 		if (referrer !== null)
 			return location.href = location.origin + referrer;
 		
-		if (document.referrer?.startsWith(location.origin))
+		const blacklist = ['/reset-password', '/login', '/account-migration', '/verify-account'];
+		const referrer_path = new URL(document.referrer || '/', location.origin).pathname;
+		
+		if (document.referrer?.startsWith(location.origin) && !blacklist.includes(referrer_path))
 			return location.href = document.referrer;
 
 		location.href = '/';
