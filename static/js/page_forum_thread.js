@@ -282,16 +282,14 @@ const app = createApp({
 		},
 
 		user_title(flags) {
-			if (flags & 8) return 'Banned'; // Banned flag
+			if (flags & 2) return 'Banned'; // AccountDisabled flag
 			if (flags & 4) return 'Admin';  // Admin flag
-			if (flags & 2) return 'Contributor'; // Contributor flag (hypothetical)
 			return 'User';
 		},
 
 		user_title_class(flags) {
-			if (flags & 8) return 'user-title banned';
+			if (flags & 2) return 'user-title banned';
 			if (flags & 4) return 'user-title admin';
-			if (flags & 2) return 'user-title contributor';
 			return 'user-title';
 		},
 
