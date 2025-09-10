@@ -1,0 +1,215 @@
+<div v-if="!loaded" class="module module-padded">
+	<div class="loader">
+		<div></div><div></div><div></div><div></div><div></div><div></div>
+	</div>
+</div>
+
+<!-- Thread Header -->
+<div class="module module-padded" v-if="loaded && topic">
+	<div class="thread-header">
+		<div v-if="can_admin" class="thread-admin-controls">
+			<a @click="toggle_sticky" class="forum-option-sticky" :class="{ disabled: admin_processing }">
+				{{ topic.sticky ? '[Remove Sticky]' : '[Make Sticky]' }}
+			</a>
+			<a @click="delete_topic" class="forum-option-delete" :class="{ disabled: admin_processing }">[Delete Topic]</a>
+		</div>
+		
+		<h1>{{ topic.title }}</h1>
+		<div class="thread-meta">
+			<span>Created by {{ topic.creator_username }}</span>
+			<span>•</span>
+			<span>{{ format_date(topic.created) }}</span>
+			<span>•</span>
+			<span>{{ topic.views }} views</span>
+		</div>
+	</div>
+</div>
+
+<!-- Thread not found -->
+<div class="module module-padded" v-if="loaded && !topic">
+	<h1>Topic Not Found</h1>
+	<p>The topic you are looking for could not be found.</p>
+	<a href="/forum" class="back-to-forum">← Back to Forum</a>
+</div>
+
+<!-- Pagination Controls (Top) -->
+<div class="module forum-pagination" v-if="loaded && topic && pagination.total_pages > 1">
+	<div class="pagination-controls">
+		<button 
+			@click="goto_page(1)" 
+			:disabled="!pagination.has_prev"
+			class="pagination-btn first"
+		>« First</button>
+		
+		<button 
+			@click="goto_page(pagination.current_page - 1)" 
+			:disabled="!pagination.has_prev"
+			class="pagination-btn prev"
+		>‹ Previous</button>
+		
+		<span class="pagination-info">
+			Page {{ pagination.current_page }} of {{ pagination.total_pages }}
+		</span>
+		
+		<button 
+			@click="goto_page(pagination.current_page + 1)" 
+			:disabled="!pagination.has_next"
+			class="pagination-btn next"
+		>Next ›</button>
+		
+		<button 
+			@click="goto_page(pagination.total_pages)" 
+			:disabled="!pagination.has_next"
+			class="pagination-btn last"
+		>Last »</button>
+	</div>
+</div>
+
+<!-- Reply Listing -->
+<div id="thread-listing" v-if="loaded && topic && replies.length > 0">
+	<div 
+		v-for="reply in replies" 
+		:key="reply.id"
+		class="module module-padded forum-reply"
+		:id="'reply-' + reply.id"
+	>
+		<div class="reply-admin-controls">
+			<button 
+				v-if="can_like_reply(reply)"
+				@click="toggle_like(reply)"
+				class="like-btn"
+				:class="{ active: reply.user_has_liked }"
+				:disabled="reply.like_processing"
+			>
+				{{ reply.like_count }}
+			</button>
+			
+			<button 
+				v-if="reply.can_edit"
+				@click="edit_reply(reply)"
+				class="edit-btn forum-option-edit"
+			>
+				[Edit]
+			</button>
+			
+			<button 
+				v-if="reply.can_delete"
+				@click="delete_reply(reply)"
+				class="delete-btn forum-option-delete"
+				:disabled="reply.delete_processing"
+			>
+				[Delete]
+			</button>
+		</div>
+		
+		<div class="reply-user">
+			<div class="user-avatar">
+				<img 
+					:src="'/static/images/avatars/' + reply.poster_avatar_filename" 
+					:alt="reply.poster_username"
+				/>
+			</div>
+			<div class="user-info">
+				<div class="username">{{ reply.poster_username }}</div>
+				<div :class="user_title_class(reply.poster_flags)">
+					{{ user_title(reply.poster_flags) }}
+				</div>
+			</div>
+		</div>
+		
+		<div class="reply-content">
+			<div class="reply-timestamp">
+				<span class="reply-posted">{{ format_date(reply.created) }}</span>
+				<span v-if="reply.updated" class="reply-edited">
+					(edited {{ format_date(reply.updated) }})
+				</span>
+			</div>
+			
+			<div class="reply-message" v-html="reply.text"></div>
+			
+			<div v-if="reply.poster_signature" class="reply-signature">
+				{{ reply.poster_signature }}
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- No Replies Message -->
+<div class="module module-padded" v-else-if="loaded && topic">
+	<p class="no-replies">No replies yet. Be the first to reply!</p>
+</div>
+
+<!-- Pagination Controls (Bottom) -->
+<div class="module forum-pagination" v-if="loaded && topic && pagination.total_pages > 1">
+	<div class="pagination-controls">
+		<button 
+			@click="goto_page(1)" 
+			:disabled="!pagination.has_prev"
+			class="pagination-btn first"
+		>« First</button>
+		
+		<button 
+			@click="goto_page(pagination.current_page - 1)" 
+			:disabled="!pagination.has_prev"
+			class="pagination-btn prev"
+		>‹ Previous</button>
+		
+		<span class="pagination-info">
+			Page {{ pagination.current_page }} of {{ pagination.total_pages }}
+		</span>
+		
+		<button 
+			@click="goto_page(pagination.current_page + 1)" 
+			:disabled="!pagination.has_next"
+			class="pagination-btn next"
+		>Next ›</button>
+		
+		<button 
+			@click="goto_page(pagination.total_pages)" 
+			:disabled="!pagination.has_next"
+			class="pagination-btn last"
+		>Last »</button>
+	</div>
+</div>
+
+<!-- Reply Form -->
+<div class="module module-padded" v-if="loaded && topic">
+	<h2 v-if="!editing_reply">Post a Reply</h2>
+	<h2 v-if="editing_reply">Edit Reply</h2>
+	
+	<div class="reply-form">
+		<textarea 
+			v-model="reply_form.message"
+			:placeholder="editing_reply ? 'Edit your reply...' : 'Enter your reply...'"
+			maxlength="10000"
+			rows="6"
+			class="reply-message-input"
+		></textarea>
+		
+		<div class="reply-form-controls">
+			<span class="character-count">{{ reply_form.message.length }}/10000</span>
+			
+			<div class="reply-buttons">
+				<button 
+					v-if="editing_reply"
+					@click="cancel_edit"
+					class="cancel-edit-btn"
+				>
+					Cancel
+				</button>
+				
+				<button 
+					@click="submit_reply"
+					:disabled="submitting_reply || !can_submit_reply"
+					class="submit-reply-btn"
+				>
+					{{ submit_button_text }}
+				</button>
+			</div>
+		</div>
+		
+		<div v-if="reply_error" class="reply-error">
+			{{ reply_error }}
+		</div>
+	</div>
+</div>

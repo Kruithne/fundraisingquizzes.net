@@ -215,6 +215,28 @@ const schema_password_change = form_create_schema({
 	}
 });
 
+const schema_forum_topic_create = form_create_schema({
+	fields: {
+		title: { type: 'text', min: 3, max: 200 },
+		message: { type: 'text', min: 1, max: 10000 }
+	}
+});
+
+const schema_forum_reply_create = form_create_schema({
+	fields: {
+		topic_id: { type: 'number', min: 1 },
+		message: { type: 'text', min: 1, max: 10000 }
+	}
+});
+
+const schema_forum_reply_edit = form_create_schema({
+	fields: {
+		reply_id: { type: 'number', min: 1 },
+		message: { type: 'text', min: 1, max: 10000 }
+	}
+});
+
+
 // endregion
 
 // region mail
@@ -1321,6 +1343,330 @@ register_session_endpoint('/api/user_change_password', async (req, url, json, se
 }, true);
 // endregion
 
+// region api forum
+register_session_endpoint('/api/forum_topics', async (req, url, json, session) => {
+	const page = Math.max(1, parseInt(String(json.page || 1)));
+	const limit = Math.min(50, Math.max(1, parseInt(String(json.limit || 30))));
+	const offset = (page - 1) * limit;
+
+	const user_id = session.user_id;
+	const topics = await db.get_all(`
+		SELECT 
+			t.id, t.title, t.creator_id, u.username as creator_username,
+			u.avatar_id as creator_avatar_id, a.filename as creator_avatar_filename,
+			t.created, t.updated, t.sticky, t.views, t.topic_type,
+			COALESCE(rc.reply_count, 0) as reply_count,
+			CASE WHEN rs.last_read IS NULL OR rs.last_read < t.updated THEN 1 ELSE 0 END as is_unread
+		FROM forum_topics t
+		LEFT JOIN users u ON t.creator_id = u.id
+		LEFT JOIN avatars a ON u.avatar_id = a.id
+		LEFT JOIN (
+			SELECT topic_id, COUNT(*) as reply_count 
+			FROM forum_replies 
+			GROUP BY topic_id
+		) rc ON t.id = rc.topic_id
+		LEFT JOIN forum_read_status rs ON t.id = rs.topic_id AND rs.user_id = ?
+		ORDER BY t.sticky DESC, t.updated DESC
+		LIMIT ${limit}
+		OFFSET ${offset}
+	`, user_id);
+
+	const total_count = await db.get_single('SELECT COUNT(*) as count FROM forum_topics');
+	const total_pages = Math.ceil((total_count?.count || 0) / limit);
+
+	return {
+		topics: topics.map(topic => ({
+			id: topic.id,
+			title: topic.title,
+			creator_id: topic.creator_id,
+			creator_username: topic.creator_username,
+			creator_avatar_id: topic.creator_avatar_id,
+			creator_avatar_filename: topic.creator_avatar_filename || 'avatar_devid.png',
+			created: topic.created,
+			updated: topic.updated,
+			sticky: Boolean(topic.sticky),
+			views: topic.views,
+			reply_count: topic.reply_count,
+			is_unread: Boolean(topic.is_unread)
+		})),
+		pagination: {
+			current_page: page,
+			total_pages: total_pages,
+			total_topics: total_count?.count || 0,
+			has_next: page < total_pages,
+			has_prev: page > 1
+		}
+	};
+}, true);
+
+register_session_endpoint('/api/forum_topic_create', async (req, url, json, session) => {
+	const form = form_validate_req(schema_forum_topic_create, json);
+	if (form.error)
+		return form;
+
+	console.log('Creating topic:', { title: form.fields.title, message: form.fields.message, user_id: session.user_id });
+
+	try {
+		// Create the topic
+		const topic_id = await db.insert_object('forum_topics', {
+			title: form.fields.title,
+			creator_id: session.user_id,
+			created: new Date(),
+			updated: new Date()
+		});
+
+		console.log('Topic created with ID:', topic_id);
+
+		// Create the initial reply with the message
+		const reply_id = await db.insert_object('forum_replies', {
+			topic_id: topic_id,
+			text: form.fields.message,
+			poster_id: session.user_id,
+			created: new Date()
+		});
+
+		console.log('Initial reply created with ID:', reply_id);
+
+		return {
+			success: true,
+			topic_id: topic_id
+		};
+	} catch (error) {
+		console.error('Error creating topic:', error);
+		return { error: 'Failed to create topic' };
+	}
+}, true);
+
+register_session_endpoint('/api/forum_replies', async (req, url, json, session) => {
+	const topic_id = parseInt(String(json.topic_id || 0));
+	const page = Math.max(1, parseInt(String(json.page || 1)));
+	const limit = Math.min(50, Math.max(1, parseInt(String(json.limit || 30))));
+
+	if (!topic_id || topic_id < 1)
+		return { error: 'Invalid topic ID' };
+
+	const topic = await db.get_single(`
+		SELECT t.id, t.title, u.username as creator_username, t.created, t.views, t.sticky
+		FROM forum_topics t
+		LEFT JOIN users u ON t.creator_id = u.id
+		WHERE t.id = ?
+	`, topic_id);
+
+	if (!topic)
+		return { error: 'Topic not found' };
+
+	db.execute('UPDATE forum_topics SET views = views + 1 WHERE id = ?', topic_id);
+
+	await db.execute(`
+		INSERT INTO forum_read_status (user_id, topic_id, last_read) 
+		VALUES (?, ?, NOW()) 
+		ON DUPLICATE KEY UPDATE last_read = NOW()
+	`, session.user_id, topic_id);
+
+	const offset = (page - 1) * limit;
+
+	const replies = await db.get_all(`
+		SELECT 
+			r.id, r.text, r.poster_id, u.username as poster_username,
+			u.avatar_id as poster_avatar_id, a.filename as poster_avatar_filename,
+			u.flags as poster_flags, u.forum_signature as poster_signature,
+			r.created, r.updated,
+			COALESCE(lc.like_count, 0) as like_count
+		FROM forum_replies r
+		LEFT JOIN users u ON r.poster_id = u.id
+		LEFT JOIN avatars a ON u.avatar_id = a.id
+		LEFT JOIN (
+			SELECT reply_id, COUNT(*) as like_count
+			FROM forum_likes
+			GROUP BY reply_id
+		) lc ON r.id = lc.reply_id
+		WHERE r.topic_id = ?
+		ORDER BY r.created ASC
+		LIMIT ${limit}
+		OFFSET ${offset}
+	`, topic_id);
+
+	let user_likes: Array<{ reply_id: number }> = [];
+	if (replies.length > 0) {
+		user_likes = await db.get_all(`
+			SELECT reply_id 
+			FROM forum_likes 
+			WHERE user_id = ? AND reply_id IN (${replies.map(() => '?').join(',')})
+		`, session.user_id, ...replies.map(r => r.id));
+	}
+
+	const user_liked_set = new Set(user_likes.map(l => l.reply_id));
+
+	const total_count = await db.get_single('SELECT COUNT(*) as count FROM forum_replies WHERE topic_id = ?', topic_id);
+	const total_pages = Math.ceil((total_count?.count || 0) / limit);
+
+	return {
+		topic: {
+			id: topic.id,
+			title: topic.title,
+			creator_username: topic.creator_username,
+			created: topic.created,
+			views: topic.views + 1,
+			sticky: Boolean(topic.sticky)
+		},
+		replies: replies.map(reply => ({
+			id: reply.id,
+			text: reply.text,
+			poster_id: reply.poster_id,
+			poster_username: reply.poster_username,
+			poster_avatar_id: reply.poster_avatar_id,
+			poster_avatar_filename: reply.poster_avatar_filename || 'avatar_devid.png',
+			poster_flags: reply.poster_flags,
+			poster_signature: reply.poster_signature,
+			created: reply.created,
+			updated: reply.updated,
+			like_count: reply.like_count,
+			user_has_liked: user_liked_set.has(reply.id),
+			can_edit: reply.poster_id === session.user_id,
+			can_delete: (session.flags & UserAccountFlags.AdminAccount) !== 0
+		})),
+		pagination: {
+			current_page: page,
+			total_pages: total_pages,
+			total_replies: total_count?.count || 0,
+			has_next: page < total_pages,
+			has_prev: page > 1
+		}
+	};
+}, true);
+
+register_session_endpoint('/api/forum_reply_create', async (req, url, json, session) => {
+	const form = form_validate_req(schema_forum_reply_create, json);
+	if (form.error)
+		return form;
+
+	const topic_exists = await db.exists('SELECT 1 FROM forum_topics WHERE id = ?', form.fields.topic_id);
+	if (!topic_exists)
+		return form.raise_form_error('Topic not found');
+
+	const result = await db.execute(`
+		INSERT INTO forum_replies (topic_id, text, poster_id, created) 
+		VALUES (?, ?, ?, NOW())
+	`, form.fields.topic_id, form.fields.message, session.user_id);
+
+	await db.execute('UPDATE forum_topics SET updated = NOW() WHERE id = ?', form.fields.topic_id);
+	await db.execute('DELETE FROM forum_read_status WHERE topic_id = ?', form.fields.topic_id);
+
+	await db.execute(`
+		INSERT INTO forum_read_status (user_id, topic_id, last_read) 
+		VALUES (?, ?, NOW())
+	`, session.user_id, form.fields.topic_id);
+
+	return {
+		success: true,
+		reply_id: result.insertId
+	};
+}, true);
+
+register_session_endpoint('/api/forum_reply_edit', async (req, url, json, session) => {
+	const form = form_validate_req(schema_forum_reply_edit, json);
+	if (form.error)
+		return form;
+
+	const reply = await db.get_single('SELECT poster_id FROM forum_replies WHERE id = ?', form.fields.reply_id);
+	if (!reply)
+		return form.raise_form_error('Reply not found');
+
+	if (reply.poster_id !== session.user_id)
+		return form.raise_form_error('You can only edit your own replies');
+
+	await db.execute(`
+		UPDATE forum_replies 
+		SET text = ?, updated = NOW() 
+		WHERE id = ?
+	`, form.fields.message, form.fields.reply_id);
+
+	return { success: true };
+}, true);
+
+register_session_endpoint('/api/forum_reply_like', async (req, url, json, session) => {
+	const reply_id = json.reply_id;
+	if (!reply_id || typeof reply_id !== 'number')
+		return { error: 'Invalid reply ID' };
+
+	const reply = await db.get_single('SELECT poster_id FROM forum_replies WHERE id = ?', reply_id);
+	if (!reply)
+		return { error: 'Reply not found' };
+
+	if (reply.poster_id === session.user_id)
+		return { error: 'You cannot like your own replies' };
+
+	const existing_like = await db.get_single('SELECT id FROM forum_likes WHERE user_id = ? AND reply_id = ?', session.user_id, reply_id);
+
+	let liked = false;
+	if (existing_like) {
+		await db.execute('DELETE FROM forum_likes WHERE user_id = ? AND reply_id = ?', session.user_id, reply_id);
+		liked = false;
+	} else {
+		await db.execute('INSERT INTO forum_likes (user_id, reply_id, created) VALUES (?, ?, NOW())', session.user_id, reply_id);
+		liked = true;
+	}
+
+	const like_count = await db.get_single('SELECT COUNT(*) as count FROM forum_likes WHERE reply_id = ?', reply_id);
+
+	return {
+		success: true,
+		liked: liked,
+		like_count: like_count?.count || 0
+	};
+}, true);
+
+register_admin_endpoint('/api/forum_topic_delete', async (req, url, json, session) => {
+	const topic_id = json.topic_id;
+	if (!topic_id || typeof topic_id !== 'number')
+		return { error: 'Invalid topic ID' };
+
+	const topic_exists = await db.exists('SELECT 1 FROM forum_topics WHERE id = ?', topic_id);
+	if (!topic_exists)
+		return { error: 'Topic not found' };
+
+	await db.execute('DELETE FROM forum_topics WHERE id = ?', topic_id);
+
+	return { success: true };
+});
+
+register_admin_endpoint('/api/forum_topic_toggle_sticky', async (req, url, json, session) => {
+	const topic_id = json.topic_id;
+	const sticky = json.sticky;
+	
+	if (!topic_id || typeof topic_id !== 'number')
+		return { error: 'Invalid topic ID' };
+
+	if (typeof sticky !== 'boolean')
+		return { error: 'Invalid sticky value' };
+
+	const topic_exists = await db.exists('SELECT 1 FROM forum_topics WHERE id = ?', topic_id);
+	if (!topic_exists)
+		return { error: 'Topic not found' };
+
+	await db.execute('UPDATE forum_topics SET sticky = ? WHERE id = ?', sticky ? 1 : 0, topic_id);
+
+	return {
+		success: true,
+		sticky: sticky
+	};
+});
+
+register_admin_endpoint('/api/forum_reply_delete', async (req, url, json, session) => {
+	const reply_id = json.reply_id;
+	if (!reply_id || typeof reply_id !== 'number')
+		return { error: 'Invalid reply ID' };
+
+	const reply_exists = await db.exists('SELECT 1 FROM forum_replies WHERE id = ?', reply_id);
+	if (!reply_exists)
+		return { error: 'Reply not found' };
+
+	await db.execute('DELETE FROM forum_replies WHERE id = ?', reply_id);
+
+	return { success: true };
+});
+// endregion
+
 // region routes
 type RouteOptions = {
 	content: BunFile;
@@ -1429,6 +1775,26 @@ const routes: Record<string, RouteOptions> = {
 			scripts: cache_bust(['static/js/page_settings.js']),
 			stylesheets: cache_bust(['static/css/settings.css']),
 			password_change_form: () => form_render_html(schema_password_change)
+		}
+	},
+
+	'/forum': {
+		content: Bun.file('./html/forum.html'),
+		require_auth: true,
+		subs: {
+			title: 'Forum',
+			scripts: cache_bust(['static/js/page_forum.js']),
+			stylesheets: cache_bust(['static/css/forum.css'])
+		}
+	},
+
+	'/forum/thread': {
+		content: Bun.file('./html/forum_thread.html'),
+		require_auth: true,
+		subs: {
+			title: 'Forum Thread',
+			scripts: cache_bust(['static/js/page_forum_thread.js']),
+			stylesheets: cache_bust(['static/css/forum.css'])
 		}
 	}
 }

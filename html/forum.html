@@ -1,0 +1,148 @@
+<div v-if="!loaded" class="module module-padded">
+	<div class="loader">
+		<div></div><div></div><div></div><div></div><div></div><div></div>
+	</div>
+</div>
+
+
+<!-- Pagination Controls (Top) -->
+<div class="module module-padded forum-pagination" v-if="loaded && pagination.total_pages > 1">
+	<div class="pagination-controls">
+		<button 
+			@click="goto_page(1)" 
+			:disabled="!pagination.has_prev"
+			class="pagination-btn first"
+		>« First</button>
+		
+		<button 
+			@click="goto_page(pagination.current_page - 1)" 
+			:disabled="!pagination.has_prev"
+			class="pagination-btn prev"
+		>‹ Previous</button>
+		
+		<span class="pagination-info">
+			Page {{ pagination.current_page }} of {{ pagination.total_pages }}
+		</span>
+		
+		<button 
+			@click="goto_page(pagination.current_page + 1)" 
+			:disabled="!pagination.has_next"
+			class="pagination-btn next"
+		>Next ›</button>
+		
+		<button 
+			@click="goto_page(pagination.total_pages)" 
+			:disabled="!pagination.has_next"
+			class="pagination-btn last"
+		>Last »</button>
+	</div>
+</div>
+
+<!-- Topic Listing Header -->
+<div class="module module-padded forum-listing-header" v-if="loaded && topics.length > 0">
+	<div class="topic-title">Topic Title</div>
+	<div class="topic-author">Author</div>
+	<div class="topic-posted">Posted</div>
+	<div class="topic-replies">Replies</div>
+	<div class="topic-views">Views</div>
+</div>
+
+<!-- Topic Listing -->
+<div id="forum-listing" v-if="loaded && topics.length > 0">
+	<div 
+		v-for="topic in topics" 
+		:key="topic.id"
+		:class="{ 
+			'module': true, 
+			'module-padded': true, 
+			'forum-topic': true,
+			'topic-unread': topic.is_unread,
+			'topic-sticky': topic.sticky
+		}"
+		@click="goto_thread(topic.id)"
+	>
+		<div class="topic-title">
+			<span v-if="topic.sticky" class="sticky-indicator">[Sticky]</span>
+			{{ topic.title }}
+		</div>
+		<div class="topic-author">{{ topic.creator_username }}</div>
+		<div class="topic-posted">{{ format_date(topic.created) }}</div>
+		<div class="topic-replies">{{ topic.reply_count }}</div>
+		<div class="topic-views">{{ topic.views }}</div>
+	</div>
+</div>
+
+<!-- No Topics Message -->
+<div class="module module-padded" v-else-if="loaded">
+	<p class="no-topics">No forum topics found.</p>
+</div>
+
+<!-- Pagination Controls (Bottom) -->
+<div class="module module-padded forum-pagination" v-if="loaded && pagination.total_pages > 1">
+	<div class="pagination-controls">
+		<button 
+			@click="goto_page(1)" 
+			:disabled="!pagination.has_prev"
+			class="pagination-btn first"
+		>« First</button>
+		
+		<button 
+			@click="goto_page(pagination.current_page - 1)" 
+			:disabled="!pagination.has_prev"
+			class="pagination-btn prev"
+		>‹ Previous</button>
+		
+		<span class="pagination-info">
+			Page {{ pagination.current_page }} of {{ pagination.total_pages }}
+		</span>
+		
+		<button 
+			@click="goto_page(pagination.current_page + 1)" 
+			:disabled="!pagination.has_next"
+			class="pagination-btn next"
+		>Next ›</button>
+		
+		<button 
+			@click="goto_page(pagination.total_pages)" 
+			:disabled="!pagination.has_next"
+			class="pagination-btn last"
+		>Last »</button>
+	</div>
+</div>
+
+<!-- Create New Topic -->
+<div id="create-topic-section" class="module module-padded">
+	<h2>Create New Topic</h2>
+	<div class="topic-form">
+		<input 
+			type="text" 
+			v-model="new_topic.title"
+			placeholder="Topic title..."
+			maxlength="200"
+			class="topic-title-input"
+		/>
+		
+		<textarea 
+			v-model="new_topic.message"
+			placeholder="Enter your message..."
+			maxlength="10000"
+			rows="6"
+			class="topic-message-input"
+		></textarea>
+		
+		<div class="topic-form-controls">
+			<span class="character-count">{{ new_topic.message.length }}/10000</span>
+			<button 
+				@click="create_topic"
+				:disabled="creating_topic || !can_create_topic"
+				class="create-topic-btn"
+			>
+				{{ creating_topic ? 'Creating...' : 'Create Topic' }}
+			</button>
+		</div>
+		
+		<div v-if="topic_error" class="topic-error">
+			{{ topic_error }}
+		</div>
+	</div>
+</div>
