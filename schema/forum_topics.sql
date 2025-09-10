@@ -13,3 +13,7 @@ CREATE TABLE `forum_topics` (
 	INDEX `idx_topic_type` (`topic_type`),
 	FOREIGN KEY (`creator_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+-- [2] fix forum thread ordering bug
+ALTER TABLE `forum_topics` 
+MODIFY COLUMN `updated` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP;
