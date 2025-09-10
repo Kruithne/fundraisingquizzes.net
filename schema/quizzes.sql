@@ -26,6 +26,7 @@ ALTER TABLE `quizzes` ADD column `created_ts` BIGINT UNSIGNED NOT NULL DEFAULT (
 ALTER TABLE `quizzes` ADD column `updated_ts` BIGINT UNSIGNED NOT NULL DEFAULT (UNIX_TIMESTAMP() * 1000);
 
 -- [7] add user_id column to track quiz creators
+-- [deps] users.sql
 ALTER TABLE `quizzes` ADD COLUMN `user_id` BIGINT UNSIGNED NULL;
 UPDATE `quizzes` SET `user_id` = (SELECT MIN(`id`) FROM `users` LIMIT 1) WHERE `user_id` IS NULL;
 ALTER TABLE `quizzes` MODIFY COLUMN `user_id` BIGINT UNSIGNED NOT NULL;

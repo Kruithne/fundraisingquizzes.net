@@ -1,4 +1,5 @@
 -- [1] create quiz_answers table
+-- [deps] users.sql
 CREATE TABLE `quiz_answers` (
 	`id` SERIAL PRIMARY KEY,
 	`title` VARCHAR(100) NOT NULL,

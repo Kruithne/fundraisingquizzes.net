@@ -1,4 +1,5 @@
 -- [1] create quiz_votes table
+-- [deps] users.sql, quizzes.sql
 CREATE TABLE `quiz_votes` (
 	`user_id` BIGINT UNSIGNED NOT NULL,
 	`quiz_id` BIGINT UNSIGNED NOT NULL,
