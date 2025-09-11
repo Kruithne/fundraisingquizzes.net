@@ -1835,7 +1835,7 @@ async function resolve_bootstrap_content(content: string | BunFile): Promise<str
 	});
 
 	const cache = cache_http({
-		ttl: 5 * 60 * 60 * 1000, // 5 minutes
+		ttl: 5 * 60 * 60 * 1000, // 5 hours
 		max_size: 5 * 1024 * 1024, // 5 MB
 		use_canary_reporting: true,
 		use_etags: true,
