@@ -1967,7 +1967,7 @@ async function maintenance_routine() {
 	const time_now = Date.now();
 
 	// mark quizzes that are over their closing date as deleted
-	await db.execute('UPDATE `quizzes` SET `flags` = `flags` | ? WHERE `closing` < CURDATE()');
+	await db.execute('UPDATE `quizzes` SET `flags` = `flags` | ? WHERE `closing` < CURDATE()', QuizFlags.IsDeleted);
 
 	// delete quizzes that are over 1 month past their closing date.
 	await db.execute('DELETE FROM `quizzes` WHERE `closing` < DATE_SUB(NOW(), INTERVAL 1 MONTH)');
