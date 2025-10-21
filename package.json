@@ -1,5 +1,5 @@
 {
-	"name": "kruithne.net",
+	"name": "fundraisingquizzes.net",
 	"module": "server.ts",
 	"devDependencies": {
 		"@types/bun": "^1.2.15",
