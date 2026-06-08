@@ -931,7 +931,7 @@ register_session_endpoint('/api/quiz_submit', async (req, url, json, session) =>
 // region api answers
 register_session_endpoint('/api/answer_list', async (req, url, json, session) => {
 	if (session) {
-		const params = [session.user_id, AnswerFlags.IsDeleted];
+		const params = [AnswerFlags.IsDeleted];
 
 		let query = `
 			SELECT 
