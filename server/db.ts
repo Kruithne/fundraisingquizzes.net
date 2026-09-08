@@ -1,4 +1,4 @@
-import { db_mysql } from 'spooder';
+import { db_mysql, db_update_schema_mysql } from 'spooder';
 
 export const db = await db_mysql({
 	host: process.env.DB_HOST,
@@ -7,5 +7,8 @@ export const db = await db_mysql({
 	database: process.env.DB_DATABASE
 }, true, true);
 
-if (Bun.isMainThread)
-	await db.update_schema('./schema');
+if (Bun.isMainThread) {
+	const connection = await db.instance.getConnection();
+	await db_update_schema_mysql(connection, './schema');
+	connection.release();
+}
