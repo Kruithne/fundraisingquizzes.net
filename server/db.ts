@@ -5,7 +5,7 @@ export const db = await db_mysql({
 	user: process.env.DB_USER,
 	password: process.env.DB_PASSWORD,
 	database: process.env.DB_DATABASE
-}, false, true);
+}, true, true);
 
 if (Bun.isMainThread)
 	await db.update_schema('./schema');
