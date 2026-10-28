@@ -4,6 +4,8 @@ import { post_worker_message } from './server/worker_base';
 import path from 'node:path';
 import { db } from './server/db';
 
+const COOKIE_MAX_AGE = 400 * 24 * 60 * 60; // seconds, browsers cap at 400 days
+
 type BunFile = ReturnType<typeof Bun.file>;
 
 // region bootstrap
@@ -306,7 +308,7 @@ function get_cookies(source: Request | Response, decode: boolean = false): Recor
 	return parsed_cookies;
 }
 
-function set_response_cookie(response: Response, name: string, value: any, http_only = true, max_age = 315360000000) {
+function set_response_cookie(response: Response, name: string, value: any, http_only = true, max_age = COOKIE_MAX_AGE) {
 	set_cookie(response, name, value, {
 		path: '/',
 		http_only,
@@ -320,6 +322,16 @@ function set_response_cookie(response: Response, name: string, value: any, http_
 function delete_response_cookie(response: Response, name: string, http_only = true) {
 	set_response_cookie(response, name, '', http_only, 0);
 	return response;
+}
+
+function renew_session_cookies(response: Response, session: user_session) {
+	set_response_cookie(response, 'session_id', session.session_id);
+	set_response_cookie(response, 'session_updated', session.user_updated_timestamp, false);
+}
+
+function expire_session_cookies(response: Response) {
+	delete_response_cookie(response, 'session_id');
+	set_response_cookie(response, 'session_updated', 'EXPIRED', false);
 }
 // endregion
 
@@ -1210,9 +1222,8 @@ register_throttled_endpoint('/api/account_verify', async (req, url, json) => {
 
 	const response = Response.json({ success: true });
 	const session = await user_start_session(verify_record.user_id);
-	
-	set_response_cookie(response, 'session_id', session.session_id);
-	set_response_cookie(response, 'session_updated', session.user_updated_timestamp, false);
+
+	renew_session_cookies(response, session);
 	
 	return response;
 });
@@ -1220,11 +1231,10 @@ register_throttled_endpoint('/api/account_verify', async (req, url, json) => {
 register_session_endpoint('/api/logout', async (req, url, json, session) => {
 	const response = Response.json({ success: true });
 
+	expire_session_cookies(response);
+
 	if (session) {
 		await user_end_session(session.session_id);
-		delete_response_cookie(response, 'session_id');
-		set_response_cookie(response, 'session_updated', 'EXPIRED', false);
-
 		log(`logged out user {${session.user_id}} session {${session.session_id}}`);
 	}
 
@@ -1284,9 +1294,8 @@ register_throttled_endpoint('/api/login', async (req, url, json) => {
 	
 	const response = Response.json(result);
 	const session = await user_start_session(user_data.id);
-	
-	set_response_cookie(response, 'session_id', session.session_id);
-	set_response_cookie(response, 'session_updated', session.user_updated_timestamp, false);
+
+	renew_session_cookies(response, session);
 	
 	return response;
 });
@@ -1866,33 +1875,18 @@ async function resolve_bootstrap_content(content: string | BunFile): Promise<str
 		};
 
 		server.route(route, async (req, url) => {
-			const user_session_id = get_cookies(req).session_id ?? null;
+			const cookies = get_cookies(req);
+			const user_session_id = cookies.session_id ?? null;
 			const user_session = await user_get_session(user_session_id);
 
-			if (route_opts.require_auth) {
-				if (user_session !== null) {
-					const res = await get_response(req);
+			const res = user_session === null && route_opts.require_auth
+				? Response.redirect('/login?referrer=' + encodeURIComponent(url.pathname), 302)
+				: await get_response(req);
 
-					// keep session_updated in sync
-					set_response_cookie(res, 'session_updated', user_session.user_updated_timestamp, false);
-
-					return res;
-				}
-
-				const res = Response.redirect('/login?referrer=' + encodeURIComponent(url.pathname), 302);
-	
-				// user has provided a session which is no longer valid, so expire it
-				if (user_session_id !== null) {
-					delete_response_cookie(res, 'session_id');
-					set_response_cookie(res, 'session_updated', 'EXPIRED', false);
-				}
-
-				return res;
-			}
-
-			const res = await get_response(req);
 			if (user_session !== null)
-				set_response_cookie(res, 'session_updated', user_session.user_updated_timestamp, false);
+				renew_session_cookies(res, user_session);
+			else if (user_session_id !== null || (cookies.session_updated !== undefined && cookies.session_updated !== 'EXPIRED'))
+				expire_session_cookies(res);
 
 			return res;
 		});
